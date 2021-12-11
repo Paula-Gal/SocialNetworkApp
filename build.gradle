@@ -41,6 +41,9 @@ dependencies {
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
+    // https://mvnrepository.com/artifact/org.postgresql/postgresql
+
+    implementation 'org.postgresql:postgresql:42.3.1'
 }
 
 test {

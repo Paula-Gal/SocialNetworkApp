@@ -116,5 +116,9 @@ public class UserService {
         repoUser.update(user);
         return user;
     }
+
+    public User exists(Long id){
+        return repoUser.findOne(id);
+    }
 }
 
