@@ -2,6 +2,7 @@ package com.example.lab6.controller;
 
 import com.example.lab6.model.User;
 import com.example.lab6.model.validators.ValidationException;
+import com.example.lab6.service.FriendRequestService;
 import com.example.lab6.service.UserService;
 import javafx.fxml.FXML;
 
@@ -12,11 +13,13 @@ import javafx.stage.Stage;
 public class AccountController {
 
     private UserService userService;
+    FriendRequestService friendRequestService;
     Stage stage;
 
-    public void setService(UserService service, Stage stage){
+    public void setService(UserService service, FriendRequestService friendRequestService, Stage stage){
 
         this.userService = service;
+        this.friendRequestService = friendRequestService;
         this.stage = stage;
     }
 

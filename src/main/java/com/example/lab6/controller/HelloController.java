@@ -1,7 +1,9 @@
 package com.example.lab6.controller;
 
 import com.example.lab6.model.User;
+import com.example.lab6.service.FriendRequestService;
 import com.example.lab6.service.FriendshipService;
+import com.example.lab6.service.MessageService;
 import com.example.lab6.service.UserService;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -19,6 +21,8 @@ import java.io.IOException;
 public class HelloController {
     UserService userService;
     FriendshipService friendshipService;
+    MessageService messageService;
+    FriendRequestService friendRequestService;
     private Long id;
     @FXML
     private Label welcomeText;
@@ -61,7 +65,7 @@ public class HelloController {
             dialogStage.setScene(scene);
 
             UserController userViewController  = loader.getController();
-            userViewController.setServices(userService, friendshipService, dialogStage, id);
+            userViewController.setServices(userService, friendshipService, friendRequestService,dialogStage, id);
 
 
             dialogStage.show();
@@ -89,7 +93,7 @@ public class HelloController {
             dialogStage.setScene(scene);
 
             AccountController accountViewController  = loader.getController();
-            accountViewController.setService(userService, dialogStage);
+            accountViewController.setService(userService, friendRequestService, dialogStage);
 
             dialogStage.show();
         }
@@ -108,9 +112,11 @@ public class HelloController {
     public void loginLabel(InputMethodEvent inputMethodEvent) {
     }
 
-    public void setServices(UserService service, FriendshipService fservice){
+    public void setServices(UserService service, FriendshipService fservice, MessageService messageService, FriendRequestService friendRequestService){
 
         this.userService=service;
         this.friendshipService = fservice;
+        this.messageService = messageService;
+        this.friendRequestService = friendRequestService;
     }
 }
