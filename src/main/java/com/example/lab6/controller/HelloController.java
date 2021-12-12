@@ -2,6 +2,7 @@ package com.example.lab6.controller;
 
 import com.example.lab6.controller.AccountController;
 import com.example.lab6.model.User;
+import com.example.lab6.service.FriendshipService;
 import com.example.lab6.service.UserService;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -18,6 +19,7 @@ import java.io.IOException;
 
 public class HelloController {
     UserService userService;
+    FriendshipService friendshipService;
     private Long id;
     @FXML
     private Label welcomeText;
@@ -60,7 +62,8 @@ public class HelloController {
         dialogStage.setScene(scene);
 
         UserController userViewController  = loader.getController();
-        userViewController.setUserService(userService, dialogStage, id);
+        userViewController.setServices(userService, friendshipService, dialogStage, id);
+
 
         dialogStage.show();
     }
@@ -106,7 +109,9 @@ public class HelloController {
     public void loginLabel(InputMethodEvent inputMethodEvent) {
     }
 
-    public void setUserService(UserService service){
+    public void setServices(UserService service, FriendshipService fservice){
+
         this.userService=service;
+        this.friendshipService = fservice;
     }
 }
