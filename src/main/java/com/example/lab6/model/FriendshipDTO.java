@@ -28,5 +28,16 @@ public class FriendshipDTO {
         this.user = user;
     }
 
+    public String getId(){
+        return user.getId().toString();
+    }
+
+    public String getFirstName(){
+        return user.getFirstName();
+    }
+
+    public String getLastName(){
+        return user.getLastName();
+    }
 
 }

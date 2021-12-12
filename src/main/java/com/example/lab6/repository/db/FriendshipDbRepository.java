@@ -2,17 +2,15 @@ package com.example.lab6.repository.db;
 
 import com.example.lab6.model.Friendship;
 import com.example.lab6.model.Tuple;
-import com.example.lab6.model.User;
 import com.example.lab6.model.validators.Validator;
 import com.example.lab6.repository.Repository;
 
 import java.sql.*;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
 import java.util.Set;
 
-public class FriendshipDbRepository implements  Repository<Tuple<Long, Long>, Friendship> {
+public class FriendshipDbRepository implements Repository<Tuple<Long, Long>, Friendship> {
 
     private String url;
     private String username;

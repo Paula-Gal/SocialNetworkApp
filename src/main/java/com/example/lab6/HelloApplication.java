@@ -17,7 +17,6 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 
 public class HelloApplication extends Application {
     Repository<Long, User> repoDb;
@@ -27,8 +26,8 @@ public class HelloApplication extends Application {
     FriendshipService friendshipService;
     @Override
     public void start(Stage stage) throws IOException {
-        repoDb = new UtilizatorDbRepository("jdbc:postgresql://localhost:5432/userApp", "postgres","qwaszx12", new UserValidator());
-        repoDbf = new FriendshipDbRepository("jdbc:postgresql://localhost:5432/userApp", "postgres","qwaszx12", new FriendshipValidator());
+        repoDb = new UtilizatorDbRepository("jdbc:postgresql://localhost:5432/socialnetworkapp", "postgres","paula123", new UserValidator());
+        repoDbf = new FriendshipDbRepository("jdbc:postgresql://localhost:5432/socialnetworkapp", "postgres","paula123", new FriendshipValidator());
 
         userService = new UserService(repoDb, repoDbf);
         friendshipService = new FriendshipService(repoDb, repoDbf);

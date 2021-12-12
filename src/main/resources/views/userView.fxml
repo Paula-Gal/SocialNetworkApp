@@ -4,23 +4,22 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
-<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 
-
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.lab6.controller.UserController">
+<AnchorPane prefHeight="433.0" prefWidth="746.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.lab6.controller.UserController">
     <children>
-        <Label fx:id="userLabel" layoutX="158.0" layoutY="27.0" prefHeight="32.0" prefWidth="259.0" />
-        <TextField fx:id="searchField" layoutX="342.0" layoutY="43.0" />
-        <TableView fx:id="tableView" layoutX="322.0" layoutY="124.0" prefHeight="200.0" prefWidth="223.0">
+        <Label fx:id="userLabel" layoutX="32.0" layoutY="83.0" prefHeight="32.0" prefWidth="259.0" />
+        <TableView fx:id="tableViewFriends" layoutX="322.0" layoutY="117.0" prefHeight="207.0" prefWidth="383.0">
             <columns>
-                <TableColumn fx:id="IdColumnForm" prefWidth="75.0" text="ID" />
-                <TableColumn fx:id="NameColumnForm" prefWidth="75.0" text="Name" />
-                <TableColumn fx:id="dateColumnForm" prefWidth="75.0" text="Date" />
+                <TableColumn fx:id="tableColumnFriendFirstName" prefWidth="98.0" text="First Name" />
+            <TableColumn fx:id="tableColumnFriendLastName" prefWidth="75.0" text="Last Name" />
+                <TableColumn fx:id="tableColumnFriendDate" prefWidth="209.0" text="Friendship Date" />
             </columns>
         </TableView>
         <Button layoutX="42.0" layoutY="161.0" mnemonicParsing="false" onAction="#handleAddFriend" text="Add friend" />
         <Button layoutX="197.0" layoutY="161.0" mnemonicParsing="false" onAction="#handleRemoveFriend" text="Remove friend" />
-        <Button layoutX="527.0" layoutY="43.0" mnemonicParsing="false" onAction="#handleSearchButton" text="Search" />
+      <Button layoutX="42.0" layoutY="221.0" mnemonicParsing="false" onAction="#handleShowFriends" text="Show the friends" />
+      <Button layoutX="42.0" layoutY="271.0" mnemonicParsing="false" onAction="#handleShowRequests" text="Show requests" />
+      <Button layoutX="42.0" layoutY="324.0" mnemonicParsing="false" onAction="#handleMessages" text="Messages" />
     </children>
 </AnchorPane>

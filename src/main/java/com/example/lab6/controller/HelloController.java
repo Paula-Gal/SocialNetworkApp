@@ -1,6 +1,5 @@
 package com.example.lab6.controller;
 
-import com.example.lab6.controller.AccountController;
 import com.example.lab6.model.User;
 import com.example.lab6.service.FriendshipService;
 import com.example.lab6.service.UserService;

@@ -3,18 +3,11 @@ package com.example.lab6.controller;
 import com.example.lab6.model.User;
 import com.example.lab6.model.validators.ValidationException;
 import com.example.lab6.service.UserService;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 
-import javafx.scene.Scene;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.AnchorPane;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
-import java.io.IOException;
 
 public class AccountController {
 
