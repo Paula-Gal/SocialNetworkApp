@@ -60,7 +60,7 @@ public class UserService {
     public int nrConnectedComponents() {
 
         int nr = 0;
-       // setFriendships();
+        // setFriendships();
         Graph graph = new Graph(repoUser);
         graph.createGraph();
         final SocialNetwork socialNetwork = new SocialNetwork(graph);
@@ -86,7 +86,7 @@ public class UserService {
         for(int id: path)
             community.add(repoUser.findOne(Long.parseLong(String.valueOf(id))));
         return community;
-        }
+    }
 
 
 
@@ -115,6 +115,10 @@ public class UserService {
     public User update(User user){
         repoUser.update(user);
         return user;
+    }
+
+    public User exists(Long id){
+        return repoUser.findOne(id);
     }
 }
 
