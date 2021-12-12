@@ -1,13 +1,11 @@
 package com.example.lab6.repository.memory;
 
 import com.example.lab6.model.Entity;
-import com.example.lab6.model.User;
 import com.example.lab6.model.validators.ValidationException;
 import com.example.lab6.model.validators.Validator;
 import com.example.lab6.repository.Repository;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 public class InMemoryRepository<ID, E extends Entity<ID>> implements Repository<ID, E> {

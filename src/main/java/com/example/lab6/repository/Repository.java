@@ -1,12 +1,7 @@
 package com.example.lab6.repository;
 
 import com.example.lab6.model.Entity;
-import com.example.lab6.model.User;
 import com.example.lab6.model.validators.ValidationException;
-
-import java.sql.*;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * CRUD operations repository interface

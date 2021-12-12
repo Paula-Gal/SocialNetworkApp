@@ -1,7 +1,6 @@
 package com.example.lab6.model.validators;
 
 import com.example.lab6.model.User;
-import com.example.lab6.repository.Repository;
 
 
 public class UserValidator implements Validator<User>{

@@ -1,15 +1,11 @@
-package  com.example.lab6.repository.db;
-import com.example.lab6.model.Friendship;
-import com.example.lab6.model.Tuple;
+package com.example.lab6.repository.db;
 import com.example.lab6.model.User;
-import com.example.lab6.model.validators.UserValidator;
 import com.example.lab6.model.validators.Validator;
 
 import com.example.lab6.repository.Repository;
 
 import java.sql.*;
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 
 public class UtilizatorDbRepository implements Repository<Long, User> {

@@ -1,8 +1,14 @@
 package com.example.lab6.service;
 
-import com.example.lab6.model.*;
+import com.example.lab6.model.Friendship;
+import com.example.lab6.model.FriendshipDTO;
 import com.example.lab6.model.validators.ValidationException;
 import com.example.lab6.repository.Repository;
+import com.example.lab6.utils.events.UserChangeEvent;
+import com.example.lab6.utils.observer.Observable;
+import com.example.lab6.utils.observer.Observer;
+import com.example.lab6.model.Tuple;
+import com.example.lab6.model.User;
 
 
 import java.time.LocalDateTime;
@@ -11,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
-public class FriendshipService {
+public class FriendshipService implements Observable<UserChangeEvent> {
     Repository<Long, User> repoUser;
     Repository<Tuple<Long, Long>, Friendship> repoFriendship;
 
@@ -90,4 +96,20 @@ public class FriendshipService {
         return friendslist;
     }
 
+    private final List<Observer<UserChangeEvent>> observers = new ArrayList<>();
+
+    @Override
+    public void addObserver(Observer<UserChangeEvent> e) {
+        observers.add(e);
+    }
+
+    @Override
+    public void removeObserver(Observer<UserChangeEvent> e) {
+
+    }
+
+    @Override
+    public void notifyObservers(UserChangeEvent t) {
+        observers.forEach(x -> x.update(t));
+    }
 }
