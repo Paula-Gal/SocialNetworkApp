@@ -1,6 +1,7 @@
 package com.example.lab6.controller;
 
 import com.example.lab6.model.User;
+import com.example.lab6.model.validators.ValidationException;
 import com.example.lab6.service.FriendRequestService;
 import com.example.lab6.service.FriendshipService;
 import com.example.lab6.service.UserService;
@@ -41,8 +42,6 @@ public class AddFriendController {
     @FXML
     TableColumn<User, User> tableColumnAction = new TableColumn<>("Action");
 
-
-
     public void addFriend() {
 
     }
@@ -73,8 +72,12 @@ public class AddFriendController {
                 setGraphic(sendRequest);
                 sendRequest.setOnAction(
                         event -> {
-                        friendRequestService.sendFriendRequest(id, person.getId());
-                        MessageAlert.showMessage(null, Alert.AlertType.INFORMATION,"Send request","The request has been sent");
+                            try {
+                                friendRequestService.sendFriendRequest(id, person.getId());
+                                MessageAlert.showMessage(null, Alert.AlertType.INFORMATION, "Send request", "The request has been sent");
+                            } catch (ValidationException ex) {
+                                MessageAlert.showErrorMessage(null, ex.getMessage());
+                            }
                         }
                 );
             }
@@ -110,5 +113,9 @@ public class AddFriendController {
     public void onSearchFieldAction(ActionEvent actionEvent) {
         if(searchField.getText().isEmpty())
             tableViewUsers.getItems().removeAll();
+    }
+
+    public void onHandleBack(ActionEvent actionEvent) {
+        stage.close();
     }
 }

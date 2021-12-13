@@ -100,8 +100,6 @@ public class HelloController {
         catch (IOException e){
             e.printStackTrace();
         }
-
-
     }
 
     @FXML
@@ -118,5 +116,34 @@ public class HelloController {
         this.friendshipService = fservice;
         this.messageService = messageService;
         this.friendRequestService = friendRequestService;
+    }
+
+    public void onHandleUsers() {
+        showAllUsers();
+    }
+
+    private void showAllUsers() {
+        try {
+            // create a new stage for the popup dialog.
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getResource("/views/allUsersView.fxml"));
+
+            AnchorPane root = loader.load();
+
+            // Create the dialog Stage.
+            Stage dialogStage = new Stage();
+            dialogStage.setTitle("All users");
+            dialogStage.initModality(Modality.WINDOW_MODAL);
+            Scene scene = new Scene(root);
+            dialogStage.setScene(scene);
+
+            AllUsersController allUsersController  = loader.getController();
+            allUsersController.setService(userService, dialogStage);
+
+            dialogStage.show();
+        }
+        catch (IOException e){
+            e.printStackTrace();
+        }
     }
 }

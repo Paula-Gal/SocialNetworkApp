@@ -18,8 +18,8 @@
         </TableView>
         <Button layoutX="42.0" layoutY="161.0" mnemonicParsing="false" onAction="#handleAddFriend" text="Add friend" />
         <Button layoutX="197.0" layoutY="161.0" mnemonicParsing="false" onAction="#handleRemoveFriend" text="Remove friend" />
-      <Button layoutX="42.0" layoutY="221.0" mnemonicParsing="false" onAction="#handleShowFriends" text="Show the friends" />
-      <Button layoutX="42.0" layoutY="271.0" mnemonicParsing="false" onAction="#handleShowRequests" text="Show requests" />
-      <Button layoutX="42.0" layoutY="324.0" mnemonicParsing="false" onAction="#handleMessages" text="Messages" />
+      <Button layoutX="321.0" layoutY="337.0" mnemonicParsing="false" onAction="#handleUpdateFriends" text="Update friends" />
+      <Button layoutX="42.0" layoutY="204.0" mnemonicParsing="false" onAction="#handleShowRequests" text="Show requests" />
+      <Button layoutX="42.0" layoutY="378.0" mnemonicParsing="false" onAction="#onHandleBack" text="Back" />
     </children>
 </AnchorPane>

@@ -27,12 +27,14 @@ public class FriendRequestDbRepository implements Repository<Tuple<Long, Long>, 
     public FriendRequest findOne(Tuple<Long, Long> longLongTuple) {
         try {
             Connection connection = DriverManager.getConnection(url, username, password);
-            String sql = "SELECT * FROM friend_requests WHERE \"from\" = ? AND \"to\" = ? ";
+            String sql = "SELECT * FROM friend_requests WHERE \"from\" = ? AND \"to\" = ?  or \"from\" = ? and \"to\" = ?";
 
             PreparedStatement statement = connection.prepareStatement(sql);
 
             statement.setInt(1, (int) (long) longLongTuple.getE1());
             statement.setInt(2, (int) (long) longLongTuple.getE2());
+            statement.setInt(3, (int) (long) longLongTuple.getE2());
+            statement.setInt(4, (int) (long) longLongTuple.getE1());
 
             ResultSet resultSet = statement.executeQuery();
 
