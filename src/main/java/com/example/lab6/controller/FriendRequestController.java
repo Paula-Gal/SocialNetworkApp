@@ -1,6 +1,7 @@
 package com.example.lab6.controller;
 
 import com.example.lab6.model.*;
+import com.example.lab6.model.validators.ValidationException;
 import com.example.lab6.service.FriendRequestService;
 import com.example.lab6.service.UserService;
 import javafx.collections.FXCollections;
@@ -60,32 +61,64 @@ public class FriendRequestController {
     private void initModel() {
         try {
             List<FriendRequestDTO> request = friendRequestService.getFriendRequest(id);
-            List<FriendRequestDTO> requestDTOS = StreamSupport.stream(request.spliterator(), false)
-                    .collect(Collectors.toList());
+            List<FriendRequestDTO> requestDTOS = StreamSupport.stream(request.spliterator(), false).collect(Collectors.toList());
             modelRequest.setAll(requestDTOS);
         }
         catch (Exception ex) {
             MessageAlert.showErrorMessage(null, "!!");
         }
     }
+
     public void handleAcceptButton(ActionEvent actionEvent) {
         int poz = tableRequestView.getSelectionModel().getSelectedIndex();
         List<FriendRequestDTO> friendRequestDTOS= friendRequestService.getFriendRequest(id);
         if(friendRequestDTOS.get(poz).getIdF().equals(id))
-        MessageAlert.showErrorMessage(null, "The only operation allowed is 'Delete'");
+         MessageAlert.showErrorMessage(null, "The only operation allowed is 'Delete'");
         else {
-            friendRequestService.acceptFriendRequest(friendRequestDTOS.get(poz).getIdF(), id);
-            initModel();
-            MessageAlert.showMessage(null, Alert.AlertType.INFORMATION, "Accept a friend request", "The request has been accepted");
+            try {
+                friendRequestService.acceptFriendRequest(friendRequestDTOS.get(poz).getIdF(), id);
+                initModel();
+                MessageAlert.showMessage(null, Alert.AlertType.INFORMATION, "Accept a friend request", "The request has been accepted");
+            } catch (ValidationException ex) {
+                MessageAlert.showErrorMessage(null, ex.getMessage());
+            }
         }
+        initModel();
     }
 
     public void handleDeleteButton(ActionEvent actionEvent) {
+        int poz = tableRequestView.getSelectionModel().getSelectedIndex();
+        List<FriendRequestDTO> friendRequestDTOS= friendRequestService.getFriendRequest(id);
+        if(!friendRequestDTOS.get(poz).getIdF().equals(id))
+            MessageAlert.showErrorMessage(null, "This request can't be deleted!");
+        else {
+            try {
+                friendRequestService.deleteFriendRequest(id, friendRequestDTOS.get(poz).getIdT());
+                initModel();
+                MessageAlert.showMessage(null, Alert.AlertType.INFORMATION, "Delete a friend request", "The request has been deleted");
+            } catch (ValidationException ex) {
+                MessageAlert.showErrorMessage(null, ex.getMessage());
+            }
+        }
     }
 
     public void handleRejectButton(ActionEvent actionEvent) {
+        int poz = tableRequestView.getSelectionModel().getSelectedIndex();
+        List<FriendRequestDTO> friendRequestDTOS= friendRequestService.getFriendRequest(id);
+        if(!friendRequestDTOS.get(poz).getIdT().equals(id))
+            MessageAlert.showErrorMessage(null, "This request can't be rejected!");
+        else{
+            try{
+                friendRequestService.rejectFriendRequest(friendRequestDTOS.get(poz).getIdF(),id);
+                initModel();
+                MessageAlert.showMessage(null, Alert.AlertType.INFORMATION, "Reject a friend request", "The request has been rejected");
+            } catch (ValidationException ex) {
+                MessageAlert.showErrorMessage(null, ex.getMessage());
+            }
+        }
     }
 
     public void handleBackButton(ActionEvent actionEvent) {
+        stage.close();
     }
 }

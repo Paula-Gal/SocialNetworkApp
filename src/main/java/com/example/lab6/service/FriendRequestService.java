@@ -94,6 +94,30 @@ public class FriendRequestService {
     }
 
     /**
+     * remove a friend request method
+     * @param from - id of the sender user
+     * @param to - id of the receiver user
+     */
+    public void deleteFriendRequest(Long from, Long to)
+    {
+        if(repoUser.findOne(from) == null)
+            throw new ValidationException("The user do not exist!");
+
+        if(repoUser.findOne(to) == null)
+            throw new ValidationException("The user do not exist!");
+
+        Tuple<Long, Long> ship = new Tuple<>(from, to);
+        if(friendRequestRepo.findOne(ship) != null) {
+            if (friendRequestRepo.findOne(ship).getStatus() != Status.PENDING)
+                throw new ValidationException("The request is not possible");
+        }
+
+        FriendRequest friendRequest = new FriendRequest(friendRequestRepo.findOne(ship).getFrom(), friendRequestRepo.findOne(ship).getTo(), friendRequestRepo.findOne(ship).getStatus(), friendRequestRepo.findOne(ship).getLastUpdatedDate());
+        friendRequest.setId(ship);
+        friendRequestRepo.remove(friendRequest);
+    }
+
+    /**
      * return all the friend request of a user
      * @param id
      * @return
@@ -111,7 +135,7 @@ public class FriendRequestService {
         List<FriendRequest> list = new ArrayList<>();
         requestIterable.forEach(list::add);
         list.stream().filter(requestPredicate).map(x ->{
-                return new FriendRequestDTO(repoUser.findOne(x.getFrom()), repoUser.findOne(x.getTo()), x.getStatus(), x.getLastUpdatedDate());
+            return new FriendRequestDTO(repoUser.findOne(x.getFrom()), repoUser.findOne(x.getTo()), x.getStatus(), x.getLastUpdatedDate());
 
         }).forEach(requestlist::add);
 

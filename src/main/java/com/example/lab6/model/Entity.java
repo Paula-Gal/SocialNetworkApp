@@ -14,13 +14,13 @@ public class Entity<ID> implements Serializable {
         this.id = id;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Entity)) return false;
-        Entity<?> entity = (Entity<?>) o;
-        return getId().equals(entity.getId());
-    }
+//    @Override
+//    public boolean equals(Object o) {
+//        if (this == o) return true;
+//        if (!(o instanceof Entity)) return false;
+//        Entity<?> entity = (Entity<?>) o;
+//        return getId().equals(entity.getId());
+//    }
 
     @Override
     public int hashCode() {

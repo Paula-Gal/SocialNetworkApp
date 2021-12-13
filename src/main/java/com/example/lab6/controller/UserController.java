@@ -51,14 +51,14 @@ public class UserController implements Observer<UserChangeEvent> {
     TableColumn<FriendshipDTO, LocalDateTime> tableColumnFriendDate;
 
     @FXML
-    public void initialize(){
+    public void initialize() {
         tableColumnFriendFirstName.setCellValueFactory(new PropertyValueFactory<>("firstName"));
         tableColumnFriendLastName.setCellValueFactory(new PropertyValueFactory<>("lastName"));
         tableColumnFriendDate.setCellValueFactory(new PropertyValueFactory<>("date"));
         tableViewFriends.setItems(modelUserFriends);
     }
 
-    public void setServices(UserService userService, FriendshipService friendshipService, FriendRequestService friendRequestService, Stage stage, Long id){
+    public void setServices(UserService userService, FriendshipService friendshipService, FriendRequestService friendRequestService, Stage stage, Long id) {
         this.userService = userService;
         this.friendshipService = friendshipService;
         this.friendRequestService = friendRequestService;
@@ -74,13 +74,12 @@ public class UserController implements Observer<UserChangeEvent> {
             List<FriendshipDTO> friendshipDTOS = StreamSupport.stream(friends.spliterator(), false)
                     .collect(Collectors.toList());
             modelUserFriends.setAll(friendshipDTOS);
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             MessageAlert.showErrorMessage(null, "The user doesn't exist!");
         }
     }
 
-    public void setUserLabel(Long id){
+    public void setUserLabel(Long id) {
         userLabel.setText("Welcome " + userService.exists(id).getFirstName() + " " + userService.exists(id).getLastName());
     }
 
@@ -118,10 +117,10 @@ public class UserController implements Observer<UserChangeEvent> {
         int poz = tableViewFriends.getSelectionModel().getSelectedIndex();
         List<FriendshipDTO> friendshipDTOS = friendshipService.getFriendships(id);
         friendshipService.removeFriendship(id, friendshipDTOS.get(poz).getUser().getId());
-        if(friendshipService.getFriendships(id).size() == 0)
+        if (friendshipService.getFriendships(id).size() == 0)
             tableViewFriends.getItems().clear();
         else
-             getFriends();
+            getFriends();
         MessageAlert.showMessage(null, Alert.AlertType.INFORMATION, "Remove a friend", "The friend has been removed");
 
     }
@@ -131,14 +130,15 @@ public class UserController implements Observer<UserChangeEvent> {
 
     }
 
-    public void handleShowFriends(ActionEvent actionEvent) {
-        }
+    public void handleUpdateFriends(ActionEvent actionEvent) {
+        getFriends();
+    }
 
     public void handleShowRequests(ActionEvent actionEvent) {
         showFriendsRequestDialog(id);
     }
 
-    public void showFriendsRequestDialog(Long id){
+    public void showFriendsRequestDialog(Long id) {
         // create a new stage for the popup dialog.
         try {
             FXMLLoader loader = new FXMLLoader();
@@ -162,6 +162,11 @@ public class UserController implements Observer<UserChangeEvent> {
             e.printStackTrace();
         }
     }
+
     public void handleMessages(ActionEvent actionEvent) {
+    }
+
+    public void onHandleBack(ActionEvent actionEvent) {
+        stage.close();
     }
 }

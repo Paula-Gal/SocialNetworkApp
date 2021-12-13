@@ -91,14 +91,12 @@ public class UserService {
     }
 
 
+    public List<User> getUsers(){
+        Iterable<User> list = repoUser.findAll();
+        List<User> users = new ArrayList<>();
+        list.forEach(users::add);
 
-    public List<UserDTO> getUsers(){
-        List<UserDTO> list = new ArrayList<>();
-        for(User user : repoUser.findAll())
-        {
-            list.add(new UserDTO(user));
-        }
-        return list;
+        return users;
 
     }
     /**
