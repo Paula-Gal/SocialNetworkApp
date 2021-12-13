@@ -6,6 +6,9 @@ import com.example.lab6.repository.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import static java.lang.Math.max;
 
@@ -118,6 +121,26 @@ public class UserService {
 
     public User exists(Long id){
         return repoUser.findOne(id);
+    }
+
+    public List<User> filter1(Long id, String str){
+
+        Iterable<User> userIterable = repoUser.findAll();
+        List<User> usersList = new ArrayList<>();
+        userIterable.forEach(usersList::add);
+
+        Predicate<User> firstName = x->x.getFirstName().toLowerCase(Locale.ROOT).contains(str.toLowerCase(Locale.ROOT));
+        Predicate<User> lastName = x->x.getLastName().toLowerCase(Locale.ROOT).contains(str.toLowerCase(Locale.ROOT));
+        Predicate<User> friends = x-> !x.getFriendsList().contains(repoUser.findOne(id));
+        Predicate<User> user = x-> !x.getId().equals(id);
+
+
+        Predicate<User> userPredicate = firstName.or(lastName);
+
+        List<User> users = usersList.stream().filter(userPredicate.and(friends).and(user)).collect(Collectors.toList());
+        return users;
+
+
     }
 }
 

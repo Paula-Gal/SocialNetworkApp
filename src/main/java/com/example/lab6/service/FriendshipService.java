@@ -41,17 +41,16 @@ public class FriendshipService implements Observable<UserChangeEvent> {
         Long id1 = entity.getE1();
         Long id2 = entity.getE2();
 
-        if(repoUser.findOne(id1) == null || repoUser.findOne(id2) == null)
+        if (repoUser.findOne(id1) == null || repoUser.findOne(id2) == null)
             throw new ValidationException("Id invalid");
-        if(repoFriendship.findOne(entity.getId()) != null)
+        if (repoFriendship.findOne(entity.getId()) != null)
             throw new ValidationException("Already exists");
 
         repoUser.findOne(id1).addFriend(repoUser.findOne(id2));
         repoUser.findOne(id2).addFriend(repoUser.findOne(id1));
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         LocalDateTime dateTime = LocalDateTime.now();
 
-        entity.setDate(dateTime.toLocalDate());
+        entity.setDate(dateTime);
         return repoFriendship.save(entity);
     }
 

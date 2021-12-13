@@ -4,6 +4,9 @@ import com.example.lab6.model.*;
 import com.example.lab6.model.validators.ValidationException;
 import com.example.lab6.repository.Repository;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Predicate;
 
 public class FriendRequestService {
     Repository<Tuple<Long, Long>, Friendship> repoFriendship;
@@ -88,5 +91,30 @@ public class FriendRequestService {
         friendRequest.setStatus(Status.REJECTED);
         friendRequest.setId(ship);
         friendRequestRepo.remove(friendRequest);
+    }
+
+    /**
+     * return all the friend request of a user
+     * @param id
+     * @return
+     */
+    public List<FriendRequestDTO> getFriendRequest(Long id){
+        if(repoUser.findOne(id) == null)
+            throw new ValidationException("Invalid id");
+
+        List<FriendRequestDTO> requestlist = new ArrayList<>();
+        Iterable<FriendRequest> requestIterable = friendRequestRepo.findAll();
+
+        Predicate<FriendRequest> from = x->x.getFrom().equals(id);
+        Predicate<FriendRequest> to = x->x.getTo().equals(id);
+        Predicate<FriendRequest> requestPredicate = from.or(to);
+        List<FriendRequest> list = new ArrayList<>();
+        requestIterable.forEach(list::add);
+        list.stream().filter(requestPredicate).map(x ->{
+                return new FriendRequestDTO(repoUser.findOne(x.getFrom()), repoUser.findOne(x.getTo()), x.getStatus(), x.getLastUpdatedDate());
+
+        }).forEach(requestlist::add);
+
+        return requestlist;
     }
 }

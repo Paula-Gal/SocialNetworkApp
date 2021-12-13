@@ -54,11 +54,6 @@ public interface Repository<ID, E extends Entity<ID>> {
      */
     E update(E entity);
 
-    //void removeallFriendships(User one);
-
-
-
-   // Iterable<User> getFriends(User x);
 }
 
 

@@ -1,12 +1,16 @@
 package com.example.lab6.repository.db;
 
 import com.example.lab6.model.FriendRequest;
+import com.example.lab6.model.Friendship;
 import com.example.lab6.model.Status;
 import com.example.lab6.model.Tuple;
 import com.example.lab6.repository.Repository;
 
 import java.sql.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 public class FriendRequestDbRepository implements Repository<Tuple<Long, Long>, FriendRequest> {
     private String url;
@@ -58,7 +62,36 @@ public class FriendRequestDbRepository implements Repository<Tuple<Long, Long>, 
 
     @Override
     public Iterable<FriendRequest> findAll() {
-        return null;
+
+        Set<FriendRequest> friendRequests = new HashSet<>();
+        try (Connection connection = DriverManager.getConnection(url, username, password);
+             PreparedStatement statement = connection.prepareStatement("SELECT * from friend_requests");
+             ResultSet resultSet = statement.executeQuery()) {
+            while (resultSet.next()) {
+
+                Long from = resultSet.getLong("from");
+                Long to = resultSet.getLong("to");
+                Tuple<Long, Long> ship = new Tuple<>(from, to);
+                String status = resultSet.getString("status");
+                LocalDateTime dateTime = resultSet.getTimestamp("last_update_date").toLocalDateTime();
+                Status status1;
+                if(status.equals("APPROVED"))
+                    status1 = Status.APPROVED;
+                else if(status.equals("PENDING"))
+                    status1 = Status.PENDING;
+                else status1 = Status.REJECTED;
+
+                FriendRequest friendRequest = new FriendRequest(from, to, status1, dateTime);
+                friendRequest.setId(ship);
+                friendRequests.add(friendRequest);
+            }
+
+            return friendRequests;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return friendRequests;
+
     }
 
     @Override
@@ -126,4 +159,5 @@ public class FriendRequestDbRepository implements Repository<Tuple<Long, Long>, 
         }
         return entity;
     }
+
 }

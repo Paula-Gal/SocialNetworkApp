@@ -1,22 +1,23 @@
 package com.example.lab6.model;
 
-import java.time.LocalDate;
+
+import java.time.LocalDateTime;
 
 public class FriendshipDTO {
     private User user;
-    private LocalDate date;
+    private LocalDateTime date;
 
-    public FriendshipDTO(User user, LocalDate date) {
+    public FriendshipDTO(User user, LocalDateTime date) {
 
         this.user = user;
         this.date = date;
     }
 
-    public LocalDate getDate() {
+    public LocalDateTime getDate() {
         return date;
     }
 
-    public void setDate(LocalDate date) {
+    public void setDate(LocalDateTime date) {
         this.date = date;
     }
 

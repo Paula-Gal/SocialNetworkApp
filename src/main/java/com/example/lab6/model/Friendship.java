@@ -1,16 +1,17 @@
 package com.example.lab6.model;
 
-import java.time.LocalDate;
+
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
 public class Friendship extends Entity<Tuple<Long,Long>> implements List<String> {
-    LocalDate date;
+    LocalDateTime date;
     private Tuple<Long,Long> ship;
 
-    public void setDate(LocalDate date) {
+    public void setDate(LocalDateTime date) {
         this.date = date;
     }
 
@@ -52,7 +53,7 @@ public class Friendship extends Entity<Tuple<Long,Long>> implements List<String>
     }
 
 
-    public LocalDate getDate(){return date;}
+    public LocalDateTime getDate(){return date;}
 
     @Override
     public String toString() {
