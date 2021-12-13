@@ -1,6 +1,7 @@
 package com.example.lab6.controller;
 
 import com.example.lab6.model.FriendshipDTO;
+import com.example.lab6.service.FriendRequestService;
 import com.example.lab6.service.FriendshipService;
 import com.example.lab6.service.UserService;
 import com.example.lab6.utils.events.UserChangeEvent;
@@ -27,6 +28,7 @@ public class UserController implements Observer<UserChangeEvent> {
 
     private UserService userService;
     private FriendshipService friendshipService;
+    private FriendRequestService friendRequestService;
 
     Stage stage;
     private Long id;
@@ -48,20 +50,6 @@ public class UserController implements Observer<UserChangeEvent> {
     @FXML
     TableColumn<FriendshipDTO, LocalDateTime> tableColumnFriendDate;
 
-    //friend requests
-    @FXML
-    Button buttonShowRequests;
-    @FXML
-    Button buttonSentRequests;
-
-    //messages
-    @FXML
-    Button buttonMessages;
-
-    @FXML
-    TextField searchField;
-
-
     @FXML
     public void initialize(){
         tableColumnFriendFirstName.setCellValueFactory(new PropertyValueFactory<>("firstName"));
@@ -70,12 +58,12 @@ public class UserController implements Observer<UserChangeEvent> {
         tableViewFriends.setItems(modelUserFriends);
     }
 
-    public void setServices(UserService userService, FriendshipService friendshipService, Stage stage, Long id){
+    public void setServices(UserService userService, FriendshipService friendshipService, FriendRequestService friendRequestService, Stage stage, Long id){
         this.userService = userService;
         this.friendshipService = friendshipService;
+        this.friendRequestService = friendRequestService;
         this.stage = stage;
         this.id = id;
-        friendshipService.addObserver(this);
         setUserLabel(id);
         getFriends();
     }
@@ -117,7 +105,7 @@ public class UserController implements Observer<UserChangeEvent> {
             dialogStage.setScene(scene);
 
             AddFriendController addFriendController = loader.getController();
-            addFriendController.setServices(userService, friendshipService, dialogStage, id);
+            addFriendController.setServices(userService, friendRequestService, dialogStage, id);
 
 
             dialogStage.show();
@@ -127,6 +115,15 @@ public class UserController implements Observer<UserChangeEvent> {
     }
 
     public void handleRemoveFriend(ActionEvent actionEvent) {
+        int poz = tableViewFriends.getSelectionModel().getSelectedIndex();
+        List<FriendshipDTO> friendshipDTOS = friendshipService.getFriendships(id);
+        friendshipService.removeFriendship(id, friendshipDTOS.get(poz).getUser().getId());
+        if(friendshipService.getFriendships(id).size() == 0)
+            tableViewFriends.getItems().clear();
+        else
+             getFriends();
+        MessageAlert.showMessage(null, Alert.AlertType.INFORMATION, "Remove a friend", "The friend has been removed");
+
     }
 
     @Override
@@ -134,15 +131,37 @@ public class UserController implements Observer<UserChangeEvent> {
 
     }
 
-    public void handleSearchButton(ActionEvent actionEvent) {
-    }
-
     public void handleShowFriends(ActionEvent actionEvent) {
-    }
+        }
 
     public void handleShowRequests(ActionEvent actionEvent) {
+        showFriendsRequestDialog(id);
     }
 
+    public void showFriendsRequestDialog(Long id){
+        // create a new stage for the popup dialog.
+        try {
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getResource("/views/friendsRequestsView.fxml"));
+
+            AnchorPane root = loader.load();
+
+            // Create the dialog Stage.
+            Stage dialogStage = new Stage();
+            dialogStage.setTitle("Friend requests");
+            dialogStage.initModality(Modality.WINDOW_MODAL);
+            //dialogStage.initOwner(primaryStage);
+            Scene scene = new Scene(root);
+            dialogStage.setScene(scene);
+
+            FriendRequestController friendRequestController = loader.getController();
+            friendRequestController.setServices(userService, friendRequestService, dialogStage, id);
+
+            dialogStage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
     public void handleMessages(ActionEvent actionEvent) {
     }
 }

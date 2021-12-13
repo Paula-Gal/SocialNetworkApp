@@ -8,13 +8,12 @@
 
 <AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.lab6.controller.AddFriendController">
    <children>
-      <TextField fx:id="searchField" layoutX="47.0" layoutY="62.0" text="Search a user here" />
+      <TextField fx:id="searchField" layoutX="47.0" layoutY="62.0" onAction="#onSearchFieldAction" />
       <Button fx:id="searchButton" layoutX="248.0" layoutY="62.0" mnemonicParsing="false" onAction="#onHandleSearch" text="Search" />
-      <TableView fx:id="tableViewUsers" layoutX="23.0" layoutY="137.0" prefHeight="200.0" prefWidth="335.0">
+      <TableView fx:id="tableViewUsers" layoutX="23.0" layoutY="137.0" prefHeight="200.0" prefWidth="234.0">
         <columns>
           <TableColumn fx:id="tableColumnFirstName" prefWidth="115.0" text="First Name" />
           <TableColumn fx:id="tableColumnLastName" minWidth="0.0" prefWidth="121.0" text="Last Name" />
-            <TableColumn minWidth="0.0" prefWidth="0.0" />
         </columns>
       </TableView>
    </children>

@@ -159,8 +159,4 @@ public class UtilizatorDbRepository implements Repository<Long, User> {
         return null;
     }
 
-
-
-
-
 }

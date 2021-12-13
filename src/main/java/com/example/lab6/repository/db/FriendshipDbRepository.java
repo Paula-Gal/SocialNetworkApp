@@ -7,6 +7,7 @@ import com.example.lab6.repository.Repository;
 
 import java.sql.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -28,30 +29,30 @@ public class FriendshipDbRepository implements Repository<Tuple<Long, Long>, Fri
     }
 
     @Override
-    public Friendship findOne(Tuple<Long, Long> longLongTuple) {
-        String sql = "SELECT * from friendships where first_friend = " + String.valueOf(longLongTuple.getE1()) + "  and second_friend = " + longLongTuple.getE2() +
-                " or second_friend = " + longLongTuple.getE2() + " and first_friend = longLongTuple.getE2()";
-        try (Connection connection = DriverManager.getConnection(url, username, password);
-             PreparedStatement statement = connection.prepareStatement(sql);
-             ResultSet resultSet = statement.executeQuery()) {
-            while (resultSet.next()) {
-                Long first = resultSet.getLong("first_friend");
-                Long second = resultSet.getLong("second_friend");
-                LocalDate date = resultSet.getDate("date").toLocalDate();
-                Tuple<Long, Long> ship = new Tuple<>(first, second);
-               // if (ship.getE1() == longLongTuple.getE1() && ship.getE2() == longLongTuple.getE2()) {
+    public Friendship findOne(Tuple<Long, Long> friendshipTuple) {
+        try {
+            Connection connection = DriverManager.getConnection(url, username, password);
+            String sql = "SELECT * FROM friendships WHERE first_friend = ? AND second_friend = ?";
+
+            PreparedStatement statement = connection.prepareStatement(sql);
+
+            statement.setInt(1, (int) (long) friendshipTuple.getE1());
+            statement.setInt(2, (int) (long) friendshipTuple.getE2());
+
+            ResultSet resultSet = statement.executeQuery();
+
+            if (resultSet.next()) {
+                Tuple<Long, Long> ship = new Tuple<>(friendshipTuple.getE1(), friendshipTuple.getE2());
                 Friendship friendship = new Friendship(ship);
                 friendship.setId(ship);
+                LocalDateTime date = resultSet.getTimestamp("date").toLocalDateTime();
                 friendship.setDate(date);
                 return friendship;
-                //}
-
             }
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
         return null;
     }
 
@@ -59,12 +60,12 @@ public class FriendshipDbRepository implements Repository<Tuple<Long, Long>, Fri
     public Iterable<Friendship> findAll() {
         Set<Friendship> friendships = new HashSet<>();
         try (Connection connection = DriverManager.getConnection(url, username, password);
-             PreparedStatement statement = connection.prepareStatement("SELECT * from friendships");
+             PreparedStatement statement = connection.prepareStatement("SELECT * FROM friendships");
              ResultSet resultSet = statement.executeQuery()) {
             while (resultSet.next()) {
                 Long first = resultSet.getLong("first_friend");
                 Long second = resultSet.getLong("second_friend");
-                LocalDate date = resultSet.getDate("date").toLocalDate();
+                LocalDateTime date = resultSet.getTimestamp("date").toLocalDateTime();
                 Tuple<Long, Long> ship = new Tuple<>(first, second);
                 Friendship friendship = new Friendship(ship);
                 friendship.setId(ship);
@@ -84,48 +85,39 @@ public class FriendshipDbRepository implements Repository<Tuple<Long, Long>, Fri
        if (entity == null)
            throw new IllegalArgumentException("Entity must not be null!");
 
-        String sql = "insert into friendships (first_friend, second_friend, date) values (?, ?, ?)";
+       String sql = "INSERT INTO friendships (first_friend, second_friend, date) VALUES (?, ?, ?)";
 
-        try (Connection connection = DriverManager.getConnection(url, username, password);
-             PreparedStatement ps = connection.prepareStatement(sql)) {
+       try (Connection connection = DriverManager.getConnection(url, username, password);
+            PreparedStatement ps = connection.prepareStatement(sql)) {
 
-            ps.setInt(1, Integer.parseInt(String.valueOf(entity.getE1())));
-            ps.setInt(2, Math.toIntExact(entity.getE2()));
-            ps.setDate(3, Date.valueOf(LocalDate.now()));
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
+           ps.setInt(1, Integer.parseInt(String.valueOf(entity.getE1())));
+           ps.setInt(2, Math.toIntExact(entity.getE2()));
+           ps.setTimestamp(3, Timestamp.valueOf(LocalDateTime.now()));
+           ps.executeUpdate();
+       } catch (SQLException e) {
+           e.printStackTrace();
+       }
+       return null;
     }
 
     @Override
     public Friendship remove(Friendship entity) {
-        String sql = "delete from friendships where first_friend = ? and second_friend = ? or second_friend = ? and first_friend = ?";
-        try (Connection connection = DriverManager.getConnection(url, username, password);
-             PreparedStatement statement = connection.prepareStatement("SELECT * from friendships");
-             ResultSet resultSet = statement.executeQuery()) {
-            while (resultSet.next()) {
-                Long first = resultSet.getLong("first_friend");
-                Long second = resultSet.getLong("second_friend");
+        try {
+            Connection connection = DriverManager.getConnection(url, username, password);
+            String sql = "DELETE FROM friendships WHERE first_friend = ? AND second_friend = ?";
 
-                Tuple<Long, Long> ship = new Tuple<>(first, second);
-                if (ship.getE1() == entity.getE1() && ship.getE2() == entity.getE2()) {
-                    Friendship friendship = new Friendship(ship);
-                    friendship.setId(ship);
-                    PreparedStatement statement1 = connection.prepareStatement(sql);
-                    statement1.setInt(1, Math.toIntExact(ship.getE1()));
-                    statement1.setInt(2, Math.toIntExact(ship.getE2()));
-                    statement1.executeUpdate();
-                    return friendship;
-                }
+            PreparedStatement statement = connection.prepareStatement(sql);
 
-            }
+            statement.setInt(1, (int) (long) entity.getId().getE1());
+            statement.setInt(2, (int) (long) entity.getId().getE2());
+
+            statement.executeUpdate();
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return  null;
+
+        return null;
     }
 
   /* public Iterable<User> getFriends(User user){
@@ -177,6 +169,8 @@ public class FriendshipDbRepository implements Repository<Tuple<Long, Long>, Fri
         }
         return null;
     }
+
+
 
 }
 
