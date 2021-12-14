@@ -4,20 +4,33 @@
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.lab6.controller.FriendRequestController">
+<AnchorPane prefHeight="338.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.lab6.controller.FriendRequestController">
    <children>
-      <TableView fx:id="tableRequestView" layoutX="14.0" layoutY="14.0" prefHeight="200.0" prefWidth="322.0">
+      <TableView fx:id="tableRequestView" layoutX="38.0" layoutY="29.0" prefHeight="200.0" prefWidth="322.0">
         <columns>
           <TableColumn fx:id="fromTableColumn" prefWidth="75.0" text="From" />
           <TableColumn fx:id="toTableColumn" prefWidth="75.0" text="To" />
-            <TableColumn fx:id="statusTableColumn" prefWidth="75.0" text="Status" />
-            <TableColumn fx:id="dateColumnTable" prefWidth="96.0" text="Date" />
+            <TableColumn fx:id="statusTableColumn" prefWidth="83.20001220703125" text="Status" />
+            <TableColumn fx:id="dateColumnTable" prefWidth="88.0" text="Date" />
         </columns>
       </TableView>
-      <Button layoutX="345.0" layoutY="114.0" mnemonicParsing="false" onAction="#handleAcceptButton" text="Accept" />
-      <Button layoutX="508.0" layoutY="114.0" mnemonicParsing="false" onAction="#handleDeleteButton" text="Delete" />
-      <Button layoutX="428.0" layoutY="114.0" mnemonicParsing="false" onAction="#handleRejectButton" text="Reject" />
-      <Button layoutX="211.0" layoutY="259.0" mnemonicParsing="false" onAction="#handleBackButton" text="Back" />
+      <Button layoutX="429.0" layoutY="29.0" mnemonicParsing="false" onAction="#handleAcceptButton" prefHeight="42.0" prefWidth="96.0" text="Accept">
+         <font>
+            <Font name="Ebrima Bold" size="14.0" />
+         </font></Button>
+      <Button layoutX="429.0" layoutY="186.0" mnemonicParsing="false" onAction="#handleDeleteButton" prefHeight="42.0" prefWidth="96.0" text="Delete">
+         <font>
+            <Font name="Ebrima Bold" size="14.0" />
+         </font></Button>
+      <Button layoutX="429.0" layoutY="108.0" mnemonicParsing="false" onAction="#handleRejectButton" prefHeight="42.0" prefWidth="96.0" text="Reject">
+         <font>
+            <Font name="Ebrima Bold" size="14.0" />
+         </font></Button>
+      <Button layoutX="38.0" layoutY="269.0" mnemonicParsing="false" onAction="#handleBackButton" prefHeight="42.0" prefWidth="96.0" text="Back">
+         <font>
+            <Font name="Ebrima Bold" size="14.0" />
+         </font></Button>
    </children>
 </AnchorPane>
