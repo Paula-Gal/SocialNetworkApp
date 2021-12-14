@@ -18,7 +18,7 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
-public class HelloController {
+public class LoginController {
     UserService userService;
     FriendshipService friendshipService;
     MessageService messageService;

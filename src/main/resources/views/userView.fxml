@@ -5,21 +5,40 @@
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="433.0" prefWidth="746.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.lab6.controller.UserController">
+<AnchorPane prefHeight="379.0" prefWidth="748.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.lab6.controller.UserController">
     <children>
-        <Label fx:id="userLabel" layoutX="32.0" layoutY="83.0" prefHeight="32.0" prefWidth="259.0" />
-        <TableView fx:id="tableViewFriends" layoutX="322.0" layoutY="117.0" prefHeight="207.0" prefWidth="383.0">
+        <Label fx:id="userLabel" layoutX="31.0" layoutY="40.0" prefHeight="32.0" prefWidth="259.0">
+         <font>
+            <Font name="Ebrima Bold" size="19.0" />
+         </font></Label>
+        <TableView fx:id="tableViewFriends" layoutX="321.0" layoutY="57.0" prefHeight="207.0" prefWidth="383.0">
             <columns>
                 <TableColumn fx:id="tableColumnFriendFirstName" prefWidth="98.0" text="First Name" />
-            <TableColumn fx:id="tableColumnFriendLastName" prefWidth="75.0" text="Last Name" />
-                <TableColumn fx:id="tableColumnFriendDate" prefWidth="209.0" text="Friendship Date" />
+            <TableColumn fx:id="tableColumnFriendLastName" prefWidth="104.0" text="Last Name" />
+                <TableColumn fx:id="tableColumnFriendDate" prefWidth="180.800048828125" text="Friendship Date" />
             </columns>
         </TableView>
-        <Button layoutX="42.0" layoutY="161.0" mnemonicParsing="false" onAction="#handleAddFriend" text="Add friend" />
-        <Button layoutX="197.0" layoutY="161.0" mnemonicParsing="false" onAction="#handleRemoveFriend" text="Remove friend" />
-      <Button layoutX="321.0" layoutY="337.0" mnemonicParsing="false" onAction="#handleUpdateFriends" text="Update friends" />
-      <Button layoutX="42.0" layoutY="204.0" mnemonicParsing="false" onAction="#handleShowRequests" text="Show requests" />
-      <Button layoutX="42.0" layoutY="378.0" mnemonicParsing="false" onAction="#onHandleBack" text="Back" />
+        <Button layoutX="42.0" layoutY="145.0" mnemonicParsing="false" onAction="#handleAddFriend" prefHeight="42.0" prefWidth="102.0" text="Add friend">
+         <font>
+            <Font name="Ebrima Bold" size="13.0" />
+         </font></Button>
+        <Button layoutX="196.0" layoutY="145.0" mnemonicParsing="false" onAction="#handleRemoveFriend" prefHeight="42.0" prefWidth="102.0" text="Remove friend">
+         <font>
+            <Font name="Ebrima Bold" size="12.0" />
+         </font></Button>
+      <Button layoutX="196.0" layoutY="217.0" mnemonicParsing="false" onAction="#handleUpdateFriends" prefHeight="42.0" prefWidth="102.0" text="Update friends">
+         <font>
+            <Font name="Ebrima Bold" size="12.0" />
+         </font></Button>
+      <Button layoutX="42.0" layoutY="217.0" mnemonicParsing="false" onAction="#handleShowRequests" prefHeight="42.0" prefWidth="102.0" text="Show requests">
+         <font>
+            <Font name="Ebrima Bold" size="12.0" />
+         </font></Button>
+      <Button layoutX="46.0" layoutY="315.0" mnemonicParsing="false" onAction="#onHandleBack" prefHeight="42.0" prefWidth="94.0" text="Back">
+         <font>
+            <Font name="Ebrima Bold" size="15.0" />
+         </font></Button>
     </children>
 </AnchorPane>

@@ -4,7 +4,7 @@
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
-
+<?import javafx.scene.text.Font?>
 
 <AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.lab6.controller.AllUsersController">
    <children>
@@ -15,6 +15,9 @@
             <TableColumn fx:id="lastName" prefWidth="138.0" text="Last Name" />
         </columns>
       </TableView>
-      <Button layoutX="30.0" layoutY="345.0" mnemonicParsing="false" onAction="#onHandleBack" text="Back" />
+      <Button layoutX="30.0" layoutY="349.0" mnemonicParsing="false" onAction="#onHandleBack" prefHeight="22.0" prefWidth="75.0" text="Back">
+         <font>
+            <Font name="Ebrima" size="13.0" />
+         </font></Button>
    </children>
 </AnchorPane>

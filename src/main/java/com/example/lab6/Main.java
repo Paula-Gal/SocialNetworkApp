@@ -1,6 +1,6 @@
 package com.example.lab6;
 
-import com.example.lab6.controller.HelloController;
+import com.example.lab6.controller.LoginController;
 import com.example.lab6.model.*;
 import com.example.lab6.model.validators.FriendshipValidator;
 import com.example.lab6.model.validators.UserValidator;
@@ -20,7 +20,7 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
-public class HelloApplication extends Application {
+public class Main extends Application {
     Repository<Long, User> repoDb;
     Repository<Tuple<Long, Long>, Friendship> repoDbf;
     Repository<Long, MessageDTO> messageDb;
@@ -33,10 +33,10 @@ public class HelloApplication extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        repoDb = new UtilizatorDbRepository("jdbc:postgresql://localhost:5432/socialnetworkapp", "postgres","paula123", new UserValidator());
-        repoDbf = new FriendshipDbRepository("jdbc:postgresql://localhost:5432/socialnetworkapp", "postgres","paula123", new FriendshipValidator());
-        messageDb = new MessageDbRepository("jdbc:postgresql://localhost:5432/socialnetworkapp", "postgres", "paula123");
-        frRequestDb = new FriendRequestDbRepository("jdbc:postgresql://localhost:5432/socialnetworkapp", "postgres", "paula123");
+        repoDb = new UtilizatorDbRepository("jdbc:postgresql://localhost:5432/userApp", "postgres","qwaszx12", new UserValidator());
+        repoDbf = new FriendshipDbRepository("jdbc:postgresql://localhost:5432/userApp", "postgres","qwaszx12", new FriendshipValidator());
+        messageDb = new MessageDbRepository("jdbc:postgresql://localhost:5432/userApp", "postgres", "qwaszx12");
+        frRequestDb = new FriendRequestDbRepository("jdbc:postgresql://localhost:5432/userApp", "postgres", "qwaszx12");
 
 
 
@@ -44,11 +44,11 @@ public class HelloApplication extends Application {
         friendshipService = new FriendshipService(repoDb, repoDbf);
         messageService = new MessageService(messageDb, repoDb, repoDbf);
         friendRequestService = new FriendRequestService(frRequestDb, repoDb, repoDbf);
-        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("/views/hello-view.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("/views/hello-view.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 400, 240);
         stage.setTitle("UserApp");
         stage.setScene(scene);
-        HelloController helloController = fxmlLoader.getController();
+        LoginController helloController = fxmlLoader.getController();
         helloController.setServices(userService, friendshipService, messageService, friendRequestService);
         stage.show();
     }
