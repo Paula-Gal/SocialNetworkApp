@@ -24,14 +24,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-public class UserController implements Observer<UserChangeEvent> {
+public class UserController  {
 
     private UserService userService;
     private FriendshipService friendshipService;
     private FriendRequestService friendRequestService;
 
     Stage stage;
-    private Long id;
+    private String email;
 
     ObservableList<FriendshipDTO> modelUserFriends = FXCollections.observableArrayList();
 
@@ -58,34 +58,34 @@ public class UserController implements Observer<UserChangeEvent> {
         tableViewFriends.setItems(modelUserFriends);
     }
 
-    public void setServices(UserService userService, FriendshipService friendshipService, FriendRequestService friendRequestService, Stage stage, Long id) {
+    public void setServices(UserService userService, FriendshipService friendshipService, FriendRequestService friendRequestService, Stage stage, String email) {
         this.userService = userService;
         this.friendshipService = friendshipService;
         this.friendRequestService = friendRequestService;
         this.stage = stage;
-        this.id = id;
-        setUserLabel(id);
-        getFriends();
+        this.email = email;
+        //setUserLabel(email);
+        //getFriends();
     }
 
-    private void getFriends() {
-        try {
-            List<FriendshipDTO> friends = friendshipService.getFriendships(id);
-            List<FriendshipDTO> friendshipDTOS = StreamSupport.stream(friends.spliterator(), false)
-                    .collect(Collectors.toList());
-            modelUserFriends.setAll(friendshipDTOS);
-        } catch (Exception ex) {
-            MessageAlert.showErrorMessage(null, "The user doesn't exist!");
-        }
-    }
+//    private void getFriends() {
+//        try {
+//            List<FriendshipDTO> friends = friendshipService.getFriendships(id);
+//            List<FriendshipDTO> friendshipDTOS = StreamSupport.stream(friends.spliterator(), false)
+//                    .collect(Collectors.toList());
+//            modelUserFriends.setAll(friendshipDTOS);
+//        } catch (Exception ex) {
+//            MessageAlert.showErrorMessage(null, "The user doesn't exist!");
+//        }
+//    }
 
-    public void setUserLabel(Long id) {
-        userLabel.setText("Welcome " + userService.exists(id).getFirstName() + " " + userService.exists(id).getLastName());
-    }
+//    public void setUserLabel(Long id) {
+//        userLabel.setText("Welcome " + userService.exists(id).getFirstName() + " " + userService.exists(id).getLastName());
+//    }
 
-    public void handleAddFriend(ActionEvent actionEvent) {
-        showFriendsDialog(id);
-    }
+//    public void handleAddFriend(ActionEvent actionEvent) {
+//        showFriendsDialog(id);
+//    }
 
     public void showFriendsDialog(Long id) {
         // create a new stage for the popup dialog.
@@ -113,60 +113,72 @@ public class UserController implements Observer<UserChangeEvent> {
         }
     }
 
-    public void handleRemoveFriend(ActionEvent actionEvent) {
-        int poz = tableViewFriends.getSelectionModel().getSelectedIndex();
-        List<FriendshipDTO> friendshipDTOS = friendshipService.getFriendships(id);
-        friendshipService.removeFriendship(id, friendshipDTOS.get(poz).getUser().getId());
-        if (friendshipService.getFriendships(id).size() == 0)
-            tableViewFriends.getItems().clear();
-        else
-            getFriends();
-        MessageAlert.showMessage(null, Alert.AlertType.INFORMATION, "Remove a friend", "The friend has been removed");
+//    public void handleRemoveFriend(ActionEvent actionEvent) {
+//        int poz = tableViewFriends.getSelectionModel().getSelectedIndex();
+//        List<FriendshipDTO> friendshipDTOS = friendshipService.getFriendships(id);
+//        friendshipService.removeFriendship(id, friendshipDTOS.get(poz).getUser().getId());
+//        if (friendshipService.getFriendships(id).size() == 0)
+//            tableViewFriends.getItems().clear();
+//        else
+//            getFriends();
+//        MessageAlert.showMessage(null, Alert.AlertType.INFORMATION, "Remove a friend", "The friend has been removed");
+//
+//    }
 
-    }
-
-    @Override
-    public void update(UserChangeEvent userChangeEvent) {
-
-    }
-
-    public void handleUpdateFriends(ActionEvent actionEvent) {
-        getFriends();
-    }
-
-    public void handleShowRequests(ActionEvent actionEvent) {
-        showFriendsRequestDialog(id);
-    }
-
-    public void showFriendsRequestDialog(Long id) {
-        // create a new stage for the popup dialog.
-        try {
-            FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(getClass().getResource("/views/friendsRequestsView.fxml"));
-
-            AnchorPane root = loader.load();
-
-            // Create the dialog Stage.
-            Stage dialogStage = new Stage();
-            dialogStage.setTitle("Friend requests");
-            dialogStage.initModality(Modality.WINDOW_MODAL);
-            //dialogStage.initOwner(primaryStage);
-            Scene scene = new Scene(root);
-            dialogStage.setScene(scene);
-
-            FriendRequestController friendRequestController = loader.getController();
-            friendRequestController.setServices(userService, friendRequestService, dialogStage, id);
-
-            dialogStage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+//    @Override
+//    public void update(UserChangeEvent userChangeEvent) {
+//
+//    }
+//
+//    public void handleUpdateFriends(ActionEvent actionEvent) {
+//        getFriends();
+//    }
+//
+//    public void handleShowRequests(ActionEvent actionEvent) {
+//        showFriendsRequestDialog(id);
+//    }
+//
+//    public void showFriendsRequestDialog(Long id) {
+//        // create a new stage for the popup dialog.
+//        try {
+//            FXMLLoader loader = new FXMLLoader();
+//            loader.setLocation(getClass().getResource("/views/friendsRequestsView.fxml"));
+//
+//            AnchorPane root = loader.load();
+//
+//            // Create the dialog Stage.
+//            Stage dialogStage = new Stage();
+//            dialogStage.setTitle("Friend requests");
+//            dialogStage.initModality(Modality.WINDOW_MODAL);
+//            //dialogStage.initOwner(primaryStage);
+//            Scene scene = new Scene(root);
+//            dialogStage.setScene(scene);
+//
+//            FriendRequestController friendRequestController = loader.getController();
+//            friendRequestController.setServices(userService, friendRequestService, dialogStage, id);
+//
+//            dialogStage.show();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     public void handleMessages(ActionEvent actionEvent) {
     }
 
     public void onHandleBack(ActionEvent actionEvent) {
         stage.close();
+    }
+
+    public void handleAddFriend(ActionEvent actionEvent) {
+    }
+
+    public void handleRemoveFriend(ActionEvent actionEvent) {
+    }
+
+    public void handleUpdateFriends(ActionEvent actionEvent) {
+    }
+
+    public void handleShowRequests(ActionEvent actionEvent) {
     }
 }

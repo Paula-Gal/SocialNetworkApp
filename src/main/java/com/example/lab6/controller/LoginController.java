@@ -11,44 +11,51 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.InputMethodEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 
 public class LoginController {
+
+    public Label loginLabel;
+    public AnchorPane anchorPanePurple;
+    public ImageView logo;
+    public ImageView emailIcon;
+    public ImageView passwordIcon;
+    public TextField emailTextField;
+    public TextField passwordTextField;
     UserService userService;
     FriendshipService friendshipService;
     MessageService messageService;
     FriendRequestService friendRequestService;
-    private Long id;
-    @FXML
-    private Label welcomeText;
+    private String email;
 
     @FXML
     private TextField loginField;
 
-    @FXML
-    public void onHelloButtonClick() {
-        welcomeText.setText("Welcome to JavaFX Application!");
-    }
-
     public void initialize(){
-
+      logo.setImage(new Image("/images/icons/social.png"));
+      emailIcon.setImage(new Image("/images/user.png"));
+      passwordIcon.setImage(new Image("/images/padlock.png"));
     }
 
     @FXML
     public void handleLogin(){
-        id = Long.valueOf(loginField.getText());
-        if(userService.exists(id) == null)
+        email = String.valueOf(emailTextField.getText());
+        if(userService.exists(email) == null)
             MessageAlert.showErrorMessage(null, "The account do not exists");
         else
-            showUserDialog(id);
+            showUserDialog(email);
     }
 
-    public void showUserDialog(Long id){
+    public void showUserDialog(String id){
         // create a new stage for the popup dialog.
         try{
             FXMLLoader loader = new FXMLLoader();
@@ -103,7 +110,7 @@ public class LoginController {
     }
 
     @FXML
-    public void handleCreateAccountDialog(ActionEvent ev){
+    public void handleCreateAccountDialog(MouseEvent ev){
         showCreateAccountDialog(null);
 
     }
@@ -145,5 +152,13 @@ public class LoginController {
         catch (IOException e){
             e.printStackTrace();
         }
+    }
+
+    public void onHandleLogin(ActionEvent actionEvent) {
+        email = String.valueOf(emailTextField.getText());
+        if(userService.exists(email) == null)
+            MessageAlert.showErrorMessage(null, "The account do not exists");
+        else
+            showUserDialog(email);
     }
 }

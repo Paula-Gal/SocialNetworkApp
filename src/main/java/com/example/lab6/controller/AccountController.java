@@ -12,6 +12,8 @@ import javafx.stage.Stage;
 
 public class AccountController {
 
+    public TextField emailTextField;
+    public TextField passwordTextField;
     private UserService userService;
     FriendRequestService friendRequestService;
     Stage stage;
@@ -37,7 +39,9 @@ public class AccountController {
     public void handleCreate(){
         String firstName = firstNameField.getText();
         String lastName = lastNameField.getText();
-        User user = new User(firstName, lastName);
+        String email = emailTextField.getText();
+        String password = passwordTextField.getText();
+        User user = new User(firstName, lastName, email, password);
         saveUser(user);
     }
 
