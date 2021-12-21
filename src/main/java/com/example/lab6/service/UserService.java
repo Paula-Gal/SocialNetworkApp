@@ -1,8 +1,10 @@
 package com.example.lab6.service;
 
 import com.example.lab6.model.*;
+import com.example.lab6.model.validators.UserValidator;
 import com.example.lab6.model.validators.ValidationException;
 import com.example.lab6.repository.Repository;
+import com.example.lab6.repository.UserRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,16 +12,17 @@ import java.util.Locale;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import static java.lang.Math.max;
 
 public class UserService {
 
-    Repository<Long, User> repoUser;
+    UserRepository<Long, User> repoUser;
     Repository<Tuple<Long, Long>, Friendship> repoFriendship;
+    UserValidator userValidator;
 
-    public UserService(Repository<Long, User> repoUser, Repository<Tuple<Long, Long>, Friendship> repoFriendship) {
+    public UserService(UserRepository<Long, User> repoUser, Repository<Tuple<Long, Long>, Friendship> repoFriendship, UserValidator userValidator) {
         this.repoUser = repoUser;
         this.repoFriendship =  repoFriendship;
+        this.userValidator = userValidator;
         //setFriendships();
     }
 
@@ -30,9 +33,15 @@ public class UserService {
      * throw ValidationException if the entity already exits
      */
     public User add(User entity) {
-        if(repoUser.findOne(entity.getId()) != null)
-            throw new ValidationException("Already exists");
-        return repoUser.save(entity);
+        try {
+            userValidator.validateEmail(entity.getEmail());
+            if (repoUser.findOneByEmail(entity.getEmail()) != null)
+                throw new ValidationException("Email already exists");
+            return repoUser.save(entity);
+        }
+        catch (ValidationException ex){
+            throw new ValidationException(ex.getMessage());
+        }
     }
 
     /**
@@ -55,40 +64,40 @@ public class UserService {
                 repoFriendship.remove(friendship);
             }
         }}
-    /**
-     *
-     * @return number of connected components
-     */
-    public int nrConnectedComponents() {
+//    /**
+//     *
+//     * @return number of connected components
+//     */
+//    public int nrConnectedComponents() {
+//
+//        int nr = 0;
+//        // setFriendships();
+//        Graph graph = new Graph(repoUser);
+//        graph.createGraph();
+//        final SocialNetwork socialNetwork = new SocialNetwork(graph);
+//        nr = socialNetwork.nrCommunities();
+//        for(User user : repoUser.findAll())
+//            if(user.getFriendsList().size() == 0)
+//                nr = nr + 1;
+//        return nr;
+//    }
 
-        int nr = 0;
-        // setFriendships();
-        Graph graph = new Graph(repoUser);
-        graph.createGraph();
-        final SocialNetwork socialNetwork = new SocialNetwork(graph);
-        nr = socialNetwork.nrCommunities();
-        for(User user : repoUser.findAll())
-            if(user.getFriendsList().size() == 0)
-                nr = nr + 1;
-        return nr;
-    }
-
-    /**
-     *
-     * @return List<User> which contains the user of the longest path
-     */
-    public List<User> sociableCommunity() {
-        //setFriendships();
-        Graph graph = new Graph(repoUser);
-        graph.createGraph();
-        final SocialNetwork longestPath = new SocialNetwork(graph);
-        List<Integer> path = longestPath.findLongestPath();
-        System.out.println(path);
-        List<User> community = new ArrayList<User>();
-        for(int id: path)
-            community.add(repoUser.findOne(Long.parseLong(String.valueOf(id))));
-        return community;
-    }
+//    /**
+//     *
+//     * @return List<User> which contains the user of the longest path
+//     */
+//    public List<User> sociableCommunity() {
+//        //setFriendships();
+//        Graph graph = new Graph(repoUser);
+//        graph.createGraph();
+//        final SocialNetwork longestPath = new SocialNetwork(graph);
+//        List<Integer> path = longestPath.findLongestPath();
+//        System.out.println(path);
+//        List<User> community = new ArrayList<User>();
+//        for(int id: path)
+//            community.add(repoUser.findOne(Long.parseLong(String.valueOf(id))));
+//        return community;
+//    }
 
 
     public List<User> getUsers(){
@@ -117,8 +126,8 @@ public class UserService {
         return user;
     }
 
-    public User exists(Long id){
-        return repoUser.findOne(id);
+    public User exists(String email){
+        return repoUser.findOneByEmail(email);
     }
 
     public List<User> filter1(Long id, String str){

@@ -79,60 +79,60 @@ public class MessageService {
      * @param fromUser
      * @param message
      */
-    public void replyToOne(Long toMessage, Long fromUser, String message) {
-        if (repoMessage.findOne(toMessage) == null)
-            throw new ValidationException("The message do not exist!");
-        if (repoUser.findOne(fromUser) == null)
-            throw new ValidationException("The user do not exist!");
-        if (message.length() == 0)
-            throw new ValidationException("The message is empty!");
-
-        List<Long> toUsersList = new ArrayList<>();
-        List<Long> recipients = new ArrayList<>();
-        //toUsers.add(fromUser);
-        repoMessage.findOne(toMessage).getTo().forEach(x -> {
-            User user = new User(repoUser.findOne(x).getFirstName(), repoUser.findOne(x).getLastName());
-            user.setId(repoUser.findOne(x).getId());
-            recipients.add(user.getId());
-        });
-        if (recipients.contains(fromUser)) {
-            toUsersList.add(repoMessage.findOne(toMessage).getFrom());
-            MessageDTO messageDTO = new MessageDTO(fromUser, toUsersList, message, LocalDateTime.now(), toMessage);
-            repoMessage.save(messageDTO);
-        } else
-            throw new ValidationException("The user did not receive the message!");
-
-    }
+//    public void replyToOne(Long toMessage, Long fromUser, String message) {
+//        if (repoMessage.findOne(toMessage) == null)
+//            throw new ValidationException("The message do not exist!");
+//        if (repoUser.findOne(fromUser) == null)
+//            throw new ValidationException("The user do not exist!");
+//        if (message.length() == 0)
+//            throw new ValidationException("The message is empty!");
+//
+//        List<Long> toUsersList = new ArrayList<>();
+//        List<Long> recipients = new ArrayList<>();
+//        //toUsers.add(fromUser);
+//        repoMessage.findOne(toMessage).getTo().forEach(x -> {
+//            User user = new User(repoUser.findOne(x).getFirstName(), repoUser.findOne(x).getLastName());
+//            user.setId(repoUser.findOne(x).getId());
+//            recipients.add(user.getId());
+//        });
+//        if (recipients.contains(fromUser)) {
+//            toUsersList.add(repoMessage.findOne(toMessage).getFrom());
+//            MessageDTO messageDTO = new MessageDTO(fromUser, toUsersList, message, LocalDateTime.now(), toMessage);
+//            repoMessage.save(messageDTO);
+//        } else
+//            throw new ValidationException("The user did not receive the message!");
+//
+//    }
 
     /**
      * @param toMessage - id-ul mesajului la care se raspunde
      * @param fromUser  - user-ul care da replyAll
      * @param message   - mesajul pe care il trimite
      */
-    public void replyToAll(Long toMessage, Long fromUser, String message) {
-        if (repoMessage.findOne(toMessage) == null)
-            throw new ValidationException("The message do not exist!");
-        if (repoUser.findOne(fromUser) == null)
-            throw new ValidationException("The user do not exist!");
-        if (message.length() == 0)
-            throw new ValidationException("The message is empty!");
-
-        List<Long> recipients = new ArrayList<>();
-
-        repoMessage.findOne(toMessage).getTo().forEach(x -> {
-            if (!fromUser.equals(x)) {
-                User user = new User(repoUser.findOne(x).getFirstName(), repoUser.findOne(x).getLastName());
-                user.setId(repoUser.findOne(x).getId());
-                recipients.add(user.getId());
-            }
-        });
-
-        recipients.add(repoMessage.findOne(toMessage).getFrom());
-
-        MessageDTO messageDTO = new MessageDTO(fromUser, recipients, message, LocalDateTime.now(), toMessage);
-        repoMessage.save(messageDTO);
-
-    }
+//    public void replyToAll(Long toMessage, Long fromUser, String message) {
+//        if (repoMessage.findOne(toMessage) == null)
+//            throw new ValidationException("The message do not exist!");
+//        if (repoUser.findOne(fromUser) == null)
+//            throw new ValidationException("The user do not exist!");
+//        if (message.length() == 0)
+//            throw new ValidationException("The message is empty!");
+//
+//        List<Long> recipients = new ArrayList<>();
+//
+//        repoMessage.findOne(toMessage).getTo().forEach(x -> {
+//            if (!fromUser.equals(x)) {
+//                User user = new User(repoUser.findOne(x).getFirstName(), repoUser.findOne(x).getLastName());
+//                user.setId(repoUser.findOne(x).getId());
+//                recipients.add(user.getId());
+//            }
+//        });
+//
+//        recipients.add(repoMessage.findOne(toMessage).getFrom());
+//
+//        MessageDTO messageDTO = new MessageDTO(fromUser, recipients, message, LocalDateTime.now(), toMessage);
+//        repoMessage.save(messageDTO);
+//
+//    }
 
     /**
      * get the conversation of two users

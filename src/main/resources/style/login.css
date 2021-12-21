@@ -1,0 +1,75 @@
+@font-face {
+    font-family: Poppins-Regular;
+    src: url('../fonts/poppins/Poppins-Regular.ttf');
+}
+
+@font-face {
+    font-family: Poppins-Medium;
+    src: url('../fonts/poppins/Poppins-Medium.ttf');
+}
+
+@font-face {
+    font-family: Poppins-Bold;
+    src: url('../fonts/poppins/Poppins-Bold.ttf');
+}
+
+@font-face {
+    font-family: Poppins-SemiBold;
+    src: url('../fonts/poppins/Poppins-SemiBold.ttf');
+}
+
+.label {
+    -fx-font-family: Poppins-Bold;
+}
+
+.root {
+    -fx-background-image: url("/images/bg.jpg");
+    -fx-background-size: cover;
+}
+
+
+.labelTitle {
+    -fx-font-size: 30px;
+    -fx-text-fill: white;
+}
+
+.labelTitle:hover {
+    -fx-text-fill: #3f72af;
+}
+
+.purpleBox {
+    -fx-border-radius: 10px;
+    -fx-overflow: hidden;
+    -fx-background-color: #9152f8;
+    -fx-background-color: linear-gradient(to top, #b224ef, #7579ff);
+    -fx-background-radius: 20;
+}
+
+.text-field {
+    -fx-border-color: white;
+    -fx-border-width: 0 0 1 0;
+    -fx-background-color: transparent;
+}
+
+.label-credentials {
+    -fx-font-size: 12px;
+    -fx-text-fill: white;
+}
+
+.login-button {
+    -fx-font-size: 15px;
+    -fx-background-color: white;
+    -fx-border-radius: 10px;
+    -fx-background-radius: 20;
+    -fx-text-fill: black;
+}
+
+.button:hover {
+    -fx-background-color: #9152f8;
+    -fx-background-color: linear-gradient(to top, #7579ff, #b224ef);
+    -fx-text-fill: white;
+}
+
+.no-account-label {
+    -fx-text-fill: white;
+}
