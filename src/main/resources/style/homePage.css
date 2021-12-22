@@ -1,0 +1,94 @@
+@font-face {
+    font-family: Poppins-Regular;
+    src: url('../fonts/poppins/Poppins-Regular.ttf');
+}
+
+@font-face {
+    font-family: Poppins-Medium;
+    src: url('../fonts/poppins/Poppins-Medium.ttf');
+}
+
+@font-face {
+    font-family: Poppins-Bold;
+    src: url('../fonts/poppins/Poppins-Bold.ttf');
+}
+
+@font-face {
+    font-family: Poppins-SemiBold;
+    src: url('../fonts/poppins/Poppins-SemiBold.ttf');
+}
+
+
+.label {
+    -fx-font-family: Poppins-Bold;
+}
+
+.root {
+    -fx-background-image: url("/images/backgroundHomePage.png");
+    -fx-background-size: cover;
+}
+
+.tab-style{
+    -fx-background-color: white;
+    -fx-background-radius: 40;
+}
+
+.area-style {
+    -fx-font-family: Poppins-Bold;
+    -fx-background-color: transparent;
+
+    -fx-font-size: 30px;
+    -fx-text-fill: white;
+    -fx-position-shape: center;
+}
+
+.label-tab{
+    -fx-font-size: 12px;
+    -fx-text-fill: black;
+}
+.label-tab:hover{
+    -fx-text-fill: #ff589e;
+}
+
+.text-field {
+    -fx-border-color: white;
+    -fx-border-width: 0 0 1 0;
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+}
+/*mere@gmail.com
+*/
+.x-style {
+    -fx-image: url("/images/x.png");
+}
+
+
+
+
+.list-cell:filled:hover {
+    -fx-background-color: #ff589e;
+
+    -fx-text-fill: white;
+}
+.list-cell{
+    -fx-background-color: white;
+    -fx-background-radius: 40;
+}
+
+.list-view {
+    -fx-background-radius: 40;
+
+}
+
+.list-view .scroll-bar:vertical {
+    -fx-padding: 0px;
+}
+.list-view .scroll-bar:vertical .increment-arrow,
+.list-view .scroll-bar:vertical .decrement-arrow,
+.list-view .scroll-bar:vertical .increment-button,
+.list-view .scroll-bar:vertical .decrement-button {
+    -fx-padding:0;
+}
+
+
+

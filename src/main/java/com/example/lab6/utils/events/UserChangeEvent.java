@@ -1,18 +1,18 @@
 package com.example.lab6.utils.events;
 
-import com.example.lab6.model.FriendshipDTO;
+import com.example.lab6.model.User;
 
 public class UserChangeEvent implements Event {
     private ChangeEventType type;
-    private FriendshipDTO data;
-    private FriendshipDTO oldData;
+    private User data;
+    private User oldData;
 
-    public UserChangeEvent( ChangeEventType type, FriendshipDTO data ) {
+    public UserChangeEvent( ChangeEventType type, User data ) {
         this.type = type;
         this.data = data;
     }
 
-    public UserChangeEvent( ChangeEventType type, FriendshipDTO data, FriendshipDTO oldData ) {
+    public UserChangeEvent( ChangeEventType type, User data, User oldData ) {
         this.type = type;
         this.data = data;
         this.oldData = oldData;
@@ -22,11 +22,11 @@ public class UserChangeEvent implements Event {
         return type;
     }
 
-    public FriendshipDTO getData() {
+    public User getData() {
         return data;
     }
 
-    public FriendshipDTO getOldData() {
+    public User getOldData() {
         return oldData;
     }
 }

@@ -35,22 +35,22 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        repoDb = new UserDbRepository("jdbc:postgresql://localhost:5432/socialnetworkapp", "postgres","paula123", new UserValidator());
-        repoDbf = new FriendshipDbRepository("jdbc:postgresql://localhost:5432/socialnetworkapp", "postgres","paula123", new FriendshipValidator());
-        messageDb = new MessageDbRepository("jdbc:postgresql://localhost:5432/socialnetworkapp", "postgres", "paula123");
-        frRequestDb = new FriendRequestDbRepository("jdbc:postgresql://localhost:5432/socialnetworkapp", "postgres", "paula123");
+        repoDb = new UserDbRepository("jdbc:postgresql://localhost:5432/userApp", "postgres","qwaszx12", new UserValidator());
+        repoDbf = new FriendshipDbRepository("jdbc:postgresql://localhost:5432/userApp", "postgres","qwaszx12", new FriendshipValidator());
+        messageDb = new MessageDbRepository("jdbc:postgresql://localhost:5432/userApp", "postgres", "qwaszx12");
+        frRequestDb = new FriendRequestDbRepository("jdbc:postgresql://localhost:5432/userApp", "postgres", "qwaszx12");
 
 
 
         userService = new UserService(repoDb, repoDbf, new UserValidator());
-        //friendshipService = new FriendshipService(repoDb, repoDbf);
+        friendshipService = new FriendshipService(repoDb, repoDbf);
         //messageService = new MessageService(messageDb, repoDb, repoDbf);
         //friendRequestService = new FriendRequestService(frRequestDb, repoDb, repoDbf);
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("/views/login-view.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 400, 240);
+        Scene scene = new Scene(fxmlLoader.load());
         stage.setTitle("UserApp");
         stage.setScene(scene);
-        stage.setFullScreen(true);
+        //stage.setFullScreen(true);
         LoginController helloController = fxmlLoader.getController();
         helloController.setServices(userService, friendshipService, messageService, friendRequestService);
         stage.show();
