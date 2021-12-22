@@ -59,7 +59,7 @@ public class LoginController {
         // create a new stage for the popup dialog.
         try{
             FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(getClass().getResource("/views/userView.fxml"));
+            loader.setLocation(getClass().getResource("/views/homeView.fxml"));
 
             AnchorPane root = loader.load();
 

@@ -4,6 +4,7 @@ import com.example.lab6.model.Friendship;
 import com.example.lab6.model.FriendshipDTO;
 import com.example.lab6.model.validators.ValidationException;
 import com.example.lab6.repository.Repository;
+import com.example.lab6.repository.UserRepository;
 import com.example.lab6.utils.events.UserChangeEvent;
 import com.example.lab6.utils.observer.Observable;
 import com.example.lab6.utils.observer.Observer;
@@ -18,7 +19,7 @@ import java.util.List;
 import java.util.function.Predicate;
 
 public class FriendshipService implements Observable<UserChangeEvent> {
-    Repository<Long, User> repoUser;
+    UserRepository<Long, User> repoUser;
     Repository<Tuple<Long, Long>, Friendship> repoFriendship;
 
 
@@ -26,7 +27,7 @@ public class FriendshipService implements Observable<UserChangeEvent> {
      * @param repoUser
      * @param repoFriendship
      */
-    public FriendshipService(Repository repoUser, Repository<Tuple<Long,Long>,Friendship> repoFriendship) {
+    public FriendshipService(UserRepository repoUser, Repository<Tuple<Long,Long>,Friendship> repoFriendship) {
         this.repoUser =  repoUser;
         this.repoFriendship = repoFriendship;
     }

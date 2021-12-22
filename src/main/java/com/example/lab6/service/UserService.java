@@ -5,6 +5,10 @@ import com.example.lab6.model.validators.UserValidator;
 import com.example.lab6.model.validators.ValidationException;
 import com.example.lab6.repository.Repository;
 import com.example.lab6.repository.UserRepository;
+import com.example.lab6.utils.events.ChangeEventType;
+import com.example.lab6.utils.events.UserChangeEvent;
+import com.example.lab6.utils.observer.Observable;
+import com.example.lab6.utils.observer.Observer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +17,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 
-public class UserService {
+public class UserService implements Observable<UserChangeEvent> {
 
     UserRepository<Long, User> repoUser;
     Repository<Tuple<Long, Long>, Friendship> repoFriendship;
@@ -147,7 +151,26 @@ public class UserService {
         List<User> users = usersList.stream().filter(userPredicate.and(friends).and(user)).collect(Collectors.toList());
         return users;
 
+        //notifyObservers(new UserChangeEvent(ChangeEventType.UPDATE, ));
 
+    }
+
+    private List<Observer<UserChangeEvent>> observers=new ArrayList<>();
+
+
+    @Override
+    public void addObserver(Observer<UserChangeEvent> e) {
+        observers.add(e);
+    }
+
+    @Override
+    public void removeObserver(Observer<UserChangeEvent> e) {
+
+    }
+
+    @Override
+    public void notifyObservers(UserChangeEvent t) {
+        observers.stream().forEach(x->x.update(t));
     }
 }
 

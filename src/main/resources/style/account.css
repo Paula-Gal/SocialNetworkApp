@@ -27,37 +27,8 @@
     -fx-background-size: cover;
 }
 
-.wrap-input100 {
-    -fx-width: 100%;
-    -fx-position: relative;
 
-    -fx-margin-bottom: 30px;
-}
-.validate-input {
-    -fx-position: relative;
-}
 
-.input100 {
-    -fx-font-family: Poppins-Regular;
-    -fx-font-size: 16px;
-    -fx-color: white;
-    -fx-line-height: 1.2;
-
-    -fx-display: block;
-    -fx-width: 100%;
-    -fx-height: 45px;
-    -fx-background: transparent;
-    -fx-padding: 0 5px 0 38px;
-}
-
-.labelTitle {
-    -fx-font-size: 30px;
-    -fx-text-fill: white;
-}
-
-.labelTitle:hover {
-    -fx-text-fill: #3f72af;
-}
 
 .purpleBox {
     -fx-border-radius: 10px;
@@ -71,18 +42,15 @@
     -fx-border-color: white;
     -fx-border-width: 0 0 1 0;
     -fx-background-color: transparent;
-}
-
-.placeholder{
     -fx-text-fill: white;
 }
 
 .label-credentials {
-    -fx-font-size: 12px;
+    -fx-font-size: 15px;
     -fx-text-fill: white;
 }
 
-.login-button {
+.create-button {
     -fx-font-size: 15px;
     -fx-background-color: white;
     -fx-border-radius: 10px;
@@ -95,6 +63,10 @@
     -fx-background-color: linear-gradient(to top, #7579ff, #b224ef);
     -fx-text-fill: white;
 }
+.placeholder{
+    -fx-font-size: 30px;
+    -fx-text-fill: white;
+}
 
 .button:hover{
     -fx-cursor: pointer;
@@ -104,6 +76,3 @@
     -fx-text-fill: white;
 }
 
-.no-account-label:hover{
-    -fx-text-fill: black;
-}

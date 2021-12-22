@@ -1,6 +1,7 @@
 package com.example.lab6.controller;
 
 import com.example.lab6.model.FriendshipDTO;
+import com.example.lab6.model.User;
 import com.example.lab6.service.FriendRequestService;
 import com.example.lab6.service.FriendshipService;
 import com.example.lab6.service.UserService;
@@ -14,25 +15,35 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 public class UserController  {
 
+    public Label welcomeText;
+    public ImageView xImage;
+    public TextField searchField;
+    public Label searchLabel;
+    public ListView listView;
+    public ListView friendsView;
     private UserService userService;
     private FriendshipService friendshipService;
     private FriendRequestService friendRequestService;
 
     Stage stage;
     private String email;
-
+    ObservableList<String> modelUser = FXCollections.observableArrayList();
     ObservableList<FriendshipDTO> modelUserFriends = FXCollections.observableArrayList();
 
     @FXML
@@ -52,10 +63,16 @@ public class UserController  {
 
     @FXML
     public void initialize() {
-        tableColumnFriendFirstName.setCellValueFactory(new PropertyValueFactory<>("firstName"));
-        tableColumnFriendLastName.setCellValueFactory(new PropertyValueFactory<>("lastName"));
-        tableColumnFriendDate.setCellValueFactory(new PropertyValueFactory<>("date"));
-        tableViewFriends.setItems(modelUserFriends);
+
+        searchField.setVisible(false);
+        xImage.setVisible(false);
+        listView.setVisible(false);
+        friendsView.setVisible(false);
+        //tableColumnFriendFirstName.setCellValueFactory(new PropertyValueFactory<>("firstName"));
+       // tableColumnFriendLastName.setCellValueFactory(new PropertyValueFactory<>("lastName"));
+        //tableColumnFriendDate.setCellValueFactory(new PropertyValueFactory<>("date"));
+        //tableViewFriends.setItems(modelUserFriends);
+        //welcomeText.setText("Welcome, " + userService.exists(email).getFirstName() + " " + userService.exists(email).getLastName() + "!");
     }
 
     public void setServices(UserService userService, FriendshipService friendshipService, FriendRequestService friendRequestService, Stage stage, String email) {
@@ -64,30 +81,32 @@ public class UserController  {
         this.friendRequestService = friendRequestService;
         this.stage = stage;
         this.email = email;
+        welcomeText.setText("Welcome, " + userService.exists(email).getFirstName() + " " + userService.exists(email).getLastName() + "!");
+
         //setUserLabel(email);
         //getFriends();
     }
 
-//    private void getFriends() {
-//        try {
-//            List<FriendshipDTO> friends = friendshipService.getFriendships(id);
-//            List<FriendshipDTO> friendshipDTOS = StreamSupport.stream(friends.spliterator(), false)
-//                    .collect(Collectors.toList());
-//            modelUserFriends.setAll(friendshipDTOS);
-//        } catch (Exception ex) {
-//            MessageAlert.showErrorMessage(null, "The user doesn't exist!");
-//        }
-//    }
+    private void getFriends() {
+        try {
+            List<FriendshipDTO> friends = friendshipService.getFriendships(userService.exists(email).getId());
+            List<FriendshipDTO> friendshipDTOS = StreamSupport.stream(friends.spliterator(), false)
+                    .collect(Collectors.toList());
+            modelUserFriends.setAll(friendshipDTOS);
+        } catch (Exception ex) {
+            MessageAlert.showErrorMessage(null, "The user doesn't exist!");
+        }
+    }
 
-//    public void setUserLabel(Long id) {
-//        userLabel.setText("Welcome " + userService.exists(id).getFirstName() + " " + userService.exists(id).getLastName());
-//    }
+    public void setUserLabel(String email) {
+        userLabel.setText("Welcome " + userService.exists(email).getFirstName() + " " + userService.exists(email).getLastName());
+    }
 
-//    public void handleAddFriend(ActionEvent actionEvent) {
-//        showFriendsDialog(id);
-//    }
+    public void handleAddFriend(ActionEvent actionEvent) {
+        showFriendsDialog(email);
+    }
 
-    public void showFriendsDialog(Long id) {
+    public void showFriendsDialog(String id) {
         // create a new stage for the popup dialog.
         try {
             FXMLLoader loader = new FXMLLoader();
@@ -104,7 +123,7 @@ public class UserController  {
             dialogStage.setScene(scene);
 
             AddFriendController addFriendController = loader.getController();
-            addFriendController.setServices(userService, friendRequestService, dialogStage, id);
+            //addFriendController.setServices(userService, friendRequestService, dialogStage, id);
 
 
             dialogStage.show();
@@ -170,8 +189,6 @@ public class UserController  {
         stage.close();
     }
 
-    public void handleAddFriend(ActionEvent actionEvent) {
-    }
 
     public void handleRemoveFriend(ActionEvent actionEvent) {
     }
@@ -180,5 +197,62 @@ public class UserController  {
     }
 
     public void handleShowRequests(ActionEvent actionEvent) {
+    }
+
+    public void onSearchLabel(MouseEvent mouseEvent) {
+        searchField.setVisible(true);
+        xImage.setVisible(true);
+
+
+    }
+
+    public void setModelUser() {
+        if (!searchField.getText().isEmpty())
+        { List<User> userList = userService.filter1(userService.exists(email).getId(), searchField.getText().toString());
+        List<String> users = new ArrayList<>();
+        userList.forEach(x->{
+           users.add(x.getFirstName() + " " + x.getLastName());
+            modelUser.setAll(users);
+        });}
+        else
+            listView.setVisible(false);
+
+    }
+
+    public void setModelUserforFriends() {
+        try {
+            List<FriendshipDTO> friends = friendshipService.getFriendships(userService.exists(email).getId());
+            List<String> users = new ArrayList<>();
+            friends.forEach(x->{
+                users.add(x.getFirstName() + " " + x.getLastName());
+            });
+
+            modelUser.setAll(users);
+        } catch (Exception ex) {
+            MessageAlert.showErrorMessage(null, "The user doesn't exist!");
+        }
+
+    }
+    public void onSearchField(KeyEvent keyEvent) {
+        listView.setVisible(true);
+        setModelUser();
+        listView.setItems(null);
+       //listView.setPrefHeight(26*modelUser.size());
+        listView.setItems(modelUser);
+
+    }
+
+    public void onXClicked(MouseEvent mouseEvent) {
+        searchField.setVisible(false);
+        xImage.setVisible(false);
+        listView.setVisible(false);
+    }
+
+    public void onFriendsClicked(MouseEvent mouseEvent) {
+        setModelUserforFriends();
+        friendsView.setItems(modelUser);
+        friendsView.setPrefHeight(26*modelUser.size());
+        friendsView.setVisible(true);
+
     }
 }
