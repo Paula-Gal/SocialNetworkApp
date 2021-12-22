@@ -10,7 +10,12 @@ import com.example.lab6.utils.events.UserChangeEvent;
 import com.example.lab6.utils.observer.Observable;
 import com.example.lab6.utils.observer.Observer;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.function.Predicate;
@@ -171,6 +176,30 @@ public class UserService implements Observable<UserChangeEvent> {
     @Override
     public void notifyObservers(UserChangeEvent t) {
         observers.stream().forEach(x->x.update(t));
+    }
+
+    public static String getSecurePassword(String password) {
+
+        String generatedPassword = null;
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-512");
+            byte[] bytes = md.digest(password.getBytes(StandardCharsets.UTF_8));
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < bytes.length; i++) {
+                sb.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));
+            }
+            generatedPassword = sb.toString();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return generatedPassword;
+    }
+
+    public boolean checkPassword(String inputPassword, String email) {
+
+       String hashedInputPassword = getSecurePassword(inputPassword);
+
+        return (hashedInputPassword).equals(exists(email).getPassword());
     }
 }
 

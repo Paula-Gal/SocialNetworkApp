@@ -35,10 +35,10 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        repoDb = new UserDbRepository("jdbc:postgresql://localhost:5432/userApp", "postgres","qwaszx12", new UserValidator());
-        repoDbf = new FriendshipDbRepository("jdbc:postgresql://localhost:5432/userApp", "postgres","qwaszx12", new FriendshipValidator());
-        messageDb = new MessageDbRepository("jdbc:postgresql://localhost:5432/userApp", "postgres", "qwaszx12");
-        frRequestDb = new FriendRequestDbRepository("jdbc:postgresql://localhost:5432/userApp", "postgres", "qwaszx12");
+        repoDb = new UserDbRepository("jdbc:postgresql://localhost:5432/socialnetworkapp", "postgres","paula123", new UserValidator());
+        repoDbf = new FriendshipDbRepository("jdbc:postgresql://localhost:5432/socialnetworkapp", "postgres","paula123", new FriendshipValidator());
+        messageDb = new MessageDbRepository("jdbc:postgresql://localhost:5432/socialnetworkapp", "postgres", "paula123");
+        frRequestDb = new FriendRequestDbRepository("jdbc:postgresql://localhost:5432/socialnetworkapp", "postgres", "paula123");
 
 
 
@@ -52,7 +52,7 @@ public class Main extends Application {
         stage.setScene(scene);
         //stage.setFullScreen(true);
         LoginController helloController = fxmlLoader.getController();
-        helloController.setServices(userService, friendshipService, messageService, friendRequestService);
+        helloController.setServices(userService, friendshipService, messageService, friendRequestService, stage);
         stage.show();
     }
 

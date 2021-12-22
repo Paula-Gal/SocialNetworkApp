@@ -5,8 +5,6 @@ import com.example.lab6.model.User;
 import com.example.lab6.service.FriendRequestService;
 import com.example.lab6.service.FriendshipService;
 import com.example.lab6.service.UserService;
-import com.example.lab6.utils.events.UserChangeEvent;
-import com.example.lab6.utils.observer.Observer;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -14,7 +12,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -29,7 +26,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-public class UserController  {
+public class UserController {
 
     public Label welcomeText;
     public ImageView xImage;
@@ -69,7 +66,7 @@ public class UserController  {
         listView.setVisible(false);
         friendsView.setVisible(false);
         //tableColumnFriendFirstName.setCellValueFactory(new PropertyValueFactory<>("firstName"));
-       // tableColumnFriendLastName.setCellValueFactory(new PropertyValueFactory<>("lastName"));
+        // tableColumnFriendLastName.setCellValueFactory(new PropertyValueFactory<>("lastName"));
         //tableColumnFriendDate.setCellValueFactory(new PropertyValueFactory<>("date"));
         //tableViewFriends.setItems(modelUserFriends);
         //welcomeText.setText("Welcome, " + userService.exists(email).getFirstName() + " " + userService.exists(email).getLastName() + "!");
@@ -202,19 +199,17 @@ public class UserController  {
     public void onSearchLabel(MouseEvent mouseEvent) {
         searchField.setVisible(true);
         xImage.setVisible(true);
-
-
     }
 
     public void setModelUser() {
-        if (!searchField.getText().isEmpty())
-        { List<User> userList = userService.filter1(userService.exists(email).getId(), searchField.getText().toString());
-        List<String> users = new ArrayList<>();
-        userList.forEach(x->{
-           users.add(x.getFirstName() + " " + x.getLastName());
-            modelUser.setAll(users);
-        });}
-        else
+        if (!searchField.getText().isEmpty()) {
+            List<User> userList = userService.filter1(userService.exists(email).getId(), searchField.getText().toString());
+            List<String> users = new ArrayList<>();
+            userList.forEach(x -> {
+                users.add(x.getFirstName() + " " + x.getLastName());
+                modelUser.setAll(users);
+            });
+        } else
             listView.setVisible(false);
 
     }
@@ -223,7 +218,7 @@ public class UserController  {
         try {
             List<FriendshipDTO> friends = friendshipService.getFriendships(userService.exists(email).getId());
             List<String> users = new ArrayList<>();
-            friends.forEach(x->{
+            friends.forEach(x -> {
                 users.add(x.getFirstName() + " " + x.getLastName());
             });
 
@@ -233,11 +228,12 @@ public class UserController  {
         }
 
     }
+
     public void onSearchField(KeyEvent keyEvent) {
         listView.setVisible(true);
         setModelUser();
         listView.setItems(null);
-       //listView.setPrefHeight(26*modelUser.size());
+        //listView.setPrefHeight(26*modelUser.size());
         listView.setItems(modelUser);
 
     }
@@ -251,7 +247,7 @@ public class UserController  {
     public void onFriendsClicked(MouseEvent mouseEvent) {
         setModelUserforFriends();
         friendsView.setItems(modelUser);
-        friendsView.setPrefHeight(26*modelUser.size());
+        friendsView.setPrefHeight(26 * modelUser.size());
         friendsView.setVisible(true);
 
     }
