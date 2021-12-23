@@ -28,12 +28,12 @@
             <Label fx:id="passwordLabel" layoutX="98.0" layoutY="277.0" prefHeight="19.0" prefWidth="70.0" styleClass="label-credentials" />
             <ImageView fx:id="emailIcon" fitHeight="13.0" fitWidth="22.0" layoutX="81.0" layoutY="246.0" pickOnBounds="true" preserveRatio="true" />
             <ImageView fx:id="passwordIcon" fitHeight="13.0" fitWidth="22.0" layoutX="81.0" layoutY="313.0" pickOnBounds="true" preserveRatio="true" />
-            <Button layoutX="133.0" layoutY="367.0" mnemonicParsing="false" onAction="#onHandleLogin" styleClass="login-button" text="Login" />
+            <Button layoutX="151.0" layoutY="386.0" mnemonicParsing="false" onAction="#onHandleLogin" styleClass="login-button" text="Login" />
             <Label fx:id="noAccountLabel" layoutX="92.0" layoutY="518.0" onMouseClicked="#handleCreateAccountDialog" prefHeight="19.0" prefWidth="175.0" styleClass="no-account-label" text="No account yet? Create now" />
             <TextField fx:id="emailTextField" layoutX="79.0" layoutY="240.0" prefHeight="25.0" prefWidth="220.0" promptText="Email" styleClass="text-field, input100, placeholder" />
-            <CheckBox fx:id="hidePasswordCheckbox" layoutX="306.0" layoutY="311.0" mnemonicParsing="false" onAction="#viewpass" />
+            <CheckBox fx:id="hidePasswordCheckbox" layoutX="84.0" layoutY="350.0" mnemonicParsing="false" onAction="#viewpass" prefHeight="17.0" prefWidth="150.0" styleClass="label-checkbox" text="Show password" />
             <PasswordField fx:id="passwordTextField" layoutX="79.0" layoutY="307.0" prefHeight="25.0" prefWidth="220.0" promptText="Password" styleClass="text-field, input100, placeholder" />
-            <TextField fx:id="passwordShowTextField" styleClass="text-field, input100, placeholder" layoutX="82.0" layoutY="307.0" prefHeight="25.0" prefWidth="220.0" />
+            <TextField fx:id="passwordShowTextField" layoutX="79.0" layoutY="307.0" prefHeight="25.0" prefWidth="220.0" styleClass="text-field, input100, placeholder" />
          </children></AnchorPane>
    </children>
 </AnchorPane>

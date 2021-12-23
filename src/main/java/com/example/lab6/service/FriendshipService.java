@@ -55,6 +55,19 @@ public class FriendshipService implements Observable<UserChangeEvent> {
         return repoFriendship.save(entity);
     }
 
+    public Friendship exists(Long id1, Long id2){
+        if(id1 > id2){
+            Long aux = id1;
+            id1= id2;
+            id2 = aux;
+        }
+        Tuple<Long, Long> ship = new Tuple<>(id1, id2);
+        if(repoFriendship.findOne(ship) != null)
+            return repoFriendship.findOne(ship);
+
+        return  null;
+
+    }
 
     /**
      *

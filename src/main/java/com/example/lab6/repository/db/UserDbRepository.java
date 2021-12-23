@@ -132,6 +132,57 @@ public class UserDbRepository implements UserRepository<Long, User> {
     }
 
     @Override
+    public void savePicture(String email, String urlphoto) {
+
+
+        String sql = "insert into users_profile_pictures (email, url) values (?, ?)";
+
+        try (Connection connection = DriverManager.getConnection(url, username, password);
+             PreparedStatement ps = connection.prepareStatement(sql)) {
+
+            ps.setString(1, email);
+            ps.setString(2, urlphoto);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    @Override
+    public void updatePicture(String email, String urlphoto) {
+        String sql = "update users_profile_pictures set url = ? where email = \'" + email + "\'";
+        try (Connection connection = DriverManager.getConnection(url, username, password);
+             PreparedStatement ps = connection.prepareStatement(sql)) {
+                ps.setString(1, urlphoto);
+                ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    @Override
+    public String findPhoto(String email) {
+
+        String sql = "SELECT * from users_profile_pictures where email = \'" + email + "\'";
+        try (Connection connection = DriverManager.getConnection(url, username, password);
+             PreparedStatement statement = connection.prepareStatement(sql);
+             ResultSet resultSet = statement.executeQuery()) {
+
+            while (resultSet.next()) {
+
+                String urlphoto = resultSet.getString("url");
+                return urlphoto;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
+    @Override
     public User remove(User entity) {
 
         String sql = "delete from users where id = ?";
