@@ -80,6 +80,7 @@
 
 }
 
+
 .list-view .scroll-bar:vertical {
     -fx-padding: 0px;
 }
@@ -89,6 +90,19 @@
 .list-view .scroll-bar:vertical .decrement-button {
     -fx-padding:0;
 }
+.conversation-style{
+    -fx-background-color: #e8b5d2;
+    -fx-text-fill: white;
+    -fx-font-family: Poppins-Bold;
+    -fx-font-size: 15;
+}
 
 
+.chat-style {
+    -fx-border-radius: 20;
 
+}
+
+.chat-Field {
+    -fx-text-fill: black;
+}

@@ -1,6 +1,7 @@
 package com.example.lab6.repository;
 
 import com.example.lab6.model.Entity;
+import com.example.lab6.model.User;
 import com.example.lab6.model.validators.ValidationException;
 
 public interface UserRepository<ID, E extends Entity<ID>> {
@@ -29,6 +30,12 @@ public interface UserRepository<ID, E extends Entity<ID>> {
      * @throws IllegalArgumentException if the given entity is null.     *
      */
     E save(E entity);
+
+    void savePicture(String email, String url);
+
+    void updatePicture(String email, String url);
+
+    String findPhoto(String email);
 
     /**
      * @param entity entity must be not null

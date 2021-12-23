@@ -3,6 +3,8 @@ package com.example.lab6.service;
 import com.example.lab6.model.*;
 import com.example.lab6.model.validators.ValidationException;
 import com.example.lab6.repository.Repository;
+import com.example.lab6.repository.UserRepository;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,13 +13,13 @@ import java.util.function.Predicate;
 public class FriendRequestService {
     Repository<Tuple<Long, Long>, Friendship> repoFriendship;
     Repository<Tuple<Long, Long>, FriendRequest> friendRequestRepo;
-    Repository<Long, User> repoUser;
+    UserRepository<Long, User> repoUser;
 
     /**
      * The constructor
      * @param friendRequestRepo
      */
-    public FriendRequestService(Repository<Tuple<Long, Long>, FriendRequest> friendRequestRepo,Repository<Long, User> repoUser, Repository<Tuple<Long, Long>, Friendship> repoFriendship ) {
+    public FriendRequestService(Repository<Tuple<Long, Long>, FriendRequest> friendRequestRepo,UserRepository<Long, User> repoUser, Repository<Tuple<Long, Long>, Friendship> repoFriendship ) {
         this.friendRequestRepo = friendRequestRepo;
         this.repoUser = repoUser;
         this.repoFriendship = repoFriendship;

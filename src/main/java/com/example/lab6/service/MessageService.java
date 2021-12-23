@@ -3,6 +3,7 @@ package com.example.lab6.service;
 import com.example.lab6.model.*;
 import com.example.lab6.model.validators.ValidationException;
 import com.example.lab6.repository.Repository;
+import com.example.lab6.repository.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -12,7 +13,7 @@ import java.util.stream.Collectors;
 
 public class MessageService {
     Repository<Long, MessageDTO> repoMessage;
-    Repository<Long, User> repoUser;
+    UserRepository<Long, User> repoUser;
     Repository<Tuple<Long, Long>, Friendship> repoFriendship;
 
     /**
@@ -21,7 +22,7 @@ public class MessageService {
      * @param repoMessage
      * @param repoUser
      */
-    public MessageService(Repository<Long, MessageDTO> repoMessage, Repository<Long, User> repoUser, Repository<Tuple<Long, Long>, Friendship> repoFriendship) {
+    public MessageService(Repository<Long, MessageDTO> repoMessage, UserRepository<Long, User> repoUser, Repository<Tuple<Long, Long>, Friendship> repoFriendship) {
         this.repoMessage = repoMessage;
         this.repoUser = repoUser;
         this.repoFriendship = repoFriendship;
@@ -63,7 +64,7 @@ public class MessageService {
             if (message.length() == 0)
                 throw new ValidationException("The message is empty!");
 
-            MessageDTO messageDTO = new MessageDTO(from, distinctTos, message, LocalDateTime.now(), null);
+            MessageDTO messageDTO = new MessageDTO(from, to, message, LocalDateTime.now(), null);
             repoMessage.save(messageDTO);
         } else
             throw new ValidationException("The user has no friends!");

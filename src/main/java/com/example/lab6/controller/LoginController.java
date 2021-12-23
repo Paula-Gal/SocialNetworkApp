@@ -76,7 +76,7 @@ public class LoginController {
             dialogStage.setScene(scene);
 
             UserController userViewController = loader.getController();
-            userViewController.setServices(userService, friendshipService, friendRequestService, dialogStage, id);
+            userViewController.setServices(userService, friendshipService, friendRequestService, messageService, dialogStage, id);
 
             dialogStage.show();
         } catch (IOException e) {

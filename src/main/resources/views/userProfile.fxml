@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXDrawersStack?>
+<?import com.jfoenix.controls.JFXHamburger?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane nodeOrientation="RIGHT_TO_LEFT" prefHeight="794.0" prefWidth="1175.0" stylesheets="/style/profile.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.lab6.controller.UserProfileController">
+   <children>
+      <AnchorPane layoutX="868.0" layoutY="48.0" prefHeight="707.0" prefWidth="253.0" styleClass="anchor-style" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="875.0" AnchorPane.topAnchor="50.0">
+         <children>
+            <ImageView fx:id="profilePhoto" fitHeight="132.0" fitWidth="166.0" layoutX="42.0" layoutY="26.0" pickOnBounds="true" preserveRatio="true" />
+            <Label fx:id="nameLabel" contentDisplay="TOP" layoutX="61.0" layoutY="182.0" prefHeight="31.0" prefWidth="141.0" styleClass="name" />
+            <Label layoutX="76.0" layoutY="150.0" onMouseClicked="#onEditLabelClicked" styleClass="label-edit" text="Edit profile picture!" />
+         </children>
+      </AnchorPane>
+      <Label fx:id="messagesLabel" layoutX="42.0" layoutY="5.0" prefHeight="90.0" prefWidth="253.0" styleClass="label-messages" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0" />
+      <JFXHamburger fx:id="hamburgerButton" layoutX="57.0" layoutY="29.0" prefHeight="31.0" prefWidth="30.0" />
+      <JFXDrawersStack layoutX="539.0" layoutY="319.0" />
+   </children>
+</AnchorPane>
