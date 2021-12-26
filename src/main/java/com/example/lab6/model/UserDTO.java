@@ -4,6 +4,7 @@ public class UserDTO {
     private String nume;
     private String urlPhoto;
     private String email;
+    private Long id;
 
     public String getEmailDTO() {
         return email;
@@ -16,6 +17,10 @@ public class UserDTO {
     public UserDTO(User user) {
 
         this.nume = user.getFirstName() + " " + user.getLastName();
+        this.id = user.getId();
+    }
+    public Long getIdUser() {
+        return id;
     }
     public String getNume() {
         return nume;

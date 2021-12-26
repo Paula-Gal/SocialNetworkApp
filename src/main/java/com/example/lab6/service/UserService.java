@@ -1,5 +1,6 @@
 package com.example.lab6.service;
 
+import com.example.lab6.controller.UserController;
 import com.example.lab6.model.*;
 import com.example.lab6.model.validators.UserValidator;
 import com.example.lab6.model.validators.ValidationException;
@@ -213,5 +214,7 @@ public class UserService implements Observable<UserChangeEvent> {
     public String findPhoto(String email){
         return repoUser.findPhoto(email);
     }
+
+
 }
 

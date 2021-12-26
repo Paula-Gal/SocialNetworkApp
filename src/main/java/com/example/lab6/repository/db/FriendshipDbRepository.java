@@ -32,12 +32,14 @@ public class FriendshipDbRepository implements Repository<Tuple<Long, Long>, Fri
     public Friendship findOne(Tuple<Long, Long> friendshipTuple) {
         try {
             Connection connection = DriverManager.getConnection(url, username, password);
-            String sql = "SELECT * FROM friendships WHERE first_friend = ? AND second_friend = ?";
+            String sql = "SELECT * FROM friendships WHERE first_friend = ? AND second_friend = ? or first_friend = ? AND second_friend = ?";
 
             PreparedStatement statement = connection.prepareStatement(sql);
 
             statement.setInt(1, (int) (long) friendshipTuple.getE1());
             statement.setInt(2, (int) (long) friendshipTuple.getE2());
+            statement.setInt(3, (int) (long) friendshipTuple.getE2());
+            statement.setInt(4, (int) (long) friendshipTuple.getE1());
 
             ResultSet resultSet = statement.executeQuery();
 

@@ -4,13 +4,17 @@ import com.example.lab6.model.*;
 import com.example.lab6.model.validators.ValidationException;
 import com.example.lab6.repository.Repository;
 import com.example.lab6.repository.UserRepository;
+import com.example.lab6.utils.events.ChangeEventType;
+import com.example.lab6.utils.events.FriendRequestChangeEvent;
+import com.example.lab6.utils.observer.Observable;
+import com.example.lab6.utils.observer.Observer;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
-public class FriendRequestService {
+public class FriendRequestService implements Observable<FriendRequestChangeEvent> {
     Repository<Tuple<Long, Long>, Friendship> repoFriendship;
     Repository<Tuple<Long, Long>, FriendRequest> friendRequestRepo;
     UserRepository<Long, User> repoUser;
@@ -65,10 +69,12 @@ public class FriendRequestService {
                 throw new ValidationException("The request is not possible");
         }
         FriendRequest friendRequest = new FriendRequest(friendRequestRepo.findOne(ship).getFrom(), friendRequestRepo.findOne(ship).getTo(), friendRequestRepo.findOne(ship).getStatus(), friendRequestRepo.findOne(ship).getLastUpdatedDate());
+        FriendRequest old = friendRequest;
         friendRequest.setStatus(Status.APPROVED);
         friendRequestRepo.update(friendRequest);
         Friendship friendship = new Friendship(ship);
         repoFriendship.save(friendship);
+        notifyObservers(new FriendRequestChangeEvent(ChangeEventType.ADD, friendRequest));
     }
 
     /**
@@ -93,6 +99,7 @@ public class FriendRequestService {
         friendRequest.setStatus(Status.REJECTED);
         friendRequest.setId(ship);
         friendRequestRepo.remove(friendRequest);
+        notifyObservers(new FriendRequestChangeEvent(ChangeEventType.ADD, friendRequest));
     }
 
     /**
@@ -117,6 +124,7 @@ public class FriendRequestService {
         FriendRequest friendRequest = new FriendRequest(friendRequestRepo.findOne(ship).getFrom(), friendRequestRepo.findOne(ship).getTo(), friendRequestRepo.findOne(ship).getStatus(), friendRequestRepo.findOne(ship).getLastUpdatedDate());
         friendRequest.setId(ship);
         friendRequestRepo.remove(friendRequest);
+        notifyObservers(new FriendRequestChangeEvent(ChangeEventType.ADD, friendRequest));
     }
 
     /**
@@ -131,9 +139,10 @@ public class FriendRequestService {
         List<FriendRequestDTO> requestlist = new ArrayList<>();
         Iterable<FriendRequest> requestIterable = friendRequestRepo.findAll();
 
-        Predicate<FriendRequest> from = x->x.getFrom().equals(id);
+       // Predicate<FriendRequest> from = x->x.getFrom().equals(id);
         Predicate<FriendRequest> to = x->x.getTo().equals(id);
-        Predicate<FriendRequest> requestPredicate = from.or(to);
+        Predicate<FriendRequest> status = x->x.getStatus().equals(Status.PENDING);
+        Predicate<FriendRequest> requestPredicate = status.and(to);
         List<FriendRequest> list = new ArrayList<>();
         requestIterable.forEach(list::add);
         list.stream().filter(requestPredicate).map(x ->{
@@ -142,5 +151,48 @@ public class FriendRequestService {
         }).forEach(requestlist::add);
 
         return requestlist;
+    }
+
+    /**
+     * return all the friend request of a user
+     * @param id
+     * @return
+     */
+    public List<FriendRequestDTO> getMyFriendsRequestes(Long id){
+        if(repoUser.findOne(id) == null)
+            throw new ValidationException("Invalid id");
+
+        List<FriendRequestDTO> requestlist = new ArrayList<>();
+        Iterable<FriendRequest> requestIterable = friendRequestRepo.findAll();
+
+        Predicate<FriendRequest> from = x->x.getFrom().equals(id);
+        Predicate<FriendRequest> status = x->x.getStatus().equals(Status.PENDING);
+        //Predicate<FriendRequest> to = x->x.getTo().equals(id);
+        Predicate<FriendRequest> requestPredicate = from.and(status);
+        List<FriendRequest> list = new ArrayList<>();
+        requestIterable.forEach(list::add);
+        list.stream().filter(requestPredicate).map(x ->{
+            return new FriendRequestDTO(repoUser.findOne(x.getFrom()), repoUser.findOne(x.getTo()), x.getStatus(), x.getLastUpdatedDate());
+
+        }).forEach(requestlist::add);
+
+        return requestlist;
+    }
+
+    private List<Observer> observers = new ArrayList<>();
+    @Override
+    public void addObserver(Observer<FriendRequestChangeEvent> e) {
+        observers.add(e);
+
+    }
+
+    @Override
+    public void removeObserver(Observer<FriendRequestChangeEvent> e) {
+
+    }
+
+    @Override
+    public void notifyObservers(FriendRequestChangeEvent t) {
+        observers.forEach(x->x.update(t));
     }
 }

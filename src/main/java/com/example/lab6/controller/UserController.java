@@ -1,38 +1,39 @@
 package com.example.lab6.controller;
 
-import com.example.lab6.model.FriendshipDTO;
-import com.example.lab6.model.Message;
-import com.example.lab6.model.User;
-import com.example.lab6.model.UserDTO;
+import com.example.lab6.model.*;
 import com.example.lab6.service.FriendRequestService;
 import com.example.lab6.service.FriendshipService;
 import com.example.lab6.service.MessageService;
 import com.example.lab6.service.UserService;
+import com.example.lab6.utils.events.MessageChangeEvent;
+import com.example.lab6.utils.observer.Observer;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.GridPane;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.Callback;
+
 
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
-public class UserController {
+public class UserController implements Observer<MessageChangeEvent> {
 
     public Label welcomeText;
     public ImageView xImage;
@@ -51,20 +52,22 @@ public class UserController {
     private FriendRequestService friendRequestService;
     private MessageService messageService;
 
+
+
     Stage stage;
     private Long to;
     private String email;
+    private String emailTo;
     ObservableList<String> modelUser = FXCollections.observableArrayList();
     ObservableList<UserDTO> model = FXCollections.observableArrayList();
     ObservableList<FriendshipDTO> modelUserFriends = FXCollections.observableArrayList();
     ObservableList<String> modelMessage = FXCollections.observableArrayList();
+    ObservableList<Message> modelMessages = FXCollections.observableArrayList();
 
     @FXML
     private Label userLabel;
 
-    //user friends
-    @FXML
-    Button buttonShowFriends;
+
     @FXML
     TableView<FriendshipDTO> tableViewFriends;
     @FXML
@@ -94,122 +97,19 @@ public class UserController {
         this.email = email;
         this.messageService = messageService;
         welcomeText.setText("Welcome, " + userService.exists(email).getFirstName() + " " + userService.exists(email).getLastName() + "!");
-        setChatView();
-        //setUserLabel(email);
-        //getFriends();
+        setFriendsList();
+        messageService.addObserver(this);
+
     }
 
-    private void getFriends() {
-        try {
-            List<FriendshipDTO> friends = friendshipService.getFriendships(userService.exists(email).getId());
-            List<FriendshipDTO> friendshipDTOS = StreamSupport.stream(friends.spliterator(), false)
-                    .collect(Collectors.toList());
-            modelUserFriends.setAll(friendshipDTOS);
-        } catch (Exception ex) {
-            MessageAlert.showErrorMessage(null, "The user doesn't exist!");
-        }
-    }
 
-    public void setUserLabel(String email) {
-        userLabel.setText("Welcome " + userService.exists(email).getFirstName() + " " + userService.exists(email).getLastName());
-    }
-
-    public void handleAddFriend(ActionEvent actionEvent) {
-        showFriendsDialog(email);
-    }
-
-    public void showFriendsDialog(String id) {
-        // create a new stage for the popup dialog.
-        try {
-            FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(getClass().getResource("/views/addFriendView.fxml"));
-
-            AnchorPane root = loader.load();
-
-            // Create the dialog Stage.
-            Stage dialogStage = new Stage();
-            dialogStage.setTitle("Add a friend");
-            dialogStage.initModality(Modality.WINDOW_MODAL);
-            //dialogStage.initOwner(primaryStage);
-            Scene scene = new Scene(root);
-            dialogStage.setScene(scene);
-
-            AddFriendController addFriendController = loader.getController();
-            //addFriendController.setServices(userService, friendRequestService, dialogStage, id);
-
-
-            dialogStage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-//    public void handleRemoveFriend(ActionEvent actionEvent) {
-//        int poz = tableViewFriends.getSelectionModel().getSelectedIndex();
-//        List<FriendshipDTO> friendshipDTOS = friendshipService.getFriendships(id);
-//        friendshipService.removeFriendship(id, friendshipDTOS.get(poz).getUser().getId());
-//        if (friendshipService.getFriendships(id).size() == 0)
-//            tableViewFriends.getItems().clear();
-//        else
-//            getFriends();
-//        MessageAlert.showMessage(null, Alert.AlertType.INFORMATION, "Remove a friend", "The friend has been removed");
-//
-//    }
-
-//    @Override
-//    public void update(UserChangeEvent userChangeEvent) {
-//
-//    }
-//
-//    public void handleUpdateFriends(ActionEvent actionEvent) {
-//        getFriends();
-//    }
-//
-//    public void handleShowRequests(ActionEvent actionEvent) {
-//        showFriendsRequestDialog(id);
-//    }
-//
-//    public void showFriendsRequestDialog(Long id) {
-//        // create a new stage for the popup dialog.
-//        try {
-//            FXMLLoader loader = new FXMLLoader();
-//            loader.setLocation(getClass().getResource("/views/friendsRequestsView.fxml"));
-//
-//            AnchorPane root = loader.load();
-//
-//            // Create the dialog Stage.
-//            Stage dialogStage = new Stage();
-//            dialogStage.setTitle("Friend requests");
-//            dialogStage.initModality(Modality.WINDOW_MODAL);
-//            //dialogStage.initOwner(primaryStage);
-//            Scene scene = new Scene(root);
-//            dialogStage.setScene(scene);
-//
-//            FriendRequestController friendRequestController = loader.getController();
-//            friendRequestController.setServices(userService, friendRequestService, dialogStage, id);
-//
-//            dialogStage.show();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
-
-    public void handleMessages(ActionEvent actionEvent) {
-    }
 
     public void onHandleBack(ActionEvent actionEvent) {
         stage.close();
     }
 
 
-    public void handleRemoveFriend(ActionEvent actionEvent) {
-    }
 
-    public void handleUpdateFriends(ActionEvent actionEvent) {
-    }
-
-    public void handleShowRequests(ActionEvent actionEvent) {
-    }
 
     public void onSearchLabel(MouseEvent mouseEvent) {
         searchField.setVisible(true);
@@ -229,20 +129,6 @@ public class UserController {
 
     }
 
-    public void setModelUserforFriends() {
-        try {
-            List<FriendshipDTO> friends = friendshipService.getFriendships(userService.exists(email).getId());
-            List<String> users = new ArrayList<>();
-            friends.forEach(x -> {
-                users.add(x.getFirstName() + " " + x.getLastName());
-            });
-
-            modelUser.setAll(users);
-        } catch (Exception ex) {
-            MessageAlert.showErrorMessage(null, "The user doesn't exist!");
-        }
-
-    }
 
     public void onSearchField(KeyEvent keyEvent) {
         listView.setVisible(true);
@@ -252,7 +138,8 @@ public class UserController {
         listView.setItems(modelUser);
 
     }
-    private void setChatView() {
+
+    private void setFriendsList() {
         setModel();
         chatView.setItems(model);
         chatView.setCellFactory(param -> new ListCell<UserDTO>() {
@@ -279,13 +166,19 @@ public class UserController {
                     label.setText(userDTO.getNume());
                     label.setPrefWidth(90);
                     GridPane pane = new GridPane();
-
                     pane.getStyleClass().add("gridpane");
                     pane.add(imageView, 0, 0);
                     pane.add(label, 1, 0);
-                    pane.add(button, 4, 0);
+                    pane.add(button, 3, 0);
                     setGraphic(pane);
-
+                    label.setOnMouseClicked(event -> {
+                        conversationLabel.setText("Your conversation with " + userDTO.getNume());
+                        conversation.setVisible(true);
+                        to = userDTO.getIdUser();
+                        setConversation(to);
+                        // emailTo = user.getEmail();
+                        setConversationList();
+                    });
                     button.setOnAction(event ->{
                         try {
                             FXMLLoader loader = new FXMLLoader();
@@ -308,35 +201,75 @@ public class UserController {
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
+
                     });
                 }
             }
         });
+
+
+
         chatView.setPrefHeight(50*model.size());
 
     }
+
     @FXML
-    public void onChatClicked(MouseEvent mouseEvent) {
+    public void onFriendClicked(MouseEvent mouseEvent) {
 
-
-        int poz = chatView.getSelectionModel().getSelectedIndex() + 1;
-        List<FriendshipDTO> friends = friendshipService.getFriendships(userService.exists(email).getId());
-        User user = friends.get(poz).getUser();
-        conversationLabel.setText("Your conversation with " + user.getFirstName() + " " + user.getLastName());
-        conversation.setVisible(true);
-        setConversation(user);
-        conversationList.setItems(modelMessage);
-        this.to = user.getId();
+            /*int poz = chatView.getSelectionModel().getSelectedIndex();
+            List<FriendshipDTO> friends = friendshipService.getFriendships(userService.exists(email).getId());
+            User user = friends.get(poz).getUser();
+            conversationLabel.setText("Your conversation with " + user.getFirstName() + " " + user.getLastName());
+            conversation.setVisible(true);
+            to =user.getId();
+            setConversation(to);
+            // emailTo = user.getEmail();
+            setConversationList();
+*/
 
     }
 
-    public void setConversation(User user){
-        List<Message> messages = messageService.getConversation(userService.exists(email).getId(), user.getId());
-        List<String> mess = new ArrayList<>();
+    public void setConversationList(){
+        conversationList.setItems(modelMessages);
+        conversationList.setCellFactory(
+                param -> new ListCell<Message>() {
+                    protected final Label label = new Label();
+
+                    @Override
+                    public void updateItem(Message message, boolean empty) {
+                        if (empty) {
+                            setGraphic(null);
+
+                        } else {
+                         setText(message.getMessage());
+                            if (message.getFrom().getId().equals(userService.exists(email).getId())) {
+                               // label.setTextAlignment(TextAlignment.RIGHT);
+                               getStyleClass().add("background-mymessage");
+
+                                setAlignment(Pos.CENTER_RIGHT);
+                                //setText(message.getMessage());
+
+                            } else {
+                                getStyleClass().add("background-message");
+                            }
+                           setGraphic(label);
+                        }
+                    }
+
+
+                });
+    }
+
+    public void setConversation(Long to){
+        List<Message> messages = messageService.getConversation(userService.exists(email).getId(), to);
+       /* List<String> mess = new ArrayList<>();
         messages.forEach(x -> {
             mess.add(x.getMessage());
         });
-        modelMessage.setAll(mess);
+
+        */
+
+        modelMessages.setAll(messages);
 
     }
 
@@ -436,5 +369,11 @@ public class UserController {
         }
 
 
+    }
+
+    @Override
+    public void update(MessageChangeEvent messageChangeEvent) {
+        setConversation(to);
+        setConversationList();
     }
 }
