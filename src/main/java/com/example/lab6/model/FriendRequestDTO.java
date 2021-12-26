@@ -23,6 +23,14 @@ public class FriendRequestDTO extends Entity<Tuple<Long,Long>> {
 
         return from.getFirstName() + " " + from.getLastName();
     }
+
+    public User getUserFrom(){
+        return from;
+    }
+
+    public User getUserTo(){
+        return to;
+    }
     public Long getIdF(){
         return from.getId();
     }

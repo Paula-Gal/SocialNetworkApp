@@ -4,6 +4,10 @@ import com.example.lab6.model.*;
 import com.example.lab6.model.validators.ValidationException;
 import com.example.lab6.repository.Repository;
 import com.example.lab6.repository.UserRepository;
+import com.example.lab6.utils.events.ChangeEventType;
+import com.example.lab6.utils.events.MessageChangeEvent;
+import com.example.lab6.utils.observer.Observable;
+import com.example.lab6.utils.observer.Observer;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -11,7 +15,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class MessageService {
+public class MessageService implements Observable<MessageChangeEvent> {
     Repository<Long, MessageDTO> repoMessage;
     UserRepository<Long, User> repoUser;
     Repository<Tuple<Long, Long>, Friendship> repoFriendship;
@@ -41,13 +45,8 @@ public class MessageService {
 
         List<Long> existentFriendship = new ArrayList<>();
         for (Long user : to) {
-            long fromAux = from;
-            if (user < fromAux) {
-                long aux = user;
-                user = fromAux;
-                fromAux = aux;
-            }
-            if ((repoFriendship.findOne(new Tuple<>(fromAux, user)) != null)) {
+
+            if ((repoFriendship.findOne(new Tuple<>(from, user)) != null)) {
                 existentFriendship.add(user);
             }
         }
@@ -66,11 +65,14 @@ public class MessageService {
 
             MessageDTO messageDTO = new MessageDTO(from, to, message, LocalDateTime.now(), null);
             repoMessage.save(messageDTO);
+            notifyObservers(new MessageChangeEvent(ChangeEventType.ADD, messageDTO));
         } else
             throw new ValidationException("The user has no friends!");
 
         if (existentFriendship.size() != to.size())
             throw new ValidationException("The message was sent only to friends!");
+
+
     }
 
     /**
@@ -186,5 +188,22 @@ public class MessageService {
         conv.forEach(x -> {
             System.out.println(x.getFrom().getFirstName() + " " + x.getFrom().getLastName() + " sent " + x.getMessage());
         });
+    }
+
+    private List<Observer> observers = new ArrayList<>();
+
+    @Override
+    public void addObserver(Observer<MessageChangeEvent> e) {
+        observers.add(e);
+    }
+
+    @Override
+    public void removeObserver(Observer<MessageChangeEvent> e) {
+
+    }
+
+    @Override
+    public void notifyObservers(MessageChangeEvent t) {
+        observers.forEach(x->x.update(t));
     }
 }

@@ -75,10 +75,24 @@
     -fx-font-size: 15;
 }
 
-.chat-Field {
-    -fx-text-fill: black;
-}
+
 
 .chat-view{
     -fx-border-color: transparent;
 }
+
+.button-menu{
+    -fx-image: url("/images/menu.png");
+}
+
+.image-myfriendrquests{
+    -fx-image: url("/images/requests.png");
+    -fx-background-size: 20;
+}
+
+.image-myfriendrquestssend{
+
+    -fx-background-size: 20;
+    -fx-image: url("/images/send.png");
+}
+
