@@ -1,6 +1,9 @@
 package com.example.lab6.controller;
 
-import com.example.lab6.model.*;
+import com.example.lab6.model.FriendshipDTO;
+import com.example.lab6.model.Message;
+import com.example.lab6.model.User;
+import com.example.lab6.model.UserDTO;
 import com.example.lab6.service.FriendRequestService;
 import com.example.lab6.service.FriendshipService;
 import com.example.lab6.service.MessageService;
@@ -12,7 +15,6 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -20,20 +22,17 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
-import javafx.scene.text.TextAlignment;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.util.Callback;
-
 
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserController implements Observer<MessageChangeEvent> {
+public class HomeController implements Observer<MessageChangeEvent> {
 
     public Label welcomeText;
     public ImageView xImage;
@@ -331,7 +330,7 @@ public class UserController implements Observer<MessageChangeEvent> {
             Scene scene = new Scene(root);
             dialogStage.setScene(scene);
 
-            UserProfileController userProfileController = loader.getController();
+            MyProfileController userProfileController = loader.getController();
             userProfileController.setServices(userService, friendshipService, friendRequestService, messageService, dialogStage, email);
 
             dialogStage.show();
