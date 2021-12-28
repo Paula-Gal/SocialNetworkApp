@@ -75,7 +75,9 @@
     -fx-font-size: 15;
 }
 
-
+.x-style {
+    -fx-image: url("/images/x.png");
+}
 
 .chat-view{
     -fx-border-color: transparent;
@@ -96,3 +98,18 @@
     -fx-image: url("/images/send.png");
 }
 
+.image-activity-report {
+    -fx-image: url("/images/society.png");
+}
+
+.image-messages-report {
+    -fx-image: url("/images/card.png");
+}
+
+.date-image {
+    -fx-image: url("/images/check.png");
+}
+
+.label-white-text {
+    -fx-text-fill: white;
+}

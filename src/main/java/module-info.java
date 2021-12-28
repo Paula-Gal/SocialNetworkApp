@@ -6,6 +6,7 @@ module com.example.lab6 {
     requires com.dlsc.formsfx;
     requires org.kordamp.bootstrapfx.core;
     requires java.sql;
+    requires org.apache.pdfbox;
 
     opens com.example.lab6 to javafx.fxml;
     exports com.example.lab6;
