@@ -18,7 +18,6 @@
     src: url('../fonts/poppins/Poppins-SemiBold.ttf');
 }
 
-
 .label {
     -fx-font-family: Poppins-Bold;
 }
@@ -28,7 +27,7 @@
     -fx-background-size: cover;
 }
 
-.tab-style{
+.tab-style {
     -fx-background-color: white;
     -fx-background-radius: 40;
 }
@@ -42,11 +41,12 @@
     -fx-position-shape: center;
 }
 
-.label-tab{
+.label-tab {
     -fx-font-size: 12px;
     -fx-text-fill: black;
 }
-.label-tab:hover{
+
+.label-tab:hover {
     -fx-text-fill: #ff589e;
 }
 
@@ -56,34 +56,29 @@
     -fx-background-color: transparent;
     -fx-text-fill: white;
 }
+
 /*mere@gmail.com
 */
 .x-style {
     -fx-image: url("/images/x.png");
 }
 
-
-
-
 .list-cell:filled:hover {
     -fx-background-color: #ff589e;
 
     -fx-text-fill: white;
 }
-.list-cell{
+
+.list-cell {
     -fx-background-color: white;
     -fx-background-radius: 40;
 }
 
 .list-view {
     -fx-background-radius: 40;
-
 }
 
-
-
-
-.conversation-style{
+.conversation-style {
     -fx-background-color: #e8b5d2;
     -fx-text-fill: white;
     -fx-padding: 5;
@@ -103,7 +98,7 @@
     -fx-text-fill: black;
 }
 
-.background-mymessage{
+.background-mymessage {
     -fx-background-color: #c570e5;
     -fx-text-fill: white;
     -fx-background-position: right center;
@@ -113,26 +108,28 @@
 
 }
 
-
-.background-message{
+.background-message {
     -fx-background-color: #cebade;
     -fx-text-fill: black;
     -fx-background-position: left center;
     -fx-padding: 5;
-
-
 }
 
-.label-conversation{
+.label-conversation {
     -fx-background-radius: 20, 20, 0, 0;
     -fx-border-radius: 20, 20, 0, 0;
 }
 
-.conversation-field{
+.conversation-field {
     -fx-background-color: white;
     -fx-text-fill: #4d4d4d;
 }
 
-.image-send{
+.image-send {
     -fx-image: url("/images/sendmessage.png");
+}
+
+.close-chat {
+    -fx-image: url("/images/cancel.png");
+    -fx-opacity: 0.6;
 }

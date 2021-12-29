@@ -11,22 +11,16 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.InputMethodEvent;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.net.URL;
-import java.util.EventListener;
-import java.util.ResourceBundle;
 
 public class LoginController {
 
@@ -75,7 +69,7 @@ public class LoginController {
             Scene scene = new Scene(root);
             dialogStage.setScene(scene);
 
-            UserController userViewController = loader.getController();
+            HomeController userViewController = loader.getController();
             userViewController.setServices(userService, friendshipService, friendRequestService, messageService, dialogStage, id);
 
             dialogStage.show();

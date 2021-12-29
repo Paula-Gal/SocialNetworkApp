@@ -1,6 +1,9 @@
 package com.example.lab6.controller;
 
-import com.example.lab6.model.*;
+import com.example.lab6.model.FriendshipDTO;
+import com.example.lab6.model.Message;
+import com.example.lab6.model.User;
+import com.example.lab6.model.UserDTO;
 import com.example.lab6.service.FriendRequestService;
 import com.example.lab6.service.FriendshipService;
 import com.example.lab6.service.MessageService;
@@ -12,7 +15,6 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -20,20 +22,17 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
-import javafx.scene.text.TextAlignment;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.util.Callback;
-
 
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserController implements Observer<MessageChangeEvent> {
+public class HomeController implements Observer<MessageChangeEvent> {
 
     public Label welcomeText;
     public ImageView xImage;
@@ -52,8 +51,6 @@ public class UserController implements Observer<MessageChangeEvent> {
     private FriendRequestService friendRequestService;
     private MessageService messageService;
 
-
-
     Stage stage;
     private Long to;
     private String email;
@@ -66,7 +63,6 @@ public class UserController implements Observer<MessageChangeEvent> {
 
     @FXML
     private Label userLabel;
-
 
     @FXML
     TableView<FriendshipDTO> tableViewFriends;
@@ -87,9 +83,9 @@ public class UserController implements Observer<MessageChangeEvent> {
         chatView.setItems(model);
         conversation.setVisible(false);
 
-       }
+    }
 
-    public void setServices(UserService userService, FriendshipService friendshipService, FriendRequestService friendRequestService,MessageService messageService,  Stage stage, String email) {
+    public void setServices(UserService userService, FriendshipService friendshipService, FriendRequestService friendRequestService, MessageService messageService, Stage stage, String email) {
         this.userService = userService;
         this.friendshipService = friendshipService;
         this.friendRequestService = friendRequestService;
@@ -99,17 +95,11 @@ public class UserController implements Observer<MessageChangeEvent> {
         welcomeText.setText("Welcome, " + userService.exists(email).getFirstName() + " " + userService.exists(email).getLastName() + "!");
         setFriendsList();
         messageService.addObserver(this);
-
     }
-
-
 
     public void onHandleBack(ActionEvent actionEvent) {
         stage.close();
     }
-
-
-
 
     public void onSearchLabel(MouseEvent mouseEvent) {
         searchField.setVisible(true);
@@ -126,9 +116,7 @@ public class UserController implements Observer<MessageChangeEvent> {
             });
         } else
             listView.setVisible(false);
-
     }
-
 
     public void onSearchField(KeyEvent keyEvent) {
         listView.setVisible(true);
@@ -136,7 +124,6 @@ public class UserController implements Observer<MessageChangeEvent> {
         listView.setItems(null);
         //listView.setPrefHeight(26*modelUser.size());
         listView.setItems(modelUser);
-
     }
 
     private void setFriendsList() {
@@ -163,7 +150,7 @@ public class UserController implements Observer<MessageChangeEvent> {
                     img.setFitHeight(20);
                     button.setGraphic(img);
                     button.setStyle("-fx-background-color: transparent");
-                    label.setText(userDTO.getNume());
+                    label.setText("  " + userDTO.getNume());
                     label.setPrefWidth(90);
                     GridPane pane = new GridPane();
                     pane.getStyleClass().add("gridpane");
@@ -179,7 +166,7 @@ public class UserController implements Observer<MessageChangeEvent> {
                         // emailTo = user.getEmail();
                         setConversationList();
                     });
-                    button.setOnAction(event ->{
+                    button.setOnAction(event -> {
                         try {
                             FXMLLoader loader = new FXMLLoader();
                             loader.setLocation(getClass().getResource("/views/friendProfile.fxml"));
@@ -194,7 +181,7 @@ public class UserController implements Observer<MessageChangeEvent> {
                             dialogStage.setScene(scene);
 
                             FriendProfileController friendProfileController = loader.getController();
-                            friendProfileController.setServices(userService, friendshipService, friendRequestService, dialogStage, email,userDTO.getEmailDTO());
+                            friendProfileController.setServices(userService, friendshipService, friendRequestService, dialogStage, email, userDTO.getEmailDTO());
 
                             dialogStage.show();
 
@@ -207,10 +194,7 @@ public class UserController implements Observer<MessageChangeEvent> {
             }
         });
 
-
-
-        chatView.setPrefHeight(50*model.size());
-
+        chatView.setPrefHeight(50 * model.size());
     }
 
     @FXML
@@ -226,10 +210,9 @@ public class UserController implements Observer<MessageChangeEvent> {
             // emailTo = user.getEmail();
             setConversationList();
 */
-
     }
 
-    public void setConversationList(){
+    public void setConversationList() {
         conversationList.setItems(modelMessages);
         conversationList.setCellFactory(
                 param -> new ListCell<Message>() {
@@ -241,10 +224,10 @@ public class UserController implements Observer<MessageChangeEvent> {
                             setGraphic(null);
 
                         } else {
-                         setText(message.getMessage());
+                            setText(message.getMessage());
                             if (message.getFrom().getId().equals(userService.exists(email).getId())) {
-                               // label.setTextAlignment(TextAlignment.RIGHT);
-                               getStyleClass().add("background-mymessage");
+                                // label.setTextAlignment(TextAlignment.RIGHT);
+                                getStyleClass().add("background-mymessage");
 
                                 setAlignment(Pos.CENTER_RIGHT);
                                 //setText(message.getMessage());
@@ -252,15 +235,14 @@ public class UserController implements Observer<MessageChangeEvent> {
                             } else {
                                 getStyleClass().add("background-message");
                             }
-                           setGraphic(label);
+                            setGraphic(label);
                         }
                     }
-
 
                 });
     }
 
-    public void setConversation(Long to){
+    public void setConversation(Long to) {
         List<Message> messages = messageService.getConversation(userService.exists(email).getId(), to);
        /* List<String> mess = new ArrayList<>();
         messages.forEach(x -> {
@@ -270,28 +252,26 @@ public class UserController implements Observer<MessageChangeEvent> {
         */
 
         modelMessages.setAll(messages);
-
     }
 
-    public void onSendMessage(ActionEvent actionEvent) {
+    public void onSendMessage(MouseEvent actionEvent) {
         String message = writeMessageField.getText();
-        List<Long> tos =  new ArrayList<>();
+        List<Long> tos = new ArrayList<>();
         tos.add(to);
         messageService.sendMessage(userService.exists(email).getId(), tos, message);
     }
+
     public void setModel() {
         try {
             List<FriendshipDTO> friends = friendshipService.getFriendships(userService.exists(email).getId());
             List<UserDTO> users = new ArrayList<>();
             friends.forEach(x -> {
-                if(userService.findPhoto(x.getUser().getEmail()) == null) {
+                if (userService.findPhoto(x.getUser().getEmail()) == null) {
                     UserDTO userDto = new UserDTO(x.getUser());
                     userDto.setUrlPhoto("/images/profile.png");
                     userDto.setEmailDTO(x.getUser().getEmail());
                     users.add(userDto);
-                }
-                else
-                {
+                } else {
                     UserDTO userDto = new UserDTO(x.getUser());
                     userDto.setUrlPhoto(userService.findPhoto(x.getUser().getEmail()));
                     userDto.setEmailDTO(x.getUser().getEmail());
@@ -313,8 +293,6 @@ public class UserController implements Observer<MessageChangeEvent> {
         listView.setVisible(false);
     }
 
-
-
     public void myProfileClicked(MouseEvent mouseEvent) {
         // create a new stage for the popup dialog.
         try {
@@ -331,7 +309,7 @@ public class UserController implements Observer<MessageChangeEvent> {
             Scene scene = new Scene(root);
             dialogStage.setScene(scene);
 
-            UserProfileController userProfileController = loader.getController();
+            MyProfileController userProfileController = loader.getController();
             userProfileController.setServices(userService, friendshipService, friendRequestService, messageService, dialogStage, email);
 
             dialogStage.show();
@@ -360,20 +338,22 @@ public class UserController implements Observer<MessageChangeEvent> {
             dialogStage.setScene(scene);
 
             FriendProfileController friendProfileController = loader.getController();
-            friendProfileController.setServices(userService, friendshipService, friendRequestService, dialogStage, email,user.getEmail());
+            friendProfileController.setServices(userService, friendshipService, friendRequestService, dialogStage, email, user.getEmail());
 
             dialogStage.show();
 
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
     }
 
     @Override
     public void update(MessageChangeEvent messageChangeEvent) {
         setConversation(to);
         setConversationList();
+    }
+
+    public void onCloseConversation(MouseEvent mouseEvent) {
+        conversation.setVisible(false);
     }
 }

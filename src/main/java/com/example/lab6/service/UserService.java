@@ -1,12 +1,13 @@
 package com.example.lab6.service;
 
-import com.example.lab6.controller.UserController;
-import com.example.lab6.model.*;
+import com.example.lab6.model.Friendship;
+import com.example.lab6.model.FriendshipDTO;
+import com.example.lab6.model.Tuple;
+import com.example.lab6.model.User;
 import com.example.lab6.model.validators.UserValidator;
 import com.example.lab6.model.validators.ValidationException;
 import com.example.lab6.repository.Repository;
 import com.example.lab6.repository.UserRepository;
-import com.example.lab6.utils.events.ChangeEventType;
 import com.example.lab6.utils.events.UserChangeEvent;
 import com.example.lab6.utils.observer.Observable;
 import com.example.lab6.utils.observer.Observer;
@@ -14,9 +15,8 @@ import com.example.lab6.utils.observer.Observer;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.function.Predicate;
@@ -31,13 +31,12 @@ public class UserService implements Observable<UserChangeEvent> {
 
     public UserService(UserRepository<Long, User> repoUser, Repository<Tuple<Long, Long>, Friendship> repoFriendship, UserValidator userValidator) {
         this.repoUser = repoUser;
-        this.repoFriendship =  repoFriendship;
+        this.repoFriendship = repoFriendship;
         this.userValidator = userValidator;
         //setFriendships();
     }
 
     /**
-     *
      * @param entity must be not null
      * @return entity if is saved
      * throw ValidationException if the entity already exits
@@ -48,32 +47,30 @@ public class UserService implements Observable<UserChangeEvent> {
             if (repoUser.findOneByEmail(entity.getEmail()) != null)
                 throw new ValidationException("Email already exists");
             return repoUser.save(entity);
-        }
-        catch (ValidationException ex){
+        } catch (ValidationException ex) {
             throw new ValidationException(ex.getMessage());
         }
     }
 
     /**
-     *
      * @param id must be not null
      * @return the entity if is removed
      * throw ValidationException if ID does not exist
      */
     public User remove(Long id) {
-        if(repoUser.findOne(id) == null)
+        if (repoUser.findOne(id) == null)
             throw new ValidationException("Does not exist!");
         removeallFriendships(repoUser.findOne(id));
         return repoUser.remove(repoUser.findOne(id));
     }
 
-    public void removeallFriendships(User user){
-        for(Friendship friendship: repoFriendship.findAll())
-        {
-            if(friendship.getE1() == user.getId() || friendship.getE2() == user.getId()){
+    public void removeallFriendships(User user) {
+        for (Friendship friendship : repoFriendship.findAll()) {
+            if (friendship.getE1() == user.getId() || friendship.getE2() == user.getId()) {
                 repoFriendship.remove(friendship);
             }
-        }}
+        }
+    }
 //    /**
 //     *
 //     * @return number of connected components
@@ -110,7 +107,7 @@ public class UserService implements Observable<UserChangeEvent> {
 //    }
 
 
-    public List<User> getUsers(){
+    public List<User> getUsers() {
         Iterable<User> list = repoUser.findAll();
         List<User> users = new ArrayList<>();
         list.forEach(users::add);
@@ -118,6 +115,7 @@ public class UserService implements Observable<UserChangeEvent> {
         return users;
 
     }
+
     /**
      * upload the list of friends for every user
      */
@@ -130,26 +128,25 @@ public class UserService implements Observable<UserChangeEvent> {
     }*
 
      */
-
-    public User update(User user){
+    public User update(User user) {
         repoUser.update(user);
         return user;
     }
 
-    public User exists(String email){
+    public User exists(String email) {
         return repoUser.findOneByEmail(email);
     }
 
-    public List<User> filter1(Long id, String str){
+    public List<User> filter1(Long id, String str) {
 
         Iterable<User> userIterable = repoUser.findAll();
         List<User> usersList = new ArrayList<>();
         userIterable.forEach(usersList::add);
 
-        Predicate<User> firstName = x->x.getFirstName().toLowerCase(Locale.ROOT).contains(str.toLowerCase(Locale.ROOT));
-        Predicate<User> lastName = x->x.getLastName().toLowerCase(Locale.ROOT).contains(str.toLowerCase(Locale.ROOT));
-        Predicate<User> friends = x-> !x.getFriendsList().contains(repoUser.findOne(id));
-        Predicate<User> user = x-> !x.getId().equals(id);
+        Predicate<User> firstName = x -> x.getFirstName().toLowerCase(Locale.ROOT).contains(str.toLowerCase(Locale.ROOT));
+        Predicate<User> lastName = x -> x.getLastName().toLowerCase(Locale.ROOT).contains(str.toLowerCase(Locale.ROOT));
+        Predicate<User> friends = x -> !x.getFriendsList().contains(repoUser.findOne(id));
+        Predicate<User> user = x -> !x.getId().equals(id);
 
 
         Predicate<User> userPredicate = firstName.or(lastName);
@@ -161,7 +158,7 @@ public class UserService implements Observable<UserChangeEvent> {
 
     }
 
-    private List<Observer<UserChangeEvent>> observers=new ArrayList<>();
+    private List<Observer<UserChangeEvent>> observers = new ArrayList<>();
 
 
     @Override
@@ -176,7 +173,7 @@ public class UserService implements Observable<UserChangeEvent> {
 
     @Override
     public void notifyObservers(UserChangeEvent t) {
-        observers.stream().forEach(x->x.update(t));
+        observers.stream().forEach(x -> x.update(t));
     }
 
     public static String getSecurePassword(String password) {
@@ -198,23 +195,49 @@ public class UserService implements Observable<UserChangeEvent> {
 
     public boolean checkPassword(String inputPassword, String email) {
 
-       String hashedInputPassword = getSecurePassword(inputPassword);
+        String hashedInputPassword = getSecurePassword(inputPassword);
 
         return (hashedInputPassword).equals(exists(email).getPassword());
     }
 
-    public void savePictre(String email, String url){
+    public void savePictre(String email, String url) {
         repoUser.savePicture(email, url);
     }
 
-    public void updatePictre(String email, String url){
+    public void updatePictre(String email, String url) {
         repoUser.updatePicture(email, url);
     }
 
-    public String findPhoto(String email){
+    public String findPhoto(String email) {
         return repoUser.findPhoto(email);
     }
 
+    public List<FriendshipDTO> getFriendshipsByDate(LocalDateTime startDate, LocalDateTime endDate, Long loggedUser) {
+        Iterable<Friendship> friendships = repoFriendship.findAll();
+        List<FriendshipDTO> friendshipDTOS = new ArrayList<>();
 
+        friendships.forEach(x -> {
+            if (x.getE1().equals(loggedUser)) {
+                FriendshipDTO friendshipDTO = new FriendshipDTO(repoUser.findOne(x.getE2()), x.getDate());
+                friendshipDTOS.add(friendshipDTO);
+            } else if(x.getE2().equals(loggedUser)) {
+                FriendshipDTO friendshipDTO = new FriendshipDTO(repoUser.findOne(x.getE1()), x.getDate());
+                friendshipDTOS.add(friendshipDTO);
+            }
+        });
+
+        Predicate<FriendshipDTO> isAfter = x -> x.getDate().isAfter(startDate);
+        Predicate<FriendshipDTO> isBefore = x -> x.getDate().isBefore(endDate);
+        Predicate<FriendshipDTO> isEqual = x -> x.getDate().isEqual(endDate);
+        Predicate<FriendshipDTO> isFinal = isAfter.and(isBefore).or(isEqual);
+
+        List<FriendshipDTO> friends = friendshipDTOS.stream().filter(isFinal).collect(Collectors.toList());
+
+        return friends;
+    }
+
+    public User getUserByID(Long userID) {
+        return repoUser.findOne(userID);
+    }
 }
 
