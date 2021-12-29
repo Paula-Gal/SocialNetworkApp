@@ -338,7 +338,7 @@ public class MyProfileController implements Observer<FriendRequestChangeEvent> {
         });
 
         contentStream.newLine();
-        contentStream.showText("The messages between " + start.toLocalDate());
+        contentStream.showText("The messages between " + start.toLocalDate() + " and " + end.toLocalDate());
         contentStream.newLine();
         messages.forEach(x -> {
             try {
@@ -390,7 +390,7 @@ public class MyProfileController implements Observer<FriendRequestChangeEvent> {
         contentStream.setLeading(14.5f);
 
         //The content
-        contentStream.showText("The messages between " + start.toLocalDate() + " " + end.toLocalDate() + " from " + fromUser);
+        contentStream.showText("The messages between " + start.toLocalDate() + " " + end.toLocalDate() + " from " + userService.getUserByID(fromUser).getFirstName() + " " + userService.getUserByID(fromUser).getLastName());
         contentStream.newLine();
         messages.forEach(x -> {
             try {

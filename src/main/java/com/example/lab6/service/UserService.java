@@ -220,7 +220,7 @@ public class UserService implements Observable<UserChangeEvent> {
             if (x.getE1().equals(loggedUser)) {
                 FriendshipDTO friendshipDTO = new FriendshipDTO(repoUser.findOne(x.getE2()), x.getDate());
                 friendshipDTOS.add(friendshipDTO);
-            } else {
+            } else if(x.getE2().equals(loggedUser)) {
                 FriendshipDTO friendshipDTO = new FriendshipDTO(repoUser.findOne(x.getE1()), x.getDate());
                 friendshipDTOS.add(friendshipDTO);
             }
@@ -234,6 +234,10 @@ public class UserService implements Observable<UserChangeEvent> {
         List<FriendshipDTO> friends = friendshipDTOS.stream().filter(isFinal).collect(Collectors.toList());
 
         return friends;
+    }
+
+    public User getUserByID(Long userID) {
+        return repoUser.findOne(userID);
     }
 }
 
