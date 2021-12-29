@@ -38,6 +38,16 @@ dependencies {
         exclude(group: 'org.openjfx')
     }
     implementation('org.kordamp.bootstrapfx:bootstrapfx-core:0.4.0')
+    implementation 'org.postgresql:postgresql:42.3.1'
+
+    implementation 'pdfbox:pdfbox:0.7.3'
+    implementation 'org.apache.pdfbox:pdfbox:2.0.24'
+    implementation 'org.apache.pdfbox:pdfbox-tools:2.0.24'
+//    implementation 'org.apache.pdfbox:pdfbox-war:1.8.16'
+    implementation 'org.apache.pdfbox:pdfbox-examples:2.0.24'
+//    implementation 'org.apache.pdfbox:pdfbox-app:2.0.24'
+    implementation 'org.apache.pdfbox:pdfbox-debugger:2.0.24'
+    implementation 'org.apache.pdfbox:pdfbox-ant:1.8.16'
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
