@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class MessageService implements Observable<MessageChangeEvent> {
@@ -71,8 +72,6 @@ public class MessageService implements Observable<MessageChangeEvent> {
 
         if (existentFriendship.size() != to.size())
             throw new ValidationException("The message was sent only to friends!");
-
-
     }
 
     /**
@@ -179,6 +178,55 @@ public class MessageService implements Observable<MessageChangeEvent> {
         return result;
     }
 
+    public List<MessageDTO> getMessagesByDate(LocalDateTime startDate, LocalDateTime endDate, Long loggedUser) {
+        Iterable<MessageDTO> messages = repoMessage.findAll();
+        List<MessageDTO> messageDTOS = new ArrayList<>();
+        List<Long> tos = new ArrayList<>();
+        tos.add(loggedUser);
+
+        messages.forEach(x -> {
+            Long to = x.getTo().get(0);
+            if (to.equals(loggedUser)) {
+                MessageDTO message = new MessageDTO(x.getFrom(), tos, x.getMessage(), x.getDate(), x.getReply());
+                messageDTOS.add(message);
+            }
+        });
+
+        Predicate<MessageDTO> isAfter = x -> x.getDate().isAfter(startDate);
+        Predicate<MessageDTO> isBefore = x -> x.getDate().isBefore(endDate);
+        Predicate<MessageDTO> isEqual = x -> x.getDate().isEqual(endDate);
+        Predicate<MessageDTO> isFinal = isAfter.and(isBefore).or(isEqual);
+
+        List<MessageDTO> messageDTOS1 = messageDTOS.stream().filter(isFinal).collect(Collectors.toList());
+
+        return messageDTOS1;
+    }
+
+    public List<MessageDTO> getMessagesFromAFriend(LocalDateTime startDate, LocalDateTime endDate, Long loggedUser, Long fromUser) {
+        Iterable<MessageDTO> messages = repoMessage.findAll();
+        List<MessageDTO> messageDTOS = new ArrayList<>();
+        List<Long> tos = new ArrayList<>();
+        tos.add(loggedUser);
+
+        messages.forEach(x -> {
+            Long to = x.getTo().get(0);
+            Long from  = x.getFrom();
+            if (to.equals(loggedUser) && from.equals(fromUser)) {
+                MessageDTO message = new MessageDTO(x.getFrom(), tos, x.getMessage(), x.getDate(), x.getReply());
+                messageDTOS.add(message);
+            }
+        });
+
+        Predicate<MessageDTO> isAfter = x -> x.getDate().isAfter(startDate);
+        Predicate<MessageDTO> isBefore = x -> x.getDate().isBefore(endDate);
+        Predicate<MessageDTO> isEqual = x -> x.getDate().isEqual(endDate);
+        Predicate<MessageDTO> isFinal = isAfter.and(isBefore).or(isEqual);
+
+        List<MessageDTO> messageDTOS1 = messageDTOS.stream().filter(isFinal).collect(Collectors.toList());
+
+        return messageDTOS1;
+    }
+
     /**
      * print a conversation
      *
@@ -204,6 +252,6 @@ public class MessageService implements Observable<MessageChangeEvent> {
 
     @Override
     public void notifyObservers(MessageChangeEvent t) {
-        observers.forEach(x->x.update(t));
+        observers.forEach(x -> x.update(t));
     }
 }
