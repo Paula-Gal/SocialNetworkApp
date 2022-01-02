@@ -2,7 +2,6 @@ package com.example.lab6.repository.db;
 
 import com.example.lab6.model.Group;
 import com.example.lab6.model.MessageDTO;
-import com.example.lab6.model.User;
 import com.example.lab6.repository.Repository;
 
 import java.sql.*;
@@ -62,7 +61,7 @@ public class GroupDbRepository implements Repository<Long, Group> {
     }
 
     private Group saveMessagesToUsers(Group group) {
-        String sql = "select * from messages_groups where recepient_group = " + group.getId();
+        String sql = "select * from messages_groups where recipient_group = " + group.getId();
         List<MessageDTO> messageDTOList = new ArrayList<>();
         try (Connection connection = DriverManager.getConnection(url, username, password);
              PreparedStatement statement = connection.prepareStatement(sql);
@@ -151,7 +150,7 @@ public class GroupDbRepository implements Repository<Long, Group> {
     private void saveMessages(MessageDTO messages, Long idGroup) {
 
 
-        String sql = "INSERT INTO messages_groups (date, \"from\", message, \"original_message\", recepient_group) VALUES (?, ? , ? ,? , ?)";
+        String sql = "INSERT INTO messages_groups (date, \"from\", message, \"original_message\", recipient_group) VALUES (?, ? , ? ,? , ?)";
 
         try (Connection connection = DriverManager.getConnection(url, username, password);
              PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
