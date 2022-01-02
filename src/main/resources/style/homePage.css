@@ -1,21 +1,21 @@
 @font-face {
     font-family: Poppins-Regular;
-    src: url('../fonts/poppins/Poppins-Regular.ttf');
+    src: url('../images/fonts/poppins/Poppins-Regular.ttf');
 }
 
 @font-face {
     font-family: Poppins-Medium;
-    src: url('../fonts/poppins/Poppins-Medium.ttf');
+    src: url('../images/fonts/poppins/Poppins-Medium.ttf');
 }
 
 @font-face {
     font-family: Poppins-Bold;
-    src: url('../fonts/poppins/Poppins-Bold.ttf');
+    src: url('../images/fonts/poppins/Poppins-Bold.ttf');
 }
 
 @font-face {
     font-family: Poppins-SemiBold;
-    src: url('../fonts/poppins/Poppins-SemiBold.ttf');
+    src: url('../images/fonts/poppins/Poppins-SemiBold.ttf');
 }
 
 .label {
@@ -100,19 +100,20 @@
 
 .background-mymessage {
     -fx-background-color: #c570e5;
+    -fx-background-radius: 40;
     -fx-text-fill: white;
     -fx-background-position: right center;
     -fx-text-alignment: right;
-
-    -fx-padding: 5;
+    -fx-padding: 10;
 
 }
 
 .background-message {
     -fx-background-color: #cebade;
+    -fx-background-radius: 40;
     -fx-text-fill: black;
     -fx-background-position: left center;
-    -fx-padding: 5;
+    -fx-padding: 10;
 }
 
 .label-conversation {
@@ -132,4 +133,44 @@
 .close-chat {
     -fx-image: url("/images/cancel.png");
     -fx-opacity: 0.6;
+}
+
+.image-plus {
+    -fx-image: url("/images/plus.png");
+
+}
+
+.image-setGroup {
+    -fx-image: url("/images/check-mark.png");
+}
+
+.label-createGroup{
+    -fx-text-fill: white;
+    -fx-font-family: Poppins-Medium;
+}
+
+.label-checkbox {
+    -fx-font-family: Poppins-Regular;
+    -fx-font-size: 13px;
+    -fx-text-fill: #fff;
+    -fx-line-height: 1.2;
+
+    -fx-display: block;
+    -fx-position: relative;
+    -fx-padding-left: 26px;
+    -fx-cursor: pointer;
+}
+
+.label-createGroup{
+    -fx-font-family: Poppins-Medium;
+    -fx-text-fill: white;
+    -fx-font-size: 14;
+    -fx-cursor: grab;
+}
+
+.image-name {
+    -fx-image: url("/images/bsocial.png");
+    -fx-background-size: 180, 60;
+    -fx-pref-width: 180;
+    -fx-pref-height: 60;
 }

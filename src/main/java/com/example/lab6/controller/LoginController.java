@@ -47,7 +47,7 @@ public class LoginController {
     private TextField loginField;
 
     public void initialize() {
-        logo.setImage(new Image("/images/icons/social.png"));
+        logo.setImage(new Image("/images/mountain.png"));
         emailIcon.setImage(new Image("/images/user.png"));
         passwordIcon.setImage(new Image("/images/padlock.png"));
         passwordShowTextField.setVisible(false);

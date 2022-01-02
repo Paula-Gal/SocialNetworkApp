@@ -7,7 +7,7 @@ import com.example.lab6.model.User;
 import com.example.lab6.model.validators.UserValidator;
 import com.example.lab6.model.validators.ValidationException;
 import com.example.lab6.repository.Repository;
-import com.example.lab6.repository.UserRepository;
+import com.example.lab6.repository.paging.PagingRepository;
 import com.example.lab6.utils.events.UserChangeEvent;
 import com.example.lab6.utils.observer.Observable;
 import com.example.lab6.utils.observer.Observer;
@@ -25,11 +25,12 @@ import java.util.stream.Collectors;
 
 public class UserService implements Observable<UserChangeEvent> {
 
-    UserRepository<Long, User> repoUser;
+   // UserRepository<Long, User> repoUser;
+    PagingRepository<Long, User> repoUser;
     Repository<Tuple<Long, Long>, Friendship> repoFriendship;
     UserValidator userValidator;
 
-    public UserService(UserRepository<Long, User> repoUser, Repository<Tuple<Long, Long>, Friendship> repoFriendship, UserValidator userValidator) {
+    public UserService(PagingRepository<Long, User> repoUser, Repository<Tuple<Long, Long>, Friendship> repoFriendship, UserValidator userValidator) {
         this.repoUser = repoUser;
         this.repoFriendship = repoFriendship;
         this.userValidator = userValidator;
@@ -71,40 +72,7 @@ public class UserService implements Observable<UserChangeEvent> {
             }
         }
     }
-//    /**
-//     *
-//     * @return number of connected components
-//     */
-//    public int nrConnectedComponents() {
-//
-//        int nr = 0;
-//        // setFriendships();
-//        Graph graph = new Graph(repoUser);
-//        graph.createGraph();
-//        final SocialNetwork socialNetwork = new SocialNetwork(graph);
-//        nr = socialNetwork.nrCommunities();
-//        for(User user : repoUser.findAll())
-//            if(user.getFriendsList().size() == 0)
-//                nr = nr + 1;
-//        return nr;
-//    }
 
-//    /**
-//     *
-//     * @return List<User> which contains the user of the longest path
-//     */
-//    public List<User> sociableCommunity() {
-//        //setFriendships();
-//        Graph graph = new Graph(repoUser);
-//        graph.createGraph();
-//        final SocialNetwork longestPath = new SocialNetwork(graph);
-//        List<Integer> path = longestPath.findLongestPath();
-//        System.out.println(path);
-//        List<User> community = new ArrayList<User>();
-//        for(int id: path)
-//            community.add(repoUser.findOne(Long.parseLong(String.valueOf(id))));
-//        return community;
-//    }
 
 
     public List<User> getUsers() {
@@ -116,18 +84,9 @@ public class UserService implements Observable<UserChangeEvent> {
 
     }
 
-    /**
-     * upload the list of friends for every user
-     */
-    /*public void setFriendships(){
-        for(User user: repoUser.findAll()) {
-            for (User user1 : repoFriendship.getFriends(user)) {
-                user.addFriend(user1);
-            }
-        }
-    }*
 
-     */
+
+
     public User update(User user) {
         repoUser.update(user);
         return user;
@@ -158,6 +117,39 @@ public class UserService implements Observable<UserChangeEvent> {
 
     }
 
+    public List<User> friends(Long id, String str) {
+
+        Iterable<Friendship> friendships = repoFriendship.findAll();
+        List<Friendship> friendshipsList = new ArrayList<>();
+        friendships.forEach(friendshipsList::add);
+
+        Predicate<Friendship> id1 = x->x.getE1().equals(id);
+        Predicate<Friendship> id2 = x->x.getE2().equals(id);
+        Predicate<Friendship> friendshipPredicate = id1.or(id2);
+
+        List<Friendship> friends = friendshipsList.stream().filter(friendshipPredicate).collect(Collectors.toList());
+
+
+        List<User> usersList = new ArrayList<>();
+        friends.forEach(x->{
+            if(x.getE1().equals(id))
+                usersList.add(repoUser.findOne(x.getE2()));
+            else
+                usersList.add(repoUser.findOne(x.getE1()));
+        });
+
+        Predicate<User> firstName = x -> x.getFirstName().toLowerCase(Locale.ROOT).contains(str.toLowerCase(Locale.ROOT));
+        Predicate<User> lastName = x -> x.getLastName().toLowerCase(Locale.ROOT).contains(str.toLowerCase(Locale.ROOT));
+        //Predicate<User> friends = x -> x.getFriendsList().contains(repoUser.findOne(id));
+
+        Predicate<User> userPredicate = firstName.or(lastName);
+
+        List<User> users = usersList.stream().filter(userPredicate).collect(Collectors.toList());
+        return users;
+
+        //notifyObservers(new UserChangeEvent(ChangeEventType.UPDATE, ));
+
+    }
     private List<Observer<UserChangeEvent>> observers = new ArrayList<>();
 
 
