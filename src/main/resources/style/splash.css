@@ -1,0 +1,12 @@
+
+.logo-image {
+    -fx-image: url("/images/bsocial.png");
+    -fx-background-size: 180, 60;
+    -fx-pref-width: 180;
+    -fx-pref-height: 60;
+}
+
+.root {
+    -fx-background-image: url("images/society.png");
+    -fx-background-size: cover;
+}

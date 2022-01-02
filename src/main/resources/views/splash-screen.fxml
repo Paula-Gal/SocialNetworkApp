@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.ImageView?>
+
+<?import javafx.scene.layout.HBox?>
+<HBox style="-fx-background-image: url(images/splash-background.jpg)" stylesheets="/style/splash.css" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" spacing="20.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.lab6.controller.SplashScreenController">
+   <children>
+      <ImageView styleClass="logo-image" fx:id="logoImage" fitHeight="150.0" fitWidth="200.0" layoutX="200.0" layoutY="111.0" pickOnBounds="true" preserveRatio="true" />
+   </children>
+</HBox>

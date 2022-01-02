@@ -23,14 +23,13 @@
 }
 
 .root {
-    -fx-background-image: url("/images/bg.jpg");
+    -fx-background-image: url("/images/login-back-v2.png");
     -fx-background-size: cover;
 }
 
 .wrap-input100 {
     -fx-width: 100%;
     -fx-position: relative;
-
     -fx-margin-bottom: 30px;
 }
 .validate-input {
@@ -51,12 +50,14 @@
 }
 
 .labelTitle {
-    -fx-font-size: 30px;
+    -fx-start-margin: 10 10;
+    -fx-font-size: 25px;
+    -fx-font: Poppins-Bold;
     -fx-text-fill: white;
 }
 
 .labelTitle:hover {
-    -fx-text-fill: #3f72af;
+    -fx-text-fill:#b224ef;
 }
 
 .purpleBox {
@@ -88,6 +89,7 @@
     -fx-border-radius: 10px;
     -fx-background-radius: 20;
     -fx-text-fill: black;
+    -fx-font: Poppins-Bold;
 }
 
 .button:hover {
