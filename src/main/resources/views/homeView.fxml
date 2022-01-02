@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.TextField?>
@@ -13,8 +14,8 @@
    <children>
       <AnchorPane layoutX="44.0" layoutY="16.0" prefHeight="50.0" prefWidth="820.0" styleClass="tab-style">
          <children>
-            <ImageView fitHeight="59.0" fitWidth="91.0" layoutX="27.0" layoutY="6.0" pickOnBounds="true" preserveRatio="true" />
-            <HBox layoutX="381.0" layoutY="10.0" prefHeight="38.0" prefWidth="600.0">
+            <ImageView fitHeight="59.0" fitWidth="91.0" layoutX="27.0" layoutY="6.0" pickOnBounds="true" preserveRatio="true"  />
+            <HBox layoutX="381.0" layoutY="10.0" prefHeight="38.0" prefWidth="559.0">
                <children>
                   <Label fx:id="searchLabel" onMouseClicked="#onSearchLabel" prefHeight="38.0" prefWidth="120.0" styleClass="label-tab" text="Search" textAlignment="CENTER" />
                   <Label prefHeight="38.0" prefWidth="120.0" styleClass="label-tab" text="Posts" textAlignment="CENTER" />
@@ -22,13 +23,14 @@
                   <Label fx:id="profileLabel" contentDisplay="CENTER" onMouseClicked="#myProfileClicked" prefHeight="38.0" prefWidth="120.0" styleClass="label-tab" text="My profile" textAlignment="CENTER" />
                </children>
             </HBox>
+            <ImageView fx:id="imageName" fitHeight="50.0" fitWidth="178.0" layoutX="45.0" layoutY="4.0" pickOnBounds="true" preserveRatio="true" />
          </children>
       </AnchorPane>
       <Label fx:id="welcomeText" layoutX="7.0" layoutY="82.0" prefHeight="104.0" prefWidth="337.0" styleClass="area-style" />
       <TextField fx:id="searchField" layoutX="380.0" layoutY="160.0" onKeyTyped="#onSearchField" prefHeight="26.0" prefWidth="224.0" promptText="Search user..." styleClass="text-field" />
       <ListView fx:id="listView" layoutX="380.0" layoutY="186.0" onMouseClicked="#onSearchedClicked" prefHeight="26.0" prefWidth="224.0" />
       <ImageView fitHeight="20.0" fitWidth="17.0" layoutX="583.0" layoutY="166.0" onMouseClicked="#onXClicked" pickOnBounds="true" preserveRatio="true" styleClass="x-style" fx:id="xImage" />
-      <ListView fx:id="chatView" layoutX="1016.0" layoutY="109.0" prefHeight="38.0" prefWidth="224.0" styleClass="list-view, list-cell" />
+      <ListView fx:id="chatView" layoutX="1016.0" layoutY="134.0" prefHeight="38.0" prefWidth="224.0" styleClass="list-view, list-cell" />
       <AnchorPane fx:id="conversation" layoutX="673.0" layoutY="407.0" prefHeight="392.0" prefWidth="325.0" styleClass="chat-style">
          <children>
             <VBox layoutY="1.0" prefHeight="392.0" prefWidth="325.0" styleClass="conversation-style">
@@ -59,5 +61,11 @@
          </children>
       </AnchorPane>
       <HBox layoutX="98.0" layoutY="256.0" prefHeight="100.0" prefWidth="200.0" />
+      <Label layoutX="1016.0" layoutY="40.0" onMouseClicked="#createGroupConversation" text="Create a group conversation" styleClass="label-createGroup" />
+      <TextField fx:id="addingFriendsToConversation" layoutX="1017.0" layoutY="69.0" onKeyTyped="#onAddingFriendsField" />
+      <ImageView fx:id="setGroupImage" fitHeight="26.0" fitWidth="23.0" layoutX="1200.0" layoutY="69.0" onMouseClicked="#setConversationGroup" pickOnBounds="true" preserveRatio="true" styleClass="image-setGroup" />
+      <ListView fx:id="groupView" layoutX="1016.0" layoutY="95.0" onMouseClicked="#onAddingFriendsToGroupList" prefHeight="26.0" prefWidth="150.0" />
+      <ListView fx:id="groupsView" layoutX="1016.0" layoutY="134.0" prefHeight="38.0" prefWidth="224.0" styleClass="list-view, list-cell" />
+      <CheckBox fx:id="friendsGroupsCheckBox" layoutX="918.0" layoutY="145.0" mnemonicParsing="false" onAction="#friendsOrGroups" styleClass="label-checkbox" text="Groups" />
    </children>
 </AnchorPane>

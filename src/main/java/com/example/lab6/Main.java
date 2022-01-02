@@ -6,10 +6,10 @@ import com.example.lab6.model.validators.FriendshipValidator;
 import com.example.lab6.model.validators.UserValidator;
 import com.example.lab6.repository.Repository;
 import com.example.lab6.repository.UserRepository;
-import com.example.lab6.repository.db.FriendRequestDbRepository;
-import com.example.lab6.repository.db.FriendshipDbRepository;
-import com.example.lab6.repository.db.MessageDbRepository;
-import com.example.lab6.repository.db.UserDbRepository;
+import com.example.lab6.repository.db.*;
+import com.example.lab6.repository.paging.Page;
+import com.example.lab6.repository.paging.Pageable;
+import com.example.lab6.repository.paging.PagingRepository;
 import com.example.lab6.service.FriendRequestService;
 import com.example.lab6.service.FriendshipService;
 import com.example.lab6.service.MessageService;
@@ -22,11 +22,11 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 public class Main extends Application {
-    UserRepository<Long, User> repoDb;
+    PagingRepository<Long, User> repoDb;
     Repository<Tuple<Long, Long>, Friendship> repoDbf;
     Repository<Long, MessageDTO> messageDb;
     Repository<Tuple<Long, Long>, FriendRequest> frRequestDb;
-
+    Repository<Long, Group> repoDbGroup;
     UserService userService;
     FriendshipService friendshipService;
     MessageService messageService;
@@ -34,16 +34,16 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        repoDb = new UserDbRepository("jdbc:postgresql://localhost:5432/socialnetworkapp", "postgres","paula123", new UserValidator());
-        repoDbf = new FriendshipDbRepository("jdbc:postgresql://localhost:5432/socialnetworkapp", "postgres","paula123", new FriendshipValidator());
-        messageDb = new MessageDbRepository("jdbc:postgresql://localhost:5432/socialnetworkapp", "postgres", "paula123");
-        frRequestDb = new FriendRequestDbRepository("jdbc:postgresql://localhost:5432/socialnetworkapp", "postgres", "paula123");
-
+        repoDb = new UserDbRepository("jdbc:postgresql://localhost:5432/userApp", "postgres", "qwaszx12", new UserValidator());
+        repoDbf = new FriendshipDbRepository("jdbc:postgresql://localhost:5432/userApp", "postgres","qwaszx12", new FriendshipValidator());
+        messageDb = new MessageDbRepository("jdbc:postgresql://localhost:5432/userApp", "postgres", "qwaszx12");
+        frRequestDb = new FriendRequestDbRepository("jdbc:postgresql://localhost:5432/userApp", "postgres", "qwaszx12");
+        repoDbGroup = new GroupDbRepository("jdbc:postgresql://localhost:5432/userApp", "postgres", "qwaszx12");
 
 
         userService = new UserService(repoDb, repoDbf, new UserValidator());
         friendshipService = new FriendshipService(repoDb, repoDbf);
-        messageService = new MessageService(messageDb, repoDb, repoDbf);
+        messageService = new MessageService(messageDb, repoDb, repoDbf, repoDbGroup);
         friendRequestService = new FriendRequestService(frRequestDb, repoDb, repoDbf);
         //                //stage.setFullScreen(trueice(frRequestDb, repoDb, repoDbf);
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("/views/login-view.fxml"));

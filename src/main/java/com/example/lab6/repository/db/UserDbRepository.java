@@ -3,12 +3,15 @@ import com.example.lab6.model.User;
 import com.example.lab6.model.validators.Validator;
 
 import com.example.lab6.repository.UserRepository;
+import com.example.lab6.repository.paging.Page;
+import com.example.lab6.repository.paging.Pageable;
+import com.example.lab6.repository.paging.PagingRepository;
 
 import java.sql.*;
 import java.util.HashSet;
 import java.util.Set;
 
-public class UserDbRepository implements UserRepository<Long, User> {
+public class UserDbRepository implements PagingRepository<Long, User> {
     private String url;
     private String username;
     private String password;
@@ -42,6 +45,7 @@ public class UserDbRepository implements UserRepository<Long, User> {
                     User utilizator = new User(firstName, lastName, email, password);
                     utilizator.setId(id);
                     return utilizator;
+
                // }
             }
         } catch (SQLException e) {
@@ -49,6 +53,7 @@ public class UserDbRepository implements UserRepository<Long, User> {
         }
         return null;
     }
+
 
     @Override
     public User findOneByEmail(String email) {
@@ -241,4 +246,8 @@ public class UserDbRepository implements UserRepository<Long, User> {
         return null;
     }
 
+    @Override
+    public Page<User> findAll(Pageable pageable) {
+        return null;
+    }
 }

@@ -86,6 +86,7 @@ public class MessageDbRepository implements Repository<Long, MessageDTO> {
         return null;
     }
 
+
     @Override
     public MessageDTO save(MessageDTO entity) {
         if (entity == null)

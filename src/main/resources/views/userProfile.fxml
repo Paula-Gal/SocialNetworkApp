@@ -21,7 +21,7 @@
                 <Label layoutX="76.0" layoutY="150.0" onMouseClicked="#onEditLabelClicked" styleClass="label-edit" text="Edit profile picture!" />
             </children>
         </AnchorPane>
-        <Button layoutX="296.0" layoutY="56.0" mnemonicParsing="false" onAction="#onMenuButton" prefHeight="26.0" prefWidth="24.0" />
+        <Button layoutX="16.0" layoutY="87.0" mnemonicParsing="false" onAction="#onMenuButton" prefHeight="30.0" prefWidth="30.0" styleClass="button-menu" />
         <ListView fx:id="friendsRequestsView" layoutX="397.0" layoutY="183.0" prefHeight="206.0" prefWidth="200.0" />
         <GridPane fx:id="hamburgerMenu" alignment="CENTER_RIGHT" layoutX="103.0" layoutY="153.0" styleClass="anchor-style">
             <columnConstraints>
@@ -45,7 +45,7 @@
                 <ImageView fitHeight="30.0" fitWidth="42.0" pickOnBounds="true" preserveRatio="true" styleClass="image-messages-report" GridPane.columnIndex="1" GridPane.rowIndex="3" />
             </children>
         </GridPane>
-        <DatePicker fx:id="datePicker" layoutX="95.0" layoutY="286.0" onMouseClicked="#onResetDatePicker" promptText="Start Date" />
+        <DatePicker fx:id="datePicker" layoutX="95.0" layoutY="286.0" nodeOrientation="LEFT_TO_RIGHT" onMouseClicked="#onResetDatePicker" promptText="Start Date" />
         <ImageView fx:id="dateImage" fitHeight="31.0" fitWidth="44.0" layoutX="39.0" layoutY="283.0" onMouseClicked="#onReady" pickOnBounds="true" preserveRatio="true" styleClass="date-image" />
         <TextField fx:id="searchField" layoutX="67.0" layoutY="355.0" onKeyTyped="#onSearchField" prefHeight="26.0" prefWidth="224.0" promptText="Search user..." styleClass="text-field" />
         <ListView fx:id="listView" layoutX="67.0" layoutY="381.0" onMouseClicked="#onSearchedClicked" prefHeight="40.0" prefWidth="224.0" />

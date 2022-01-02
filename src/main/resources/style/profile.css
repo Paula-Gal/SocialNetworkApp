@@ -1,21 +1,21 @@
 @font-face {
     font-family: Poppins-Regular;
-    src: url('../fonts/poppins/Poppins-Regular.ttf');
+    src: url('../images/fonts/poppins/Poppins-Regular.ttf');
 }
 
 @font-face {
     font-family: Poppins-Medium;
-    src: url('../fonts/poppins/Poppins-Medium.ttf');
+    src: url('../images/fonts/poppins/Poppins-Medium.ttf');
 }
 
 @font-face {
     font-family: Poppins-Bold;
-    src: url('../fonts/poppins/Poppins-Bold.ttf');
+    src: url('../images/fonts/poppins/Poppins-Bold.ttf');
 }
 
 @font-face {
     font-family: Poppins-SemiBold;
-    src: url('../fonts/poppins/Poppins-SemiBold.ttf');
+    src: url('../images/fonts/poppins/Poppins-SemiBold.ttf');
 }
 
 .root{
@@ -84,7 +84,10 @@
 }
 
 .button-menu{
-    -fx-image: url("/images/menu.png");
+    -fx-background-image: url("/images/menu.png");
+    -fx-background-color: white;
+    -fx-background-size: cover;
+
 }
 
 .image-myfriendrquests{

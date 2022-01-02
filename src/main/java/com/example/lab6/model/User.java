@@ -19,6 +19,10 @@ public class User extends Entity<Long>{
         };
     }
 
+    public User(String firstName, String lastName) {
+        super();
+    }
+
     public String getEmail() {
         return email;
     }
