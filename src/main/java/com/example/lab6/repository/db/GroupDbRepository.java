@@ -36,7 +36,7 @@ public class GroupDbRepository implements Repository<Long, Group> {
                 String name = resultSet.getString("name");
                 Group group = new Group(name, new ArrayList<>());
                 group.setId(id);
-                String sql1 = "select * from group_user where \"user\" = " + id;
+                String sql1 = "select * from groups_users where \"user\" = " + id;
                 List<Long> users = new ArrayList<>();
                 try (Connection connection1 = DriverManager.getConnection(url, username, password);
                      PreparedStatement statement1 = connection1.prepareStatement(sql1);
@@ -60,7 +60,11 @@ public class GroupDbRepository implements Repository<Long, Group> {
     }
 
     private Group saveMessagesToUsers(Group group) {
+<<<<<<< HEAD
         String sql = "select * from messages_groups where \"recipient_group\" = " + group.getId();
+=======
+        String sql = "select * from messages_groups where recipient_group = " + group.getId();
+>>>>>>> events
         List<MessageDTO> messageDTOList = new ArrayList<>();
         try (Connection connection = DriverManager.getConnection(url, username, password);
              PreparedStatement statement = connection.prepareStatement(sql);
@@ -100,7 +104,11 @@ public class GroupDbRepository implements Repository<Long, Group> {
                 String name = resultSet.getString("name");
                 Group group = new Group(name, new ArrayList<>());
                 group.setId(id);
+<<<<<<< HEAD
                 String sql1 = "select * from group_users where \"user\" = " + id;
+=======
+                String sql1 = "select * from groups_users where \"user\" = " + id;
+>>>>>>> events
                 List<Long> users = new ArrayList<>();
                 try (Connection connection1 = DriverManager.getConnection(url, username, password);
                      PreparedStatement statement1 = connection1.prepareStatement(sql1);
@@ -149,7 +157,11 @@ public class GroupDbRepository implements Repository<Long, Group> {
     private void saveMessages(MessageDTO messages, Long idGroup) {
 
 
+<<<<<<< HEAD
         String sql = "INSERT INTO messages_groups (date, \"from\", message, \"original_message\", \"recipient_group\") VALUES (?, ? , ? ,? , ?)";
+=======
+        String sql = "INSERT INTO messages_groups (date, \"from\", message, \"original_message\", recipient_group) VALUES (?, ? , ? ,? , ?)";
+>>>>>>> events
 
         try (Connection connection = DriverManager.getConnection(url, username, password);
              PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -172,7 +184,11 @@ public class GroupDbRepository implements Repository<Long, Group> {
     }
 
     public void saveUsersToGroup(Long id, List<Long> users) {
+<<<<<<< HEAD
         String sql = "INSERT INTO group_users (\"user\", \"group\") VALUES (?,?)";
+=======
+        String sql = "INSERT INTO groups_users (\"user\", \"group\") VALUES (?,?)";
+>>>>>>> events
 
         try (Connection connection = DriverManager.getConnection(url, username, password);
              PreparedStatement ps = connection.prepareStatement(sql)) {
