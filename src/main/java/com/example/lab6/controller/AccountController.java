@@ -4,22 +4,24 @@ import com.example.lab6.model.User;
 import com.example.lab6.model.validators.ValidationException;
 import com.example.lab6.service.FriendRequestService;
 import com.example.lab6.service.UserService;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-
 import javafx.scene.control.Alert;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
-import java.util.Arrays;
 
 public class AccountController {
 
     public TextField emailTextField;
     public TextField passwordTextField;
+    public CheckBox hidePasswordCheckbox;
+    public PasswordField passwordField;
     private UserService userService;
     FriendRequestService friendRequestService;
     Stage stage;
@@ -32,6 +34,7 @@ public class AccountController {
     }
 
     public void initialize() {
+        passwordTextField.setVisible(false);
     }
 
     @FXML
@@ -68,6 +71,7 @@ public class AccountController {
         User user = new User(firstName, lastName, email, hashedPass);
 
         saveUser(user);
+        stage.close();
     }
 
     private void saveUser(User user) {
@@ -82,4 +86,15 @@ public class AccountController {
         }
     }
 
+    public void showpass(ActionEvent actionEvent) {
+        if (hidePasswordCheckbox.isSelected()) {
+            passwordField.setVisible(false);
+            passwordTextField.setVisible(true);
+            passwordTextField.setText(passwordField.getText());
+        } else {
+            passwordField.setVisible(true);
+            passwordTextField.setVisible(false);
+            passwordField.setText(passwordField.getText());
+        }
+    }
 }

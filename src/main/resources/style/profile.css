@@ -19,7 +19,7 @@
 }
 
 .root{
-    -fx-background-image:url("/images/backgroundProfile.png");
+    -fx-background-image:url("/images/profile-back.png");
     -fx-background-size: cover;
 }
 
@@ -87,7 +87,6 @@
     -fx-background-image: url("/images/menu.png");
     -fx-background-color: white;
     -fx-background-size: cover;
-
 }
 
 .image-myfriendrquests{
@@ -115,4 +114,13 @@
 
 .label-white-text {
     -fx-text-fill: white;
+}
+
+.profile-photo {
+    -fx-shape: circle;
+    -fx-position-shape: center;
+    -fx-background-size: contain;
+    -fx-pref-height: 60;
+    -fx-pref-width: 50;
+    -fx-background-radius: 100;
 }

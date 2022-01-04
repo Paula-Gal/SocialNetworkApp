@@ -52,7 +52,7 @@
 .labelTitle {
     -fx-start-margin: 10 10;
     -fx-font-size: 25px;
-    -fx-font: Poppins-Bold;
+    -fx-font-family: Poppins-Bold;
     -fx-text-fill: white;
 }
 
@@ -89,7 +89,7 @@
     -fx-border-radius: 10px;
     -fx-background-radius: 20;
     -fx-text-fill: black;
-    -fx-font: Poppins-Bold;
+    -fx-font-family: Poppins-Bold;
 }
 
 .button:hover {

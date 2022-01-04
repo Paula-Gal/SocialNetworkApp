@@ -23,12 +23,10 @@
 }
 
 .root {
-    -fx-background-image: url("/images/bg.jpg");
+    -fx-background-image: url("/images/login-back.png");
     -fx-background-size: cover;
+    -fx-font-family: Poppins-Bold;
 }
-
-
-
 
 .purpleBox {
     -fx-border-radius: 10px;
@@ -48,6 +46,7 @@
 .label-credentials {
     -fx-font-size: 15px;
     -fx-text-fill: white;
+    -fx-font-family: Poppins-Bold;
 }
 
 .create-button {
@@ -74,4 +73,22 @@
 
 .no-account-label {
     -fx-text-fill: white;
+}
+
+.label-checkbox {
+    -fx-font-family: Poppins-Regular;
+    -fx-font-size: 13px;
+    -fx-text-fill: #fff;
+    -fx-line-height: 1.2;
+
+    -fx-display: block;
+    -fx-position: relative;
+    -fx-padding-left: 26px;
+    -fx-cursor: pointer;
+}
+
+.logo {
+    -fx-image: url("/images/mountain.png");
+    -fx-pref-height: 50;
+    -fx-pref-width: 50;
 }

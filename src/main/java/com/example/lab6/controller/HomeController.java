@@ -68,7 +68,7 @@ public class HomeController implements Observer<MessageChangeEvent> {
     ObservableList<String> modelMessage = FXCollections.observableArrayList();
     ObservableList<Message> modelMessages = FXCollections.observableArrayList();
 
-    ObservableList<Group> modelGroup= FXCollections.observableArrayList();
+    ObservableList<Group> modelGroup = FXCollections.observableArrayList();
 
     @FXML
     private Label userLabel;
@@ -140,7 +140,7 @@ public class HomeController implements Observer<MessageChangeEvent> {
         listView.setVisible(true);
         setModelUser();
         listView.setItems(null);
-        listView.setPrefHeight(26*modelUser.size());
+        listView.setPrefHeight(26 * modelUser.size());
         listView.setItems(modelUser);
     }
 
@@ -205,6 +205,7 @@ public class HomeController implements Observer<MessageChangeEvent> {
                     label.setOnMouseClicked(event -> {
                         conversationLabel.setText("Your conversation with " + userDTO.getNume());
                         conversation.setVisible(true);
+                        conversationList.scrollTo(modelMessages.size()-1);
                         to = userDTO.getIdUser();
                         setConversation(to);
                         // emailTo = user.getEmail();
@@ -246,7 +247,7 @@ public class HomeController implements Observer<MessageChangeEvent> {
         modelGroup.setAll(groups);
     }
 
-    public void setGroupView(){
+    public void setGroupView() {
         setModelGroups();
         groupsView.setItems(modelGroup);
         groupsView.setCellFactory(param -> new ListCell<Group>() {
@@ -273,6 +274,7 @@ public class HomeController implements Observer<MessageChangeEvent> {
                     label.setOnMouseClicked(event -> {
                         conversationLabel.setText("Your conversation with " + group.getName());
                         conversation.setVisible(true);
+                        conversationList.scrollTo(modelMessages.size()-1);
                         groupFinal.setId(group.getId());
                         groupFinal.setMembers(group.getMembers());
                         groupFinal.setMessages(group.getMessages());
@@ -290,11 +292,11 @@ public class HomeController implements Observer<MessageChangeEvent> {
     }
 
 
-
-
-
     public void setConversationList() {
         conversationList.setItems(modelMessages);
+
+        conversationList.scrollTo(modelMessages.size()-1);
+
         conversationList.setCellFactory(
                 param -> new ListCell<Message>() {
                     protected final Label label = new Label();
@@ -309,7 +311,7 @@ public class HomeController implements Observer<MessageChangeEvent> {
 
                             if (message.getFrom().getId().equals(userService.exists(email).getId())) {
                                 // label.setTextAlignment(TextAlignment.RIGHT);
-                               // getStyleClass().add("background-mymessage");
+                                // getStyleClass().add("background-mymessage");
                                 label.getStyleClass().add("background-mymessage");
                                 setAlignment(Pos.CENTER_RIGHT);
                                 //setText(message.getMessage());
@@ -325,11 +327,12 @@ public class HomeController implements Observer<MessageChangeEvent> {
     }
 
     private void setModelMessages(Group group) {
-        if(group.getMessages() != null) {
+        if (group.getMessages() != null) {
             List<Message> messages = messageService.convertMessages(group.getMessages());
             modelMessages.setAll(messages);
         }
     }
+
     public void setConversationListGroup() {
         conversationList.setItems(modelMessages);
         conversationList.setCellFactory(
@@ -343,7 +346,6 @@ public class HomeController implements Observer<MessageChangeEvent> {
 
                         } else {
 
-
                             if (message.getFrom().getId().equals(userService.exists(email).getId())) {
                                 // label.setTextAlignment(TextAlignment.RIGHT);
                                 // getStyleClass().add("background-mymessage");
@@ -353,7 +355,7 @@ public class HomeController implements Observer<MessageChangeEvent> {
                                 //setText(message.getMessage());
 
                             } else {
-                                label.setText(message.getFrom().getFirstName() + ": " +message.getMessage());
+                                label.setText(message.getFrom().getFirstName() + ": " + message.getMessage());
 
                                 label.getStyleClass().add("background-message");
                             }
@@ -366,11 +368,12 @@ public class HomeController implements Observer<MessageChangeEvent> {
 
 
     public void setModelUserFriends() {
-        List<User> friends =  userService.friends(userService.exists(email).getId(), addingFriendsToConversation.getText());
+        List<User> friends = userService.friends(userService.exists(email).getId(), addingFriendsToConversation.getText());
         modelUserFriends.setAll(friends);
 
     }
-    public void setCreateGroupView(){
+
+    public void setCreateGroupView() {
         groupView.setItems(modelUserFriends);
         groupView.setCellFactory(
                 param -> new ListCell<User>() {
@@ -404,7 +407,7 @@ public class HomeController implements Observer<MessageChangeEvent> {
                     }
 
                 });
-        groupView.setPrefHeight(35*modelUserFriends.size());
+        groupView.setPrefHeight(35 * modelUserFriends.size());
     }
 
     public void setConversation(Long to) {
@@ -419,36 +422,29 @@ public class HomeController implements Observer<MessageChangeEvent> {
         modelMessages.setAll(messages);
     }
 
-   /* public void setConversationGroup(){
-        List<Message> messages = messageService.getConversationGroup(userService.exists(email).getId(), groupConversation);
-        modelMessages.setAll(messages);
-    }
-*/
+    /* public void setConversationGroup(){
+         List<Message> messages = messageService.getConversationGroup(userService.exists(email).getId(), groupConversation);
+         modelMessages.setAll(messages);
+     }
+ */
     public void onSendMessage(MouseEvent actionEvent) {
         String message = writeMessageField.getText();
-        if(friendsGroupsCheckBox.isSelected()){
+        if (friendsGroupsCheckBox.isSelected()) {
             List<Long> recipients = new ArrayList<>();
-            groupFinal.getMembers().forEach(x->{
-                if(!x.equals(userService.exists(email).getId()))
+            groupFinal.getMembers().forEach(x -> {
+                if (!x.equals(userService.exists(email).getId()))
                     recipients.add(x);
             });
-            MessageDTO messageDTO = new MessageDTO(userService.exists(email).getId(), recipients, message, LocalDateTime.now(),  null);
+            MessageDTO messageDTO = new MessageDTO(userService.exists(email).getId(), recipients, message, LocalDateTime.now(), null);
             messageService.sendMessageGroup(groupFinal, messageDTO);
+            writeMessageField.setText("");
+        } else {
+            List<Long> tos = new ArrayList<>();
+            tos.add(to);
+            messageService.sendMessage(userService.exists(email).getId(), tos, message);
+            writeMessageField.setText("");
         }
-
-        else{List<Long> tos = new ArrayList<>();
-        tos.add(to);
-        messageService.sendMessage(userService.exists(email).getId(), tos, message);}
-//        int lengthConversation = messageService.getConversation(userService.exists(email).getId(), to).size();
-//
-//        if(lengthConversation == 0)
-//             messageService.sendMessage(userService.exists(email).getId(), tos, message);
-//        else {
-//            Long lastIdMessage = messageService.getConversation(userService.exists(email).getId(), to).get(lengthConversation-1).getId();
-//            messageService.replyToOne(lastIdMessage, userService.exists(email).getId(), message);
-//        }
     }
-
 
 
     public void onXClicked(MouseEvent mouseEvent) {
@@ -472,6 +468,7 @@ public class HomeController implements Observer<MessageChangeEvent> {
             //dialogStage.initOwner(primaryStage);
             Scene scene = new Scene(root);
             dialogStage.setScene(scene);
+            dialogStage.setMaximized(true);
 
             MyProfileController userProfileController = loader.getController();
             userProfileController.setServices(userService, friendshipService, friendRequestService, messageService, dialogStage, email);
@@ -513,13 +510,13 @@ public class HomeController implements Observer<MessageChangeEvent> {
 
     @Override
     public void update(MessageChangeEvent messageChangeEvent) {
-        if(friendsGroupsCheckBox.isSelected()) {
+        if (friendsGroupsCheckBox.isSelected()) {
             setModelMessages(groupFinal);
             setConversationListGroup();
+        } else {
+            setConversation(to);
+            setConversationList();
         }
-        else{
-        setConversation(to);
-        setConversationList();}
 
     }
 
@@ -528,11 +525,9 @@ public class HomeController implements Observer<MessageChangeEvent> {
     }
 
 
-
-
     public void setConversationGroup(MouseEvent mouseEvent) {
         final String[] name = {""};
-        groupConversation.forEach(x->{
+        groupConversation.forEach(x -> {
 
             name[0] = name[0] + userService.getUserByID(x).getFirstName() + userService.getUserByID(x).getLastName() + " ";
         });
@@ -559,17 +554,16 @@ public class HomeController implements Observer<MessageChangeEvent> {
         groupView.setVisible(true);
         setModelUserFriends();
         setCreateGroupView();
-        if(addingFriendsToConversation.getText().isEmpty())
+        if (addingFriendsToConversation.getText().isEmpty())
             groupView.setVisible(false);
     }
 
     public void friendsOrGroups(ActionEvent actionEvent) {
-        if(friendsGroupsCheckBox.isSelected()){
+        if (friendsGroupsCheckBox.isSelected()) {
             setGroupView();
             groupsView.setVisible(true);
             chatView.setVisible(false);
-        }
-        else{
+        } else {
             setFriendsList();
             groupsView.setVisible(false);
             chatView.setVisible(true);

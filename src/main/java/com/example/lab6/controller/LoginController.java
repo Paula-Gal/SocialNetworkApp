@@ -68,6 +68,7 @@ public class LoginController {
             //dialogStage.initOwner(primaryStage);
             Scene scene = new Scene(root);
             dialogStage.setScene(scene);
+            dialogStage.setMaximized(true);
 
             HomeController userViewController = loader.getController();
             userViewController.setServices(userService, friendshipService, friendRequestService, messageService, dialogStage, id);
@@ -90,9 +91,10 @@ public class LoginController {
 
             // Create the dialog Stage.
             Stage dialogStage = new Stage();
-            dialogStage.setTitle("Edit Message");
+            dialogStage.setTitle("Create Account");
             dialogStage.initModality(Modality.WINDOW_MODAL);
             //dialogStage.initOwner(primaryStage);
+            dialogStage.setMaximized(true);
             Scene scene = new Scene(root);
             dialogStage.setScene(scene);
 
@@ -173,7 +175,6 @@ public class LoginController {
             MessageAlert.showErrorMessage(null, "The password is incorrect!");
         else {
             showUserDialog(email);
-            stage.close();
         }
     }
 }
