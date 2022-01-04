@@ -1,10 +1,10 @@
 package com.example.lab6.repository.db;
+
 import com.example.lab6.model.User;
 import com.example.lab6.model.validators.Validator;
-
-import com.example.lab6.repository.UserRepository;
 import com.example.lab6.repository.paging.Page;
 import com.example.lab6.repository.paging.Pageable;
+import com.example.lab6.repository.paging.Paginator;
 import com.example.lab6.repository.paging.PagingRepository;
 
 import java.sql.*;
@@ -248,6 +248,7 @@ public class UserDbRepository implements PagingRepository<Long, User> {
 
     @Override
     public Page<User> findAll(Pageable pageable) {
-        return null;
+        Paginator<User> paginator = new Paginator<>(pageable, this.findAll());
+        return paginator.paginate();
     }
 }

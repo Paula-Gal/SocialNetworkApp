@@ -145,7 +145,10 @@ public class MyProfileController implements Observer<FriendRequestChangeEvent> {
     }
 
     public void onMenuButton(ActionEvent actionEvent) {
-        hamburgerMenu.setVisible(true);
+        if (hamburgerMenu.isVisible())
+            hamburgerMenu.setVisible(false);
+        else
+            hamburgerMenu.setVisible(true);
     }
 
     public void setFriendsRequestsView() {
