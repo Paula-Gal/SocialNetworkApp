@@ -269,11 +269,6 @@ public class MessageService implements Observable<MessageChangeEvent> {
     }
 
     @Override
-    public void removeObserver(Observer<MessageChangeEvent> e) {
-
-    }
-
-    @Override
     public void notifyObservers(MessageChangeEvent t) {
         observers.forEach(x -> x.update(t));
     }
@@ -300,4 +295,10 @@ public class MessageService implements Observable<MessageChangeEvent> {
         groupIterable.forEach(groups::add);
        return groups;
     }
+
+
+    @Override
+    public void removeObserver(Observer<MessageChangeEvent> e) {
+    }
 }
+

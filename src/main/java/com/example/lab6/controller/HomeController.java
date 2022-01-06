@@ -205,7 +205,7 @@ public class HomeController implements Observer<MessageChangeEvent> {
                     label.setOnMouseClicked(event -> {
                         conversationLabel.setText("Your conversation with " + userDTO.getNume());
                         conversation.setVisible(true);
-                        conversationList.scrollTo(modelMessages.size()-1);
+                        conversationList.scrollTo(modelMessages.size() - 1);
                         to = userDTO.getIdUser();
                         setConversation(to);
                         // emailTo = user.getEmail();
@@ -274,7 +274,7 @@ public class HomeController implements Observer<MessageChangeEvent> {
                     label.setOnMouseClicked(event -> {
                         conversationLabel.setText("Your conversation with " + group.getName());
                         conversation.setVisible(true);
-                        conversationList.scrollTo(modelMessages.size()-1);
+                        conversationList.scrollTo(modelMessages.size() - 1);
                         groupFinal.setId(group.getId());
                         groupFinal.setMembers(group.getMembers());
                         groupFinal.setMessages(group.getMessages());
@@ -295,7 +295,7 @@ public class HomeController implements Observer<MessageChangeEvent> {
     public void setConversationList() {
         conversationList.setItems(modelMessages);
 
-        conversationList.scrollTo(modelMessages.size()-1);
+        conversationList.scrollTo(modelMessages.size() - 1);
 
         conversationList.setCellFactory(
                 param -> new ListCell<Message>() {
@@ -508,18 +508,6 @@ public class HomeController implements Observer<MessageChangeEvent> {
         }
     }
 
-    @Override
-    public void update(MessageChangeEvent messageChangeEvent) {
-        if (friendsGroupsCheckBox.isSelected()) {
-            setModelMessages(groupFinal);
-            setConversationListGroup();
-        } else {
-            setConversation(to);
-            setConversationList();
-        }
-
-    }
-
     public void onCloseConversation(MouseEvent mouseEvent) {
         conversation.setVisible(false);
     }
@@ -569,4 +557,17 @@ public class HomeController implements Observer<MessageChangeEvent> {
             chatView.setVisible(true);
         }
     }
+
+    @Override
+    public void update(MessageChangeEvent messageChangeEvent) {
+        if (friendsGroupsCheckBox.isSelected()) {
+            setModelMessages(groupFinal);
+            setConversationListGroup();
+        } else {
+            setConversation(to);
+            setConversationList();
+        }
+
+    }
+
 }
