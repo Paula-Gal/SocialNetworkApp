@@ -2,14 +2,14 @@ package com.example.lab6.model;
 
 import java.util.List;
 
-public class Page {
+public class PageDTO {
 
     private User admin;
     private List<User> friends;
     private List<MessageDTO> receivedMessages;
     private List<FriendRequest> myReceivedRequests;
 
-    public Page(User admin, List<User> friends, List<MessageDTO> receivedMessages, List<FriendRequest> myReceivedRequests) {
+    public PageDTO(User admin, List<User> friends, List<MessageDTO> receivedMessages, List<FriendRequest> myReceivedRequests) {
         this.admin = admin;
         this.friends = friends;
         this.receivedMessages = receivedMessages;

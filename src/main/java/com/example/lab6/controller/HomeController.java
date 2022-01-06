@@ -13,6 +13,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -21,13 +22,17 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import static java.lang.Math.ceil;
 
 public class HomeController implements Observer<MessageChangeEvent> {
 
@@ -49,6 +54,8 @@ public class HomeController implements Observer<MessageChangeEvent> {
     public ListView groupsView;
     public CheckBox friendsGroupsCheckBox;
     public ImageView imageName;
+    public AnchorPane anchorPagination;
+    public Label messagesLabel;
     private UserService userService;
     private FriendshipService friendshipService;
     private FriendRequestService friendRequestService;
@@ -59,19 +66,14 @@ public class HomeController implements Observer<MessageChangeEvent> {
     private Group groupFinal = new Group();
     private List<Long> groupConversation = new ArrayList<>();
     private String email;
-    private String emailTo;
     ObservableList<String> modelUser = FXCollections.observableArrayList();
     ObservableList<UserDTO> model = FXCollections.observableArrayList();
 
     ObservableList<User> modelUserFriends = FXCollections.observableArrayList();
 
-    ObservableList<String> modelMessage = FXCollections.observableArrayList();
     ObservableList<Message> modelMessages = FXCollections.observableArrayList();
 
     ObservableList<Group> modelGroup = FXCollections.observableArrayList();
-
-    @FXML
-    private Label userLabel;
 
     @FXML
     TableView<FriendshipDTO> tableViewFriends;
@@ -81,6 +83,8 @@ public class HomeController implements Observer<MessageChangeEvent> {
     TableColumn<FriendshipDTO, String> tableColumnFriendLastName;
     @FXML
     TableColumn<FriendshipDTO, LocalDateTime> tableColumnFriendDate;
+    @FXML
+    Pagination pagination = new Pagination();
 
     @FXML
     public void initialize() {
@@ -100,7 +104,6 @@ public class HomeController implements Observer<MessageChangeEvent> {
         conversation.setVisible(false);
         addingFriendsToConversation.setVisible(false);
         setGroupImage.setVisible(false);
-
     }
 
     public void setServices(UserService userService, FriendshipService friendshipService, FriendRequestService friendRequestService, MessageService messageService, Stage stage, String email) {
@@ -113,6 +116,120 @@ public class HomeController implements Observer<MessageChangeEvent> {
         welcomeText.setText("Welcome, " + userService.exists(email).getFirstName() + " " + userService.exists(email).getLastName() + "!");
         setFriendsList();
         messageService.addObserver(this);
+        start();
+        anchorPagination.getChildren().add(pagination);
+    }
+
+    public void start() {
+        pagination.getStyleClass().add("/style/pagination");
+        pagination.getStyleClass().add("/style/pagination-control");
+        pagination.getStyleClass().add("/style/bullet-button");
+        pagination.getStyleClass().add("/style/toggle-button");
+        pagination.getStyleClass().add("/style/button");
+        pagination.setStyle("/style/pagination");
+        pagination.setPageFactory(new Callback<Integer, Node>() {
+
+            @Override
+            public Node call(Integer pageIndex) {
+                return createPage(pageIndex);
+            }
+        });
+
+        int nr_friends = friendshipService.getFriendships(userService.exists(email).getId()).size();
+        double nr = (double) (nr_friends) / (double) itemsPerPage();
+
+        pagination.setPageCount((int) ceil(nr));
+    }
+
+    public int itemsPerPage() {
+        return 2;
+    }
+
+    public VBox createPage(int pageIndex) {
+        VBox box = new VBox();
+        int page = pageIndex * itemsPerPage();
+
+        List<FriendshipDTO> friendshipDTOS = new ArrayList<>();
+        //List<FriendshipDTO> friends = friendshipService.getFriendships(userService.exists(email).getId());
+        //limit
+        friendshipDTOS.addAll(friendshipService.getMyFriendsOnPage((pageIndex) * itemsPerPage(), itemsPerPage(), userService.exists(email).getId()));
+        //List<FriendshipDTO> friendshipDTOS = friendshipService.getMyFriendsOnPage((pageIndex)*itemsPerPage(), itemsPerPage(), userService.exists(email).getId());
+        List<UserDTO> users = new ArrayList<>();
+        friendshipDTOS.forEach(x -> {
+            if (userService.findPhoto(x.getUser().getEmail()) == null) {
+                UserDTO userDto = new UserDTO(x.getUser());
+                userDto.setUrlPhoto("/images/profile.png");
+                userDto.setEmailDTO(x.getUser().getEmail());
+                users.add(userDto);
+            } else {
+                UserDTO userDto = new UserDTO(x.getUser());
+                userDto.setUrlPhoto(userService.findPhoto(x.getUser().getEmail()));
+                userDto.setEmailDTO(x.getUser().getEmail());
+                users.add(userDto);
+            }
+
+        });
+
+        int nr = 0;
+        for (int i = page; i < page + friendshipDTOS.size(); i++) {
+            VBox row = new VBox();
+            int index = nr;
+            ImageView imageView = new ImageView();
+            Button button = new Button();
+            Label label = new Label();
+            imageView.setImage(new Image(users.get(index).getUrlPhoto()));
+            imageView.setFitHeight(40);
+            imageView.setFitWidth(40);
+            ImageView img = new ImageView(new Image("/images/seeProfile.png"));
+            img.setFitWidth(20);
+            img.setFitHeight(20);
+            button.setGraphic(img);
+            button.setStyle("-fx-background-color: transparent");
+            label.setText("  " + users.get(index).getNume());
+            label.setPrefWidth(90);
+            GridPane pane = new GridPane();
+            pane.getStyleClass().add("gridpane");
+            pane.add(imageView, 0, 0);
+            pane.add(label, 1, 0);
+            pane.add(button, 3, 0);
+
+            box.getChildren().add(pane);
+            label.setOnMouseClicked(event -> {
+                conversationLabel.setText("Your conversation with " + users.get(index).getNume());
+                conversation.setVisible(true);
+                conversationList.scrollTo(modelMessages.size() - 1);
+                to = users.get(index).getIdUser();
+                setConversation(to);
+                // emailTo = user.getEmail();
+                setConversationList();
+            });
+            button.setOnAction(event -> {
+                try {
+                    FXMLLoader loader = new FXMLLoader();
+                    loader.setLocation(getClass().getResource("/views/friendProfile.fxml"));
+                    AnchorPane root = loader.load();
+
+                    // Create the dialog Stage.
+                    Stage dialogStage = new Stage();
+                    dialogStage.setTitle("My profile");
+                    dialogStage.initModality(Modality.WINDOW_MODAL);
+                    //dialogStage.initOwner(primaryStage);
+                    Scene scene = new Scene(root);
+                    dialogStage.setScene(scene);
+
+                    FriendProfileController friendProfileController = loader.getController();
+                    friendProfileController.setServices(userService, friendshipService, friendRequestService, dialogStage, email, users.get(index).getEmailDTO());
+
+                    dialogStage.show();
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            });
+            nr++;
+        }
+        return box;
     }
 
     public void onHandleBack(ActionEvent actionEvent) {
@@ -294,9 +411,7 @@ public class HomeController implements Observer<MessageChangeEvent> {
 
     public void setConversationList() {
         conversationList.setItems(modelMessages);
-
         conversationList.scrollTo(modelMessages.size() - 1);
-
         conversationList.setCellFactory(
                 param -> new ListCell<Message>() {
                     protected final Label label = new Label();
@@ -366,11 +481,9 @@ public class HomeController implements Observer<MessageChangeEvent> {
                 });
     }
 
-
     public void setModelUserFriends() {
         List<User> friends = userService.friends(userService.exists(email).getId(), addingFriendsToConversation.getText());
         modelUserFriends.setAll(friends);
-
     }
 
     public void setCreateGroupView() {
@@ -412,21 +525,10 @@ public class HomeController implements Observer<MessageChangeEvent> {
 
     public void setConversation(Long to) {
         List<Message> messages = messageService.getConversation(userService.exists(email).getId(), to);
-       /* List<String> mess = new ArrayList<>();
-        messages.forEach(x -> {
-            mess.add(x.getMessage());
-        });
-
-        */
 
         modelMessages.setAll(messages);
     }
 
-    /* public void setConversationGroup(){
-         List<Message> messages = messageService.getConversationGroup(userService.exists(email).getId(), groupConversation);
-         modelMessages.setAll(messages);
-     }
- */
     public void onSendMessage(MouseEvent actionEvent) {
         String message = writeMessageField.getText();
         if (friendsGroupsCheckBox.isSelected()) {
@@ -445,7 +547,6 @@ public class HomeController implements Observer<MessageChangeEvent> {
             writeMessageField.setText("");
         }
     }
-
 
     public void onXClicked(MouseEvent mouseEvent) {
         searchField.setVisible(false);
@@ -508,6 +609,18 @@ public class HomeController implements Observer<MessageChangeEvent> {
         }
     }
 
+    @Override
+    public void update(MessageChangeEvent messageChangeEvent) {
+        if (friendsGroupsCheckBox.isSelected()) {
+            setModelMessages(groupFinal);
+            setConversationListGroup();
+        } else {
+            setConversation(to);
+            setConversationList();
+        }
+
+    }
+
     public void onCloseConversation(MouseEvent mouseEvent) {
         conversation.setVisible(false);
     }
@@ -558,16 +671,30 @@ public class HomeController implements Observer<MessageChangeEvent> {
         }
     }
 
-    @Override
-    public void update(MessageChangeEvent messageChangeEvent) {
-        if (friendsGroupsCheckBox.isSelected()) {
-            setModelMessages(groupFinal);
-            setConversationListGroup();
-        } else {
-            setConversation(to);
-            setConversationList();
-        }
+    public void openMessagesPage(MouseEvent mouseEvent) {
+        try {
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getResource("/views/messages-view.fxml"));
 
+            AnchorPane root = loader.load();
+
+            // Create the dialog Stage.
+            Stage dialogStage = new Stage();
+            dialogStage.setTitle("My messages");
+            Scene scene = new Scene(root);
+            dialogStage.setScene(scene);
+
+            MessagesController messagesController = loader.getController();
+            messagesController.setServices(messageService,friendshipService,userService, dialogStage, email);
+
+            dialogStage.show();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
+    public void logout(MouseEvent mouseEvent) {
+        stage.close();
+    }
 }

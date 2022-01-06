@@ -2,7 +2,10 @@ package com.example.lab6.repository.db;
 
 
 import com.example.lab6.model.MessageDTO;
-import com.example.lab6.repository.Repository;
+import com.example.lab6.repository.paging.Page;
+import com.example.lab6.repository.paging.Pageable;
+import com.example.lab6.repository.paging.Paginator;
+import com.example.lab6.repository.paging.PagingRepository;
 
 import java.sql.*;
 import java.time.LocalDateTime;
@@ -11,7 +14,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class MessageDbRepository implements Repository<Long, MessageDTO> {
+public class MessageDbRepository implements PagingRepository<Long, MessageDTO> {
     private String url;
     private String username;
     private String password;
@@ -151,4 +154,9 @@ public class MessageDbRepository implements Repository<Long, MessageDTO> {
     }
 
 
+    @Override
+    public Page<MessageDTO> findAll(Pageable pageable) {
+        Paginator<MessageDTO> paginator = new Paginator<>(pageable, this.findAll());
+        return paginator.paginate();
+    }
 }

@@ -5,6 +5,7 @@ import com.example.lab6.model.*;
 import com.example.lab6.model.validators.FriendshipValidator;
 import com.example.lab6.model.validators.UserValidator;
 import com.example.lab6.repository.Repository;
+import com.example.lab6.repository.UserRepository;
 import com.example.lab6.repository.db.*;
 import com.example.lab6.repository.paging.PagingRepository;
 import com.example.lab6.service.FriendRequestService;
@@ -19,9 +20,9 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 public class Main extends Application {
-    PagingRepository<Long, User> repoDb;
-    Repository<Tuple<Long, Long>, Friendship> repoDbf;
-    Repository<Long, MessageDTO> messageDb;
+    UserRepository<Long, User> repoDb;
+    PagingRepository<Tuple<Long, Long>, Friendship> repoDbf;
+    PagingRepository<Long, MessageDTO> messageDb;
     Repository<Tuple<Long, Long>, FriendRequest> frRequestDb;
     Repository<Long, Group> repoDbGroup;
     UserService userService;
@@ -48,13 +49,15 @@ public class Main extends Application {
         Scene scene = new Scene(fxmlLoader.load());
         stage.setTitle("BeSocial");
         stage.setScene(scene);
-       // LoginController helloController = fxmlLoader.getController();
+        //LoginController helloController = fxmlLoader.getController();
         SplashScreenController splashScreenController = fxmlLoader.getController();
         stage.setMaximized(true);
         splashScreenController.setServices(userService, friendshipService, messageService, friendRequestService, stage);
         stage.show();
         splashScreenController.run();
+
     }
+
 
     public static void main(String[] args) {
         launch();
