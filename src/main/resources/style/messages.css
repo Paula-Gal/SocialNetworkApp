@@ -1,0 +1,128 @@
+@font-face {
+    font-family: Poppins-Regular;
+    src: url('../images/fonts/poppins/Poppins-Regular.ttf');
+}
+
+@font-face {
+    font-family: Poppins-Medium;
+    src: url('../images/fonts/poppins/Poppins-Medium.ttf');
+}
+
+@font-face {
+    font-family: Poppins-Bold;
+    src: url('../images/fonts/poppins/Poppins-Bold.ttf');
+}
+
+@font-face {
+    font-family: Poppins-SemiBold;
+    src: url('../images/fonts/poppins/Poppins-SemiBold.ttf');
+}
+
+.root {
+    -fx-background-color: linear-gradient(to top, #b224ef, #7579ff);
+    -fx-font-family: Poppins-Bold;
+    -fx-text-fill: white;
+}
+
+.vl {
+    border-left: 6px solid green;
+    height: 500px;
+}
+
+.button-messages {
+    /*-fx-position: absolute;*/
+    /*-fx-transform: translate(-50%, -50%);*/
+    -fx-width: 60px;
+    -fx-height: 30px;
+    -fx-text-align: center;
+    -fx-line-height: 50px;
+    -fx-font-size: 12px;
+    -fx-font-family: Poppins-Bold;
+    -fx-box-sizing: border-box;
+    -fx-border-radius: 60px;
+    -fx-background-radius: 60;
+    -fx-background-color: white;
+    -fx-text-fill: black;
+    /*-fx-z-index: 1;*/
+}
+.button-messages:hover {
+    -fx-background-color:linear-gradient(to left, #d53369, #cbad6d);
+    /*animation: animate 10s linear infinite;*/
+    -fx-cursor: pointer;
+    -fx-text-fill: white;
+}
+
+.text-field {
+    -fx-border-color: white;
+    -fx-border-width: 0 0 1 0;
+    -fx-background-color: transparent;
+}
+
+.input100 {
+    -fx-font-family: Poppins-Regular;
+    -fx-font-size: 16px;
+    -fx-color: white;
+    -fx-line-height: 1.2;
+
+    -fx-display: block;
+    -fx-width: 100%;
+    -fx-height: 45px;
+    -fx-background: transparent;
+    -fx-text-fill: white;
+}
+
+.image-add {
+    -fx-background-image: url("/images/add.png");
+    -fx-image: url("/images/add.png");
+}
+
+.label-conversation {
+    -fx-background-radius: 20, 20, 0, 0;
+    -fx-border-radius: 20, 20, 0, 0;
+}
+
+.conversation-field {
+    -fx-background-color: white;
+    -fx-text-fill: #4d4d4d;
+    -fx-font-size: 15px;
+}
+
+.image-send {
+    -fx-image: url("/images/send-white.png");
+    -fx-background-image: url("/images/send-white.png");
+}
+
+.image-send:hover {
+    -fx-background-color: linear-gradient(to left, #d53369, #cbad6d);
+}
+
+.pagination-control{
+    -fx-background-color: transparent;
+}
+
+.pagination .pagination-control .toggle-button:selected {
+    -fx-background-color: #c570e5;
+}
+
+.pagination .toggle-button .button{
+    -fx-background-radius:15px;
+    -fx-padding: 0px;
+}
+
+.pagination .button{
+    -fx-padding: 5 15 5 16px;
+}
+
+.pagination .pagination-control .bullet-button:selected {
+    -fx-background-color: transparent, #DDF1F8, #c570e5, white, #c570e5;
+}
+
+.pagination .pagination-control .left-arrow, .right-arrow{
+    -fx-background-color: #DDF1F8, #c570e5;
+}
+
+.pagination {
+    -fx-background-color: white;
+    -fx-background-radius: 20;
+}
+

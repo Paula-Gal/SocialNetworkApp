@@ -4,6 +4,10 @@ import com.example.lab6.model.*;
 import com.example.lab6.model.validators.ValidationException;
 import com.example.lab6.repository.Repository;
 import com.example.lab6.repository.UserRepository;
+import com.example.lab6.repository.paging.Page;
+import com.example.lab6.repository.paging.Pageable;
+import com.example.lab6.repository.paging.PageableImplementation;
+import com.example.lab6.repository.paging.PagingRepository;
 import com.example.lab6.utils.events.ChangeEventType;
 import com.example.lab6.utils.events.MessageChangeEvent;
 import com.example.lab6.utils.observer.Observable;
@@ -13,11 +17,12 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class MessageService implements Observable<MessageChangeEvent> {
-    Repository<Long, MessageDTO> repoMessage;
+    PagingRepository<Long, MessageDTO> repoMessage;
     UserRepository<Long, User> repoUser;
     Repository<Tuple<Long, Long>, Friendship> repoFriendship;
     Repository<Long, Group> repoGroup;
@@ -28,7 +33,7 @@ public class MessageService implements Observable<MessageChangeEvent> {
      * @param repoMessage
      * @param repoUser
      */
-    public MessageService(Repository<Long, MessageDTO> repoMessage, UserRepository<Long, User> repoUser, Repository<Tuple<Long, Long>, Friendship> repoFriendship, Repository<Long, Group> repoGroup) {
+    public MessageService(PagingRepository<Long, MessageDTO> repoMessage, UserRepository<Long, User> repoUser, Repository<Tuple<Long, Long>, Friendship> repoFriendship, Repository<Long, Group> repoGroup) {
         this.repoMessage = repoMessage;
         this.repoUser = repoUser;
         this.repoFriendship = repoFriendship;
@@ -269,11 +274,6 @@ public class MessageService implements Observable<MessageChangeEvent> {
     }
 
     @Override
-    public void removeObserver(Observer<MessageChangeEvent> e) {
-
-    }
-
-    @Override
     public void notifyObservers(MessageChangeEvent t) {
         observers.forEach(x -> x.update(t));
     }
@@ -300,4 +300,38 @@ public class MessageService implements Observable<MessageChangeEvent> {
         groupIterable.forEach(groups::add);
        return groups;
     }
+
+
+    @Override
+    public void removeObserver(Observer<MessageChangeEvent> e) {
+    }
+
+    private Pageable pageable;
+    private int size = 1;
+    private int page = 0;
+
+    public void setPageSize(int size) {
+        this.size = size;
+    }
+
+    //    public void setPageable(Pageable pageable) {
+//        this.pageable = pageable;
+//    }
+    public Set<MessageDTO> getNextMessages() {
+//        Pageable pageable = new PageableImplementation(this.page, this.size);
+//        Page<MessageTask> studentPage = repo.findAll(pageable);
+//        this.page++;
+//        return studentPage.getContent().collect(Collectors.toSet());
+        this.page++;
+        return getMessagesOnPage(this.page);
+    }
+
+    public Set<MessageDTO> getMessagesOnPage(int page) {
+        this.page=page;
+        Pageable pageable = new PageableImplementation(page, this.size);
+        Page<MessageDTO> messagePage = repoMessage.findAll(pageable);
+        return messagePage.getContent().collect(Collectors.toSet());
+    }
+
 }
+

@@ -240,17 +240,6 @@ public class MyProfileController implements Observer<FriendRequestChangeEvent> {
         labelPdfGenerated.setVisible(false);
     }
 
-    @Override
-    public void update(FriendRequestChangeEvent friendRequestChangeEvent) {
-        if (ByMe) {
-            setModelRequestsByMe();
-            setModelRequestsByMe();
-        } else {
-            setModelRequests();
-            setFriendsRequestsView();
-        }
-    }
-
     public void onActivityReport(MouseEvent mouseEvent) {
         start = null;
         end = null;
@@ -452,5 +441,16 @@ public class MyProfileController implements Observer<FriendRequestChangeEvent> {
         xImage.setVisible(false);
         listView.setVisible(false);
         userSavedLabel.setVisible(false);
+    }
+
+    @Override
+    public void update(FriendRequestChangeEvent friendRequestChangeEvent) {
+        if (ByMe) {
+            setModelRequestsByMe();
+            setModelRequestsByMe();
+        } else {
+            setModelRequests();
+            setFriendsRequestsView();
+        }
     }
 }

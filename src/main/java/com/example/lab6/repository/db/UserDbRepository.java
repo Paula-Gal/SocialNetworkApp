@@ -2,16 +2,13 @@ package com.example.lab6.repository.db;
 
 import com.example.lab6.model.User;
 import com.example.lab6.model.validators.Validator;
-import com.example.lab6.repository.paging.Page;
-import com.example.lab6.repository.paging.Pageable;
-import com.example.lab6.repository.paging.Paginator;
-import com.example.lab6.repository.paging.PagingRepository;
+import com.example.lab6.repository.UserRepository;
 
 import java.sql.*;
 import java.util.HashSet;
 import java.util.Set;
 
-public class UserDbRepository implements PagingRepository<Long, User> {
+public class UserDbRepository implements UserRepository<Long, User> {
     private String url;
     private String username;
     private String password;
@@ -244,11 +241,5 @@ public class UserDbRepository implements PagingRepository<Long, User> {
             e.printStackTrace();
         }
         return null;
-    }
-
-    @Override
-    public Page<User> findAll(Pageable pageable) {
-        Paginator<User> paginator = new Paginator<>(pageable, this.findAll());
-        return paginator.paginate();
     }
 }

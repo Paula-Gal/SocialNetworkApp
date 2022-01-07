@@ -48,7 +48,7 @@ public class AccountController {
         String generatedPassword = null;
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-512");
-            //  md.update(salt);
+            //md.update(salt);
             byte[] bytes = md.digest(password.getBytes(StandardCharsets.UTF_8));
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < bytes.length; i++) {
@@ -66,7 +66,7 @@ public class AccountController {
         String firstName = firstNameField.getText();
         String lastName = lastNameField.getText();
         String email = emailTextField.getText();
-        String password = passwordTextField.getText();
+        String password = passwordField.getText();
         String hashedPass = getSecurePassword(password);
         User user = new User(firstName, lastName, email, hashedPass);
 

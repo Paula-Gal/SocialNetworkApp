@@ -173,3 +173,34 @@
     -fx-pref-width: 180;
     -fx-pref-height: 60;
 }
+
+.pagination-control{
+    -fx-background-color: transparent;
+}
+
+.pagination .pagination-control .toggle-button:selected {
+    -fx-background-color: #c570e5;
+
+}
+
+.pagination .toggle-button .button{
+    -fx-background-radius:15px;
+    -fx-padding: 0px;
+}
+.pagination .button{
+    -fx-padding: 5 15 5 16px;
+}
+
+.pagination .pagination-control .bullet-button:selected {
+    -fx-background-color: transparent, #DDF1F8, #c570e5, white, #c570e5;
+}
+
+.pagination .pagination-control .left-arrow, .right-arrow{
+    -fx-background-color: #DDF1F8, #c570e5;
+}
+
+.pagination {
+    -fx-background-color: white;
+    -fx-background-radius: 20;
+}
+

@@ -22,7 +22,7 @@
             </children>
         </AnchorPane>
         <Button layoutX="16.0" layoutY="87.0" mnemonicParsing="false" onAction="#onMenuButton" prefHeight="30.0" prefWidth="30.0" styleClass="button-menu" AnchorPane.leftAnchor="90" />
-        <ListView fx:id="friendsRequestsView" layoutX="397.0" layoutY="183.0" prefHeight="206.0" prefWidth="200.0" />
+        <ListView fx:id="friendsRequestsView" layoutX="397.0" layoutY="183.0" prefHeight="300" prefWidth="250" AnchorPane.topAnchor="160" />
         <GridPane fx:id="hamburgerMenu" alignment="CENTER_RIGHT" layoutX="103.0" layoutY="153.0" styleClass="anchor-style" AnchorPane.leftAnchor="150">
             <columnConstraints>
                 <ColumnConstraints hgrow="SOMETIMES" maxWidth="154.40001220703127" minWidth="10.0" prefWidth="154.40001220703127" />
@@ -36,7 +36,7 @@
             </rowConstraints>
             <children>
                 <Label alignment="CENTER_RIGHT" contentDisplay="CENTER" onMouseClicked="#onMyFriendsRequests" prefHeight="18.0" prefWidth="170.0" text="My Friends Requests" />
-                <Label alignment="CENTER_RIGHT" onMouseClicked="#onSendByMe" prefHeight="18.0" prefWidth="183.0" text="Send by me" GridPane.rowIndex="1" />
+                <Label alignment="CENTER_RIGHT" onMouseClicked="#onSendByMe" prefHeight="18.0" prefWidth="183.0" text="Sent by me" GridPane.rowIndex="1" />
                 <ImageView fitHeight="32.0" fitWidth="44.0" pickOnBounds="true" preserveRatio="true" styleClass="image-myfriendrquests" GridPane.columnIndex="1" />
                 <ImageView fitHeight="30.0" fitWidth="42.0" pickOnBounds="true" preserveRatio="true" styleClass="image-myfriendrquestssend" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                 <Label alignment="CENTER_RIGHT" contentDisplay="CENTER" onMouseClicked="#onActivityReport" prefHeight="18.0" prefWidth="170.0" text="Activity Report" GridPane.rowIndex="2" />
@@ -49,13 +49,13 @@
         <ImageView fx:id="dateImage" fitHeight="31.0" fitWidth="44.0" layoutX="39.0" layoutY="283.0" onMouseClicked="#onReady" pickOnBounds="true" preserveRatio="true" styleClass="date-image" AnchorPane.bottomAnchor="600" AnchorPane.leftAnchor="120" />
         <TextField fx:id="searchField" layoutX="67.0" layoutY="355.0" onKeyTyped="#onSearchField" prefHeight="25.0" prefWidth="174.0" promptText="Search user..." styleClass="text-field" AnchorPane.bottomAnchor="530" AnchorPane.leftAnchor="170" />
         <ListView fx:id="listView" layoutX="67.0" layoutY="381.0" onMouseClicked="#onSearchedClicked" prefHeight="30.0" prefWidth="174.0" AnchorPane.bottomAnchor="505.0" AnchorPane.leftAnchor="170" />
-        <ImageView fitHeight="20.0" fitWidth="17.0" layoutX="40.0" layoutY="355.0" onMouseClicked="#onXClicked" pickOnBounds="true" preserveRatio="true" styleClass="x-style" fx:id="xImage"  AnchorPane.bottomAnchor="535.0" AnchorPane.leftAnchor="150" />
+        <ImageView fitHeight="20.0" fitWidth="17.0" layoutX="40.0" layoutY="355.0" onMouseClicked="#onXClicked" pickOnBounds="true" preserveRatio="true" styleClass="x-style" AnchorPane.bottomAnchor="535.0" AnchorPane.leftAnchor="150" fx:id="xImage" />
         <Label fx:id="labelDateSaved" layoutX="181.0" layoutY="323.0" prefHeight="17.0" prefWidth="102.0" styleClass="label-white-text" text="Interval saved!" AnchorPane.bottomAnchor="580" AnchorPane.leftAnchor="270" />
-        <Label fx:id="labelPdfGenerated" layoutX="89.0" layoutY="323.0" prefHeight="17.0" prefWidth="102.0" styleClass="label-white-text" text="PDF generated!" AnchorPane.bottomAnchor="560" AnchorPane.leftAnchor="267">
+        <Label fx:id="labelPdfGenerated" layoutX="89.0" layoutY="323.0" prefHeight="17.0" prefWidth="102.0" styleClass="label-white-text" text="PDF generated!" AnchorPane.bottomAnchor="560" AnchorPane.leftAnchor="265">
             <opaqueInsets>
                 <Insets right="15.0" />
             </opaqueInsets>
         </Label>
-        <Label AnchorPane.leftAnchor="280" AnchorPane.bottomAnchor="480" fx:id="userSavedLabel" layoutX="200.0" layoutY="435.0" prefHeight="17.0" prefWidth="102.0" styleClass="label-white-text" text="User saved!" />
+        <Label fx:id="userSavedLabel" layoutX="200.0" layoutY="435.0" prefHeight="17.0" prefWidth="102.0" styleClass="label-white-text" text="User saved!" AnchorPane.bottomAnchor="480" AnchorPane.leftAnchor="280" />
     </children>
 </AnchorPane>

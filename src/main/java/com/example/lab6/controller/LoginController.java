@@ -155,12 +155,11 @@ public class LoginController {
 
     @FXML
     void viewpass() {
-        if(hidePasswordCheckbox.isSelected()) {
+        if (hidePasswordCheckbox.isSelected()) {
             passwordTextField.setVisible(false);
             passwordShowTextField.setVisible(true);
             passwordShowTextField.setText(passwordTextField.getText());
-        }
-        else {
+        } else {
             passwordTextField.setVisible(true);
             passwordShowTextField.setVisible(false);
             passwordTextField.setText(passwordShowTextField.getText());
@@ -176,5 +175,27 @@ public class LoginController {
         else {
             showUserDialog(email);
         }
+        //test
+//        try {
+//            FXMLLoader loader = new FXMLLoader();
+//            loader.setLocation(getClass().getResource("/views/messages-view.fxml"));
+//
+//            AnchorPane root = loader.load();
+//
+//            // Create the dialog Stage.
+//            Stage dialogStage = new Stage();
+//            dialogStage.setTitle("My messages");
+//            Scene scene = new Scene(root);
+//            dialogStage.setScene(scene);
+//
+//            MessagesController messagesController = loader.getController();
+//            messagesController.setServices(messageService, friendshipService, userService,dialogStage, email);
+//
+//            dialogStage.show();
+//
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+
     }
 }

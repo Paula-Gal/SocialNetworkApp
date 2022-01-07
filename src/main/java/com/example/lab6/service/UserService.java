@@ -7,7 +7,7 @@ import com.example.lab6.model.User;
 import com.example.lab6.model.validators.UserValidator;
 import com.example.lab6.model.validators.ValidationException;
 import com.example.lab6.repository.Repository;
-import com.example.lab6.repository.paging.PagingRepository;
+import com.example.lab6.repository.UserRepository;
 import com.example.lab6.utils.events.UserChangeEvent;
 import com.example.lab6.utils.observer.Observable;
 import com.example.lab6.utils.observer.Observer;
@@ -26,11 +26,11 @@ import java.util.stream.Collectors;
 public class UserService implements Observable<UserChangeEvent> {
 
    // UserRepository<Long, User> repoUser;
-    PagingRepository<Long, User> repoUser;
+    UserRepository<Long, User> repoUser;
     Repository<Tuple<Long, Long>, Friendship> repoFriendship;
     UserValidator userValidator;
 
-    public UserService(PagingRepository<Long, User> repoUser, Repository<Tuple<Long, Long>, Friendship> repoFriendship, UserValidator userValidator) {
+    public UserService(UserRepository<Long, User> repoUser, Repository<Tuple<Long, Long>, Friendship> repoFriendship, UserValidator userValidator) {
         this.repoUser = repoUser;
         this.repoFriendship = repoFriendship;
         this.userValidator = userValidator;
@@ -73,8 +73,6 @@ public class UserService implements Observable<UserChangeEvent> {
         }
     }
 
-
-
     public List<User> getUsers() {
         Iterable<User> list = repoUser.findAll();
         List<User> users = new ArrayList<>();
@@ -83,8 +81,6 @@ public class UserService implements Observable<UserChangeEvent> {
         return users;
 
     }
-
-
 
 
     public User update(User user) {

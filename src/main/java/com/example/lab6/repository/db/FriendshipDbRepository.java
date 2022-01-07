@@ -3,7 +3,10 @@ package com.example.lab6.repository.db;
 import com.example.lab6.model.Friendship;
 import com.example.lab6.model.Tuple;
 import com.example.lab6.model.validators.Validator;
-import com.example.lab6.repository.Repository;
+import com.example.lab6.repository.paging.Page;
+import com.example.lab6.repository.paging.Pageable;
+import com.example.lab6.repository.paging.Paginator;
+import com.example.lab6.repository.paging.PagingRepository;
 
 import java.sql.*;
 import java.time.LocalDate;
@@ -11,7 +14,7 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
-public class FriendshipDbRepository implements Repository<Tuple<Long, Long>, Friendship> {
+public class FriendshipDbRepository implements PagingRepository<Tuple<Long, Long>, Friendship> {
 
     private String url;
     private String username;
@@ -25,7 +28,6 @@ public class FriendshipDbRepository implements Repository<Tuple<Long, Long>, Fri
         this.username = username;
         this.password = password;
         this.validator = validator;
-
     }
 
     @Override
@@ -172,7 +174,10 @@ public class FriendshipDbRepository implements Repository<Tuple<Long, Long>, Fri
         return null;
     }
 
-
-
+    @Override
+    public Page<Friendship> findAll(Pageable pageable) {
+        Paginator<Friendship> paginator = new Paginator<>(pageable, this.findAll());
+        return paginator.paginate();
+    }
 }
 
