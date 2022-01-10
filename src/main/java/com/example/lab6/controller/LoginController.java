@@ -126,8 +126,6 @@ public class LoginController {
         this.stage = stage;
     }
 
-
-
     @FXML
     void viewpass() {
         if (hidePasswordCheckbox.isSelected()) {
