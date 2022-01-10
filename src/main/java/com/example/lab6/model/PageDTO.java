@@ -16,6 +16,12 @@ public class PageDTO {
         this.myReceivedRequests = myReceivedRequests;
 
     }
+    public PageDTO(User admin, List<User> friends) {
+        this.admin = admin;
+        this.friends = friends;
+
+
+    }
 
     public User getAdmin() {
         return admin;

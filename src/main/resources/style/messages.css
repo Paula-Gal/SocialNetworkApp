@@ -114,15 +114,133 @@
 }
 
 .pagination .pagination-control .bullet-button:selected {
-    -fx-background-color: transparent, #DDF1F8, #c570e5, white, #c570e5;
+    -fx-background-color: transparent;
+    -fx-color-label-visible: transparent;
 }
 
 .pagination .pagination-control .left-arrow, .right-arrow{
     -fx-background-color: #DDF1F8, #c570e5;
 }
 
+
 .pagination {
     -fx-background-color: white;
     -fx-background-radius: 20;
+
+    -fx-alignment: center;
+    -fx-padding: 12;
+    -fx-smooth: true;
+
 }
 
+.anchor{
+
+    -fx-background-position: center;
+    -fx-text-alignment: center;
+    -fx-padding: 20;
+    -fx-smooth: true;
+
+}
+
+.background-mymessage {
+    -fx-background-color: #c570e5;
+    -fx-background-radius: 40;
+    -fx-text-fill: white;
+    -fx-background-position: right center;
+    -fx-text-alignment: right;
+    -fx-padding: 10;
+
+}
+
+.background-message {
+    -fx-background-color: #cebade;
+    -fx-background-radius: 40;
+    -fx-text-fill: black;
+    -fx-background-position: left center;
+    -fx-padding: 10;
+}
+
+
+.pagination > .pagination-control > .control-box {
+    -fx-alignment: center;
+    -fx-padding: 0.416em 1.1em 0 0;
+}
+
+
+.createGroup {
+    -fx-image: url("/images/createGroupImage.png");
+    -fx-background-size: cover;
+}
+
+.menu-dots {
+    -fx-image: url("/images/dots.png");
+    -fx-background-size: cover;
+}
+
+.label-addMembers{
+    -fx-font-family: Poppins-Medium;
+    -fx-text-fill: white;
+    -fx-font-size: 14;
+    -fx-cursor: grab;
+}
+
+.label-name{
+    -fx-font-family: Poppins-Bold;
+    -fx-text-fill: white;
+    -fx-font-size: 17;
+    -fx-cursor: grab;
+}
+
+.conversation-field {
+    -fx-background-color: white;
+    -fx-text-fill: #4d4d4d;
+}
+
+.placeholder{
+    -fx-text-fill: white;
+}
+
+.scroll-pane .content{
+    -fx-background-radius: 20;
+    -fx-border-radius: 20;
+    -fx-padding: 5;
+}
+
+
+
+.vbox{
+    -fx-background-radius: 20;
+    -fx-border-radius: 20;
+    -fx-padding: 5;
+}
+
+
+
+.scroll-bar:horizontal .thumb,
+.scroll-bar:vertical .thumb {
+    -fx-background-color : #dddddd;
+    -fx-background-insets : 2.0, 0.0, 0.0;
+    -fx-background-radius : 0em;
+}
+
+.scroll-bar:horizontal .thumb:hover,
+.scroll-bar:vertical .thumb:hover {
+    -fx-background-color : #9e9e9e;
+    -fx-background-insets : 2.0, 0.0, 0.0;
+    -fx-background-radius : 0em;
+}
+
+
+   .rounded-scroll-pane > .scroll-bar:horizontal .thumb,
+   .rounded-scroll-pane > .scroll-bar:vertical .thumb {
+       -fx-background-color : #dddddd;
+       -fx-background-insets : 2.0, 0.0, 0.0;
+       -fx-background-radius : 2em;
+   }
+
+.rounded-scroll-pane > .scroll-bar:horizontal .thumb:hover,
+.rounded-scroll-pane > .scroll-bar:vertical .thumb:hover {
+    -fx-background-color : #9e9e9e;
+    -fx-background-insets : 2.0, 0.0, 0.0;
+    -fx-background-radius : 2em;
+}

@@ -77,6 +77,8 @@
 
 .x-style {
     -fx-image: url("/images/x.png");
+    -fx-pref-height: 40;
+    -fx-pref-width: 40;
 }
 
 .chat-view{
@@ -123,4 +125,68 @@
     -fx-pref-height: 60;
     -fx-pref-width: 50;
     -fx-background-radius: 100;
+}
+
+
+.pagination-control{
+    -fx-background-color: transparent;
+}
+
+.pagination .pagination-control .toggle-button:selected {
+    -fx-background-color: #c570e5;
+
+}
+
+.pagination .toggle-button .button{
+    -fx-background-radius:15px;
+    -fx-padding: 0px;
+}
+.pagination .button{
+    -fx-padding: 5 15 5 16px;
+}
+
+.pagination .pagination-control .bullet-button:selected {
+    -fx-background-color: transparent, #DDF1F8, #c570e5, white, #c570e5;
+}
+
+.pagination .pagination-control .left-arrow, .right-arrow{
+    -fx-background-color: #DDF1F8, #c570e5;
+}
+
+.pagination {
+    -fx-background-color: white;
+    -fx-background-radius: 20;
+}
+
+.pagination > .pagination-control > .control-box {
+    -fx-alignment: center;
+    -fx-padding: 0.416em 1.1em 0 0;
+}
+
+
+.button-accept-reject{
+    /*-fx-position: absolute;*/
+    /*-fx-transform: translate(-50%, -50%);*/
+    -fx-width: 60px;
+    -fx-height: 30px;
+    -fx-text-align: center;
+    -fx-line-height: 50px;
+    -fx-font-size: 12px;
+    -fx-font-family: Poppins-Bold;
+    -fx-box-sizing: border-box;
+    -fx-border-radius: 60px;
+    -fx-background-radius: 60;
+    -fx-background-color: white;
+    -fx-text-fill: black;
+
+
+    -fx-z-index: 1;
+
+
+}
+.button-accept-reject:hover {
+    -fx-background-color:linear-gradient(to left, #fc6e99, #cbad6d);
+    /*animation: animate 10s linear infinite;*/
+    -fx-cursor: pointer;
+    -fx-text-fill: white;
 }

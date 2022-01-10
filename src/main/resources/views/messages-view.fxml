@@ -3,6 +3,8 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Pagination?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -13,23 +15,47 @@
 
 <AnchorPane prefHeight="598.0" prefWidth="975.0" stylesheets="/style/messages.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.lab6.controller.MessagesController">
    <children>
-      <VBox layoutY="3.0" prefHeight="592.0" prefWidth="368.0" stylesheets="/style/messages.css">
+      <VBox fillWidth="false" layoutX="1.0" prefHeight="601.0" prefWidth="333.0" stylesheets="/style/messages.css">
          <children>
-            <AnchorPane fx:id="anchorPagination" prefHeight="513.0" prefWidth="382.0" stylesheets="/style/messages.css">
+            <VBox alignment="BOTTOM_LEFT" prefHeight="87.0" prefWidth="352.0">
                <children>
-                  <Button fx:id="createGroupButton" layoutX="233.0" layoutY="443.0" mnemonicParsing="false" onAction="#onCreateGroup" prefHeight="30.0" prefWidth="122.0" styleClass="button-messages" text="Create group" textAlignment="RIGHT" />
-                  <Line endX="210.0" layoutX="172.0" layoutY="491.0" startX="-172.0" styleClass="vl" />
-                  <ImageView fx:id="addImage" fitHeight="19.0" fitWidth="15.0" layoutX="239.0" layoutY="449.0" pickOnBounds="true" preserveRatio="true" styleClass="image-add" />
+                  <Label prefHeight="36.0" prefWidth="205.0" styleClass="input100" text="Messages">
+                     <VBox.margin>
+                        <Insets left="15.0" top="10.0" />
+                     </VBox.margin>
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="addMembersToGroupLabel" prefHeight="47.0" prefWidth="145.0" text="Add members to group" styleClass="label-addMembers">
+                     <VBox.margin>
+                        <Insets left="15.0" />
+                     </VBox.margin>
+                  </Label>
+                  <TextField fx:id="searchField" onKeyTyped="#onSearchField" prefHeight="25.0" prefWidth="299.0" promptText="Search a friend here..." styleClass="text-field, input100, placeholder" />
+               </children>
+            </VBox>
+            <AnchorPane fx:id="anchorPagination" prefHeight="423.0" prefWidth="371.0" styleClass="anchor">
+               <children>
+                  <Button fx:id="createGroupButton" layoutX="227.0" layoutY="355.0" mnemonicParsing="false" onAction="#onCreateGroup" prefHeight="30.0" prefWidth="120.0" styleClass="button-messages" text="Create group" textAlignment="RIGHT" />
+                  <Line endX="111.0" endY="1.0" layoutX="258.0" layoutY="397.0" startX="-258.0" styleClass="vl" />
+                  <Pagination fx:id="pagination" layoutX="-1.0" layoutY="14.0" prefHeight="87.0" prefWidth="352.0">
+                     <padding>
+                        <Insets top="10.0" />
+                     </padding>
+                  </Pagination>
+                  <ImageView fx:id="plusGroupImage" fitHeight="30.0" fitWidth="35.0" layoutX="287.0" layoutY="325.0" onMouseClicked="#onPlusGroupImage" pickOnBounds="true" preserveRatio="true" styleClass="createGroup" />
+                  <TextField fx:id="nameGroupField" layoutX="25.0" layoutY="328.0" prefHeight="25.0" prefWidth="159.0" promptText="Type a name for the group" styleClass="placeholder"/>
                </children>
             </AnchorPane>
-            <HBox prefHeight="93.0" prefWidth="368.0" spacing="40.0" stylesheets="/style/messages.css">
+            <HBox prefHeight="81.0" prefWidth="358.0" spacing="30.0" stylesheets="/style/messages.css">
                <children>
                   <Button mnemonicParsing="false" onAction="#openPrivateMessages" prefHeight="47.0" prefWidth="145.0" styleClass="button-messages" text="Private Messages">
                      <HBox.margin>
                         <Insets left="25.0" top="10.0" />
                      </HBox.margin>
                   </Button>
-                  <Button mnemonicParsing="false" onAction="#openGroups" prefHeight="47.0" prefWidth="145.0" styleClass="button-messages" text="Groups">
+                  <Button fx:id="openGroupsButton" mnemonicParsing="false" onAction="#openGroups" prefHeight="47.0" prefWidth="145.0" styleClass="button-messages" text="Groups">
                      <HBox.margin>
                         <Insets right="10.0" top="10.0" />
                      </HBox.margin>
@@ -38,23 +64,36 @@
             </HBox>
          </children>
       </VBox>
-      <VBox layoutX="385.0" layoutY="3.0" prefHeight="592.0" prefWidth="588.0">
+      <VBox layoutX="373.0" layoutY="3.0" prefHeight="593.0" prefWidth="600.0">
          <children>
-            <HBox prefHeight="70.0" prefWidth="588.0" spacing="40.0" stylesheets="/style/messages.css">
+            <HBox prefHeight="70.0" prefWidth="588.0" spacing="35.0" stylesheets="/style/messages.css">
                <children>
-                  <ImageView fx:id="userImage" fitHeight="63.0" fitWidth="90.0" pickOnBounds="true" preserveRatio="true" />
-                  <Label fx:id="userName" prefHeight="57.0" prefWidth="352.0" styleClass="input100" text="Label" />
+                  <ImageView fx:id="userImage" fitHeight="63.0" fitWidth="88.0" pickOnBounds="true" preserveRatio="true" />
+                  <Label fx:id="userName" prefHeight="57.0" prefWidth="220.0" styleClass="input100, label-name" />
+                  <ScrollPane fx:id="scrollerMembers" prefHeight="65.0" prefWidth="159.0" styleClass="rounded-scroll-pane">
+                     <content>
+                        <VBox fx:id="members" prefHeight="68.0" prefWidth="136.0" />
+                     </content>
+                  </ScrollPane>
+                  <ImageView fx:id="menuImage" fitHeight="51.0" fitWidth="25.0" onMouseClicked="#onMenuDots" pickOnBounds="true" preserveRatio="true" styleClass="menu-dots">
+                     <HBox.margin>
+                        <Insets right="20.0" top="12.0" />
+                     </HBox.margin></ImageView>
                </children>
             </HBox>
-            <AnchorPane prefHeight="440.0" prefWidth="588.0" stylesheets="/style/messages.css" />
+            <ScrollPane fx:id="scroller" prefHeight="431.0" prefWidth="588.0">
+               <content>
+                  <VBox fx:id="chat" alignment="BOTTOM_CENTER" prefHeight="429.0" prefWidth="586.0" />
+               </content>
+            </ScrollPane>
             <HBox prefHeight="100.0" prefWidth="200.0" spacing="20.0" stylesheets="/style/messages.css">
                <children>
-                  <TextField fx:id="conversationField" prefHeight="59.0" prefWidth="421.0" styleClass="conversation-field">
+                  <TextField fx:id="conversationField" prefHeight="59.0" prefWidth="421.0" promptText="Write a message here.." styleClass="conversation-field">
                      <HBox.margin>
                         <Insets bottom="25.0" left="50.0" top="20.0" />
                      </HBox.margin>
                   </TextField>
-                  <ImageView fx:id="imageSend" fitHeight="47.0" fitWidth="56.0" pickOnBounds="true" preserveRatio="true" styleClass="image-send">
+                  <ImageView fx:id="imageSend" fitHeight="47.0" fitWidth="56.0" onMouseClicked="#onSend" pickOnBounds="true" preserveRatio="true" styleClass="image-send">
                      <HBox.margin>
                         <Insets bottom="25.0" left="20.0" right="25.0" top="20.0" />
                      </HBox.margin>
@@ -66,19 +105,6 @@
             </HBox>
          </children>
       </VBox>
-      <Line endX="-100.0" endY="582.0" layoutX="485.0" layoutY="13.0" startX="-100.0" startY="-10.0" styleClass="vl" />
-      <VBox alignment="BOTTOM_LEFT" layoutX="1.0" layoutY="-2.0" prefHeight="94.0" prefWidth="382.0">
-         <children>
-            <Label prefHeight="36.0" prefWidth="205.0" styleClass="input100" text="Messages">
-               <VBox.margin>
-                  <Insets bottom="15.0" left="15.0" />
-               </VBox.margin>
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </Label>
-            <TextField fx:id="searchField" prefHeight="30.0" prefWidth="382.0" promptText="Search a friend here..." styleClass="text-field, input100" />
-         </children>
-      </VBox>
+      <Line endX="-100.0" endY="582.0" layoutX="472.0" layoutY="14.0" startX="-100.0" startY="-10.0" styleClass="vl" />
    </children>
 </AnchorPane>
