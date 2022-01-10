@@ -85,18 +85,9 @@ public class MessageService implements Observable<MessageChangeEvent> {
     public void sendMessageGroup(Group group,  MessageDTO messageDTO)
     {
 
-        if(repoGroup.findOne(group.getId())!= null)
-        {
             group.addMessage(messageDTO);
             repoGroup.update(group);
             notifyObservers(new MessageChangeEvent(ChangeEventType.ADD, messageDTO));
-        }
-        else{
-            repoGroup.save(group);
-            group.addMessage(messageDTO);
-            repoGroup.update(group);
-            notifyObservers(new MessageChangeEvent(ChangeEventType.ADD, messageDTO));
-        }
 
 
     }
@@ -331,6 +322,96 @@ public class MessageService implements Observable<MessageChangeEvent> {
         Pageable pageable = new PageableImplementation(page, this.size);
         Page<MessageDTO> messagePage = repoMessage.findAll(pageable);
         return messagePage.getContent().collect(Collectors.toSet());
+    }
+
+    public List<Group> myGroups(Long id){
+        Iterable<Group> groupIterable = repoGroup.findAll();
+        List<Group> groupList = new ArrayList<>();
+        groupIterable.forEach(groupList::add);
+
+        List<Group> myGroups = new ArrayList<>();
+
+        Predicate<Group> myGroup = x->x.getMembers().contains(id);
+        groupList.stream().filter(myGroup).forEach(myGroups::add);
+
+        return myGroups;
+    }
+
+    public List<Group> getGroupsOnPage(int leftLimit,int rightLimit, Long id ){
+        Iterable<Group> groupIterable = repoGroup.findAll();
+        List<Group> groups = myGroups(id);
+        return groups.stream().skip(leftLimit)
+                .limit(rightLimit)
+                .collect(Collectors.toList());
+    }
+
+
+    public List<Group> filterName(String string, Long id){
+        Iterable<Group> groupIterable = repoGroup.findAll();
+        List<Group> groupList = new ArrayList<>();
+        groupIterable.forEach(groupList::add);
+
+        Predicate<Group> name = x->x.getName().contains(string);
+        Predicate<Group> inGroup = x->x.getMembers().contains(id);
+        Predicate<Group> filter = name.and(inGroup);
+
+        List<Group> myGroups = new ArrayList<>();
+        groupList.stream().filter(filter).forEach(myGroups::add);
+
+        return myGroups;
+
+
+    }
+    public List<Group> getSearchingGroupsOnPage(int leftLimit,int rightLimit, Long id, String string ){
+
+        List<Group> groups = filterName(string, id);
+        return groups.stream().skip(leftLimit)
+                .limit(rightLimit)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * return all the friendships of a user
+     * @param id
+     * @return
+     */
+    public List<FriendshipDTO> getFriendships(Long id){
+        if(repoUser.findOne(id) == null)
+            throw new ValidationException("Invalid id");
+        User user = repoUser.findOne(id);
+        List<FriendshipDTO> friendslist = new ArrayList<>();
+        Iterable<Friendship> friendshipIterable = repoFriendship.findAll();
+
+        Predicate<Friendship> firstfriend = x->x.getE1().equals(id);
+        Predicate<Friendship> secondfriend = x->x.getE2().equals(id);
+        Predicate<Friendship> friendshipPredicate = firstfriend.or(secondfriend);
+        List<Friendship> list = new ArrayList<>();
+        friendshipIterable.forEach(list::add);
+        list.stream().filter(friendshipPredicate).map(x ->{
+            if(x.getE1().equals(id))
+                return  new FriendshipDTO(repoUser.findOne(x.getE2()), x.getDate());
+            else
+                return new FriendshipDTO(repoUser.findOne(x.getE1()), x.getDate());
+        }).forEach(friendslist::add);
+
+        return friendslist;
+    }
+
+
+    public List<FriendshipDTO> getMyFriendsWithMessages(Long id) {
+        List<FriendshipDTO> friendslist = getFriendships(id);
+        List<FriendshipDTO> friendshipDTOS = new ArrayList<>();
+        friendslist.forEach(x->{
+            if(getConversation(id, x.getUser().getId()).size() > 0)
+                friendshipDTOS.add(x);
+        });
+        return friendshipDTOS;
+    }
+    public List<FriendshipDTO> getMyConversationPage(int leftLimit,int rightLimit, Long id) {
+        List<FriendshipDTO> friendslist = getMyFriendsWithMessages(id);
+        return friendslist.stream().skip(leftLimit)
+                .limit(rightLimit)
+                .collect(Collectors.toList());
     }
 
 }

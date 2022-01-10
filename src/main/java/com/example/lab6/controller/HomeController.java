@@ -13,6 +13,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -24,6 +25,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 
@@ -40,51 +42,38 @@ public class HomeController implements Observer<MessageChangeEvent> {
     public ImageView xImage;
     public TextField searchField;
     public Label searchLabel;
-    public ListView listView;
 
-    public ListView<UserDTO> chatView;
+
+  //  public ListView<UserDTO> chatView;
     public Label conversationLabel;
     public ListView conversationList;
     public TextField writeMessageField;
 
     public AnchorPane conversation;
-    public TextField addingFriendsToConversation;
-    public ListView groupView;
+    //public TextField addingFriendsToConversation;
+    //public ListView groupView;
     public ImageView setGroupImage;
-    public ListView groupsView;
+    //public ListView groupsView;
     public CheckBox friendsGroupsCheckBox;
     public ImageView imageName;
-    public AnchorPane anchorPagination;
+
     public Label messagesLabel;
+    public Pagination pagination;
+    public Pagination paginationSearch;
     private UserService userService;
     private FriendshipService friendshipService;
     private FriendRequestService friendRequestService;
     private MessageService messageService;
 
     Stage stage;
+    private Long myId;
     private Long to;
     private Group groupFinal = new Group();
     private List<Long> groupConversation = new ArrayList<>();
     private String email;
-    ObservableList<String> modelUser = FXCollections.observableArrayList();
-    ObservableList<UserDTO> model = FXCollections.observableArrayList();
-
-    ObservableList<User> modelUserFriends = FXCollections.observableArrayList();
+    private PageDTO pageDTO;
 
     ObservableList<Message> modelMessages = FXCollections.observableArrayList();
-
-    ObservableList<Group> modelGroup = FXCollections.observableArrayList();
-
-    @FXML
-    TableView<FriendshipDTO> tableViewFriends;
-    @FXML
-    TableColumn<FriendshipDTO, String> tableColumnFriendFirstName;
-    @FXML
-    TableColumn<FriendshipDTO, String> tableColumnFriendLastName;
-    @FXML
-    TableColumn<FriendshipDTO, LocalDateTime> tableColumnFriendDate;
-    @FXML
-    Pagination pagination = new Pagination();
 
     @FXML
     public void initialize() {
@@ -92,68 +81,71 @@ public class HomeController implements Observer<MessageChangeEvent> {
         imageName.setImage(new Image("/images/bsocial.png"));
         imageName.setFitHeight(60);
         imageName.setFitWidth(180);
-
         searchField.setVisible(false);
         xImage.setVisible(false);
-        listView.setVisible(false);
-
-        groupView.setVisible(false);
-
-        groupsView.setVisible(false);
-        chatView.setItems(model);
+        paginationSearch.setVisible(false);
         conversation.setVisible(false);
-        addingFriendsToConversation.setVisible(false);
-        setGroupImage.setVisible(false);
+
     }
 
-    public void setServices(UserService userService, FriendshipService friendshipService, FriendRequestService friendRequestService, MessageService messageService, Stage stage, String email) {
+    public void setServices(UserService userService, FriendshipService friendshipService, FriendRequestService friendRequestService, MessageService messageService, Stage stage, String email, PageDTO page) {
         this.userService = userService;
         this.friendshipService = friendshipService;
         this.friendRequestService = friendRequestService;
         this.stage = stage;
         this.email = email;
         this.messageService = messageService;
-        welcomeText.setText("Welcome, " + userService.exists(email).getFirstName() + " " + userService.exists(email).getLastName() + "!");
-        setFriendsList();
+        this.myId = userService.exists(email).getId();
+        this.pageDTO = page;
+        welcomeText.setText("Welcome, " + pageDTO.getAdmin().getFirstName() + " " + pageDTO.getAdmin().getLastName() + "!");
+        listofFriends();
         messageService.addObserver(this);
-        start();
-        anchorPagination.getChildren().add(pagination);
+
+
     }
 
-    public void start() {
+
+    public int itemsPerPage() {
+        return 10;
+    }
+
+    public void listofFriends() {
+
         pagination.getStyleClass().add("/style/pagination");
         pagination.getStyleClass().add("/style/pagination-control");
         pagination.getStyleClass().add("/style/bullet-button");
         pagination.getStyleClass().add("/style/toggle-button");
         pagination.getStyleClass().add("/style/button");
-        pagination.setStyle("/style/pagination");
+        pagination.getStyleClass().add("/style/control-box");
         pagination.setPageFactory(new Callback<Integer, Node>() {
 
             @Override
             public Node call(Integer pageIndex) {
-                return createPage(pageIndex);
+                return createPageForListOfFriends(pageIndex);
             }
         });
 
-        int nr_friends = friendshipService.getFriendships(userService.exists(email).getId()).size();
+        int nr_friends = friendshipService.getFriendships(myId).size();
         double nr = (double) (nr_friends) / (double) itemsPerPage();
 
         pagination.setPageCount((int) ceil(nr));
+
     }
 
-    public int itemsPerPage() {
-        return 2;
-    }
-
-    public VBox createPage(int pageIndex) {
+    public VBox createPageForListOfFriends(int pageIndex) {
         VBox box = new VBox();
+        Rectangle2D bounds = Screen.getPrimary().getVisualBounds();
+        double t = bounds.getMinX() + (bounds.getWidth() - stage.getWidth()) * 0.3;
+        double y = bounds.getMinY() + (bounds.getHeight() - stage.getHeight()) * 0.7;
+
+        box.setLayoutX(t);
+        box.setLayoutY(y);
+        box.setAlignment(Pos.CENTER);
         int page = pageIndex * itemsPerPage();
 
         List<FriendshipDTO> friendshipDTOS = new ArrayList<>();
-        //List<FriendshipDTO> friends = friendshipService.getFriendships(userService.exists(email).getId());
-        //limit
-        friendshipDTOS.addAll(friendshipService.getMyFriendsOnPage((pageIndex) * itemsPerPage(), itemsPerPage(), userService.exists(email).getId()));
-        //List<FriendshipDTO> friendshipDTOS = friendshipService.getMyFriendsOnPage((pageIndex)*itemsPerPage(), itemsPerPage(), userService.exists(email).getId());
+        friendshipDTOS.addAll(friendshipService.getMyFriendsOnPage((pageIndex) * itemsPerPage(), itemsPerPage(), myId));
+       // friendshipDTOS.addAll(messageService.getMyConversationPage((pageIndex) * itemsPerPage(), itemsPerPage(), userService.exists(email).getId()));
         List<UserDTO> users = new ArrayList<>();
         friendshipDTOS.forEach(x -> {
             if (userService.findPhoto(x.getUser().getEmail()) == null) {
@@ -177,16 +169,19 @@ public class HomeController implements Observer<MessageChangeEvent> {
             ImageView imageView = new ImageView();
             Button button = new Button();
             Label label = new Label();
+
             imageView.setImage(new Image(users.get(index).getUrlPhoto()));
             imageView.setFitHeight(40);
             imageView.setFitWidth(40);
             ImageView img = new ImageView(new Image("/images/seeProfile.png"));
             img.setFitWidth(20);
             img.setFitHeight(20);
+
             button.setGraphic(img);
             button.setStyle("-fx-background-color: transparent");
             label.setText("  " + users.get(index).getNume());
-            label.setPrefWidth(90);
+            label.setPrefWidth(160);
+
             GridPane pane = new GridPane();
             pane.getStyleClass().add("gridpane");
             pane.add(imageView, 0, 0);
@@ -200,7 +195,6 @@ public class HomeController implements Observer<MessageChangeEvent> {
                 conversationList.scrollTo(modelMessages.size() - 1);
                 to = users.get(index).getIdUser();
                 setConversation(to);
-                // emailTo = user.getEmail();
                 setConversationList();
             });
             button.setOnAction(event -> {
@@ -227,10 +221,183 @@ public class HomeController implements Observer<MessageChangeEvent> {
                 }
 
             });
+
             nr++;
         }
         return box;
     }
+
+    public void listofGroups() {
+
+        pagination.getStyleClass().add("/style/pagination");
+        pagination.getStyleClass().add("/style/pagination-control");
+        pagination.getStyleClass().add("/style/bullet-button");
+        pagination.getStyleClass().add("/style/toggle-button");
+        pagination.getStyleClass().add("/style/button");
+        pagination.getStyleClass().add("/style/control-box");
+        pagination.setPageFactory(new Callback<Integer, Node>() {
+
+            @Override
+            public Node call(Integer pageIndex) {
+                return createPageForListOfGroups(pageIndex);
+            }
+        });
+
+        int nr_groups = messageService.myGroups(myId).size();
+        double nr = (double) (nr_groups) / (double) itemsPerPage();
+
+        pagination.setPageCount((int) ceil(nr));
+
+    }
+
+    public VBox createPageForListOfGroups(int pageIndex) {
+        VBox box = new VBox();
+
+        int page = pageIndex * itemsPerPage();
+
+        List<Group> groups = new ArrayList<>();
+        groups.addAll(messageService.getGroupsOnPage((pageIndex) * itemsPerPage(), itemsPerPage(), myId));
+
+
+        int nr = 0;
+        for (int i = page; i < page + groups.size(); i++) {
+            VBox row = new VBox();
+            int index = nr;
+            ImageView imageView = new ImageView();
+            Button button = new Button();
+            Label label = new Label();
+            imageView.setImage(new Image("/images/people.png"));
+            imageView.setFitHeight(40);
+            imageView.setFitWidth(40);
+
+            label.setText("  " + groups.get(index).getName());
+            label.setPrefWidth(160);
+            GridPane pane = new GridPane();
+            pane.getStyleClass().add("gridpane");
+            pane.add(imageView, 0, 0);
+            pane.add(label, 1, 0);
+            box.getChildren().add(pane);
+            label.setOnMouseClicked(event -> {
+                conversationLabel.setText("Your conversation with " + groups.get(index).getName());
+                conversation.setVisible(true);
+                conversationList.scrollTo(modelMessages.size() - 1);
+                groupFinal.setId(groups.get(index).getId());
+                groupFinal.setMembers(groups.get(index).getMembers());
+                groupFinal.setMessages(groups.get(index).getMessages());
+                setModelMessages(groups.get(index));
+
+                setConversationListGroup();
+            });
+
+            nr++;
+        }
+        return box;
+    }
+
+
+
+    public void listofSearching() {
+
+        paginationSearch.getStyleClass().add("/style/pagination");
+        paginationSearch.getStyleClass().add("/style/pagination-control");
+        paginationSearch.getStyleClass().add("/style/bullet-button");
+        paginationSearch.getStyleClass().add("/style/toggle-button");
+        paginationSearch.getStyleClass().add("/style/button");
+        paginationSearch.getStyleClass().add("/style/control-box");
+        paginationSearch.setPageFactory(new Callback<Integer, Node>() {
+
+            @Override
+            public Node call(Integer pageIndex) {
+                return createPageForListOfSearching(pageIndex);
+            }
+        });
+
+        int nr_searchs = userService.filter1(myId, searchField.getText()).size();
+        double nr = (double) (nr_searchs) / (double) itemsPerPage();
+
+        paginationSearch.setPageCount((int) ceil(nr));
+
+    }
+
+    public VBox createPageForListOfSearching(int pageIndex) {
+        VBox box = new VBox();
+        Rectangle2D bounds = Screen.getPrimary().getVisualBounds();
+        double t = bounds.getMinX() + (bounds.getWidth() - stage.getWidth()) * 0.3;
+        double y = bounds.getMinY() + (bounds.getHeight() - stage.getHeight()) * 0.7;
+
+        box.setLayoutX(t);
+        box.setLayoutY(y);
+        box.setAlignment(Pos.CENTER);
+        int page = pageIndex * itemsPerPage();
+
+        List<User> userList = userService.getSearchOnPage((pageIndex) * itemsPerPage(), itemsPerPage(),myId, searchField.getText().toString());
+
+        List<UserDTO> users = new ArrayList<>();
+        userList.forEach(x -> {
+            if (userService.findPhoto(x.getEmail()) == null) {
+                UserDTO userDto = new UserDTO(x);
+                userDto.setUrlPhoto("/images/profile.png");
+                userDto.setEmailDTO(x.getEmail());
+                users.add(userDto);
+            } else {
+                UserDTO userDto = new UserDTO(x);
+                userDto.setUrlPhoto(userService.findPhoto(x.getEmail()));
+                userDto.setEmailDTO(x.getEmail());
+                users.add(userDto);
+            }
+
+        });
+        int nr = 0;
+        for (int i = page; i < page + userList.size(); i++) {
+            VBox row = new VBox();
+            int index = nr;
+
+            Label label = new Label();
+            ImageView imageView = new ImageView();
+
+
+            imageView.setImage(new Image(users.get(index).getUrlPhoto()));
+            imageView.setFitHeight(40);
+            imageView.setFitWidth(40);
+
+            label.setText("  " + userList.get(index).getLastName() + " " + userList.get(index).getFirstName());
+            label.setPrefWidth(160);
+
+            GridPane pane = new GridPane();
+            pane.getStyleClass().add("gridpane");
+            pane.add(imageView, 0, 0);
+            pane.add(label, 1, 0);
+
+            box.getChildren().add(pane);
+            label.setOnMouseClicked(event -> {
+                try {
+                    FXMLLoader loader = new FXMLLoader();
+                    loader.setLocation(getClass().getResource("/views/friendProfile.fxml"));
+                    AnchorPane root = loader.load();
+
+                    // Create the dialog Stage.
+                    Stage dialogStage = new Stage();
+                    dialogStage.setTitle("My profile");
+                    dialogStage.initModality(Modality.WINDOW_MODAL);
+                    //dialogStage.initOwner(primaryStage);
+                    Scene scene = new Scene(root);
+                    dialogStage.setScene(scene);
+
+                    FriendProfileController friendProfileController = loader.getController();
+                    friendProfileController.setServices(userService, friendshipService, friendRequestService, dialogStage, email, userList.get(index).getEmail());
+
+                    dialogStage.show();
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
+
+            nr++;
+        }
+        return box;
+    }
+
 
     public void onHandleBack(ActionEvent actionEvent) {
         stage.close();
@@ -241,171 +408,17 @@ public class HomeController implements Observer<MessageChangeEvent> {
         xImage.setVisible(true);
     }
 
-    public void setModelUser() {
-        if (!searchField.getText().isEmpty()) {
-            List<User> userList = userService.filter1(userService.exists(email).getId(), searchField.getText().toString());
-            List<String> users = new ArrayList<>();
-            userList.forEach(x -> {
-                users.add(x.getFirstName() + " " + x.getLastName());
-                modelUser.setAll(users);
-            });
-        } else
-            listView.setVisible(false);
-    }
 
     public void onSearchField(KeyEvent keyEvent) {
-        listView.setVisible(true);
-        setModelUser();
-        listView.setItems(null);
-        listView.setPrefHeight(26 * modelUser.size());
-        listView.setItems(modelUser);
-    }
-
-    public void setModel() {
-        try {
-            List<FriendshipDTO> friends = friendshipService.getFriendships(userService.exists(email).getId());
-            List<UserDTO> users = new ArrayList<>();
-            friends.forEach(x -> {
-                if (userService.findPhoto(x.getUser().getEmail()) == null) {
-                    UserDTO userDto = new UserDTO(x.getUser());
-                    userDto.setUrlPhoto("/images/profile.png");
-                    userDto.setEmailDTO(x.getUser().getEmail());
-                    users.add(userDto);
-                } else {
-                    UserDTO userDto = new UserDTO(x.getUser());
-                    userDto.setUrlPhoto(userService.findPhoto(x.getUser().getEmail()));
-                    userDto.setEmailDTO(x.getUser().getEmail());
-                    users.add(userDto);
-                }
-
-            });
-            model.setAll(users);
-
-        } catch (Exception ex) {
-            MessageAlert.showErrorMessage(null, "The user doesn't exist!");
+        if(searchField.getText().isEmpty())
+        {
+            paginationSearch.setVisible(false);
+        }
+        else{
+            paginationSearch.setVisible(true);
+            listofSearching();
         }
 
-    }
-
-    private void setFriendsList() {
-        setModel();
-        chatView.setItems(model);
-        chatView.setCellFactory(param -> new ListCell<UserDTO>() {
-            private final ImageView imageView = new ImageView();
-            private final Button button = new Button();
-            protected final Label label = new Label();
-
-            @Override
-            public void updateItem(UserDTO userDTO, boolean empty) {
-                if (empty) {
-                    setText(null);
-                    setGraphic(null);
-                    setLineSpacing(0);
-                    setGraphic(null);
-                } else {
-                    imageView.setImage(new Image(userDTO.getUrlPhoto()));
-                    imageView.setFitHeight(40);
-                    imageView.setFitWidth(40);
-                    ImageView img = new ImageView(new Image("/images/seeProfile.png"));
-                    img.setFitWidth(20);
-                    img.setFitHeight(20);
-                    button.setGraphic(img);
-                    button.setStyle("-fx-background-color: transparent");
-                    label.setText("  " + userDTO.getNume());
-                    label.setPrefWidth(90);
-                    GridPane pane = new GridPane();
-                    pane.getStyleClass().add("gridpane");
-                    pane.add(imageView, 0, 0);
-                    pane.add(label, 1, 0);
-                    pane.add(button, 3, 0);
-                    setGraphic(pane);
-                    label.setOnMouseClicked(event -> {
-                        conversationLabel.setText("Your conversation with " + userDTO.getNume());
-                        conversation.setVisible(true);
-                        conversationList.scrollTo(modelMessages.size() - 1);
-                        to = userDTO.getIdUser();
-                        setConversation(to);
-                        // emailTo = user.getEmail();
-                        setConversationList();
-                    });
-                    button.setOnAction(event -> {
-                        try {
-                            FXMLLoader loader = new FXMLLoader();
-                            loader.setLocation(getClass().getResource("/views/friendProfile.fxml"));
-                            AnchorPane root = loader.load();
-
-                            // Create the dialog Stage.
-                            Stage dialogStage = new Stage();
-                            dialogStage.setTitle("My profile");
-                            dialogStage.initModality(Modality.WINDOW_MODAL);
-                            //dialogStage.initOwner(primaryStage);
-                            Scene scene = new Scene(root);
-                            dialogStage.setScene(scene);
-
-                            FriendProfileController friendProfileController = loader.getController();
-                            friendProfileController.setServices(userService, friendshipService, friendRequestService, dialogStage, email, userDTO.getEmailDTO());
-
-                            dialogStage.show();
-
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-
-                    });
-                }
-            }
-        });
-
-        chatView.setPrefHeight(50 * model.size());
-    }
-
-    private void setModelGroups() {
-        List<Group> groups = messageService.getGroups();
-        modelGroup.setAll(groups);
-    }
-
-    public void setGroupView() {
-        setModelGroups();
-        groupsView.setItems(modelGroup);
-        groupsView.setCellFactory(param -> new ListCell<Group>() {
-            private final ImageView imageView = new ImageView();
-            protected final Label label = new Label();
-
-            @Override
-            public void updateItem(Group group, boolean empty) {
-                if (empty) {
-                    setGraphic(null);
-
-                } else {
-                    imageView.setImage(new Image("/images/people.png"));
-                    imageView.setFitHeight(40);
-                    imageView.setFitWidth(40);
-
-                    label.setText("  " + group.getName());
-                    label.setPrefWidth(90);
-                    GridPane pane = new GridPane();
-                    pane.getStyleClass().add("gridpane");
-                    pane.add(imageView, 0, 0);
-                    pane.add(label, 1, 0);
-                    setGraphic(pane);
-                    label.setOnMouseClicked(event -> {
-                        conversationLabel.setText("Your conversation with " + group.getName());
-                        conversation.setVisible(true);
-                        conversationList.scrollTo(modelMessages.size() - 1);
-                        groupFinal.setId(group.getId());
-                        groupFinal.setMembers(group.getMembers());
-                        groupFinal.setMessages(group.getMessages());
-                        setModelMessages(group);
-
-                        setConversationListGroup();
-                    });
-
-
-                }
-            }
-        });
-
-        chatView.setPrefHeight(50 * model.size());
     }
 
 
@@ -424,7 +437,7 @@ public class HomeController implements Observer<MessageChangeEvent> {
                         } else {
                             label.setText(message.getMessage());
 
-                            if (message.getFrom().getId().equals(userService.exists(email).getId())) {
+                            if (message.getFrom().getId().equals(myId)) {
                                 // label.setTextAlignment(TextAlignment.RIGHT);
                                 // getStyleClass().add("background-mymessage");
                                 label.getStyleClass().add("background-mymessage");
@@ -461,7 +474,7 @@ public class HomeController implements Observer<MessageChangeEvent> {
 
                         } else {
 
-                            if (message.getFrom().getId().equals(userService.exists(email).getId())) {
+                            if (message.getFrom().getId().equals(myId)) {
                                 // label.setTextAlignment(TextAlignment.RIGHT);
                                 // getStyleClass().add("background-mymessage");
                                 label.setText(message.getMessage());
@@ -481,50 +494,11 @@ public class HomeController implements Observer<MessageChangeEvent> {
                 });
     }
 
-    public void setModelUserFriends() {
-        List<User> friends = userService.friends(userService.exists(email).getId(), addingFriendsToConversation.getText());
-        modelUserFriends.setAll(friends);
-    }
 
-    public void setCreateGroupView() {
-        groupView.setItems(modelUserFriends);
-        groupView.setCellFactory(
-                param -> new ListCell<User>() {
-                    protected final Label label = new Label();
-                    protected final Button button = new Button();
 
-                    @Override
-                    public void updateItem(User user, boolean empty) {
-                        if (empty) {
-                            setGraphic(null);
-
-                        } else {
-                            label.setText(user.getFirstName() + " " + user.getLastName());
-                            label.setPrefWidth(60);
-                            ImageView img = new ImageView(new Image("/images/plus.png"));
-                            img.setFitWidth(20);
-                            img.setFitHeight(20);
-                            button.setGraphic(img);
-                            button.setStyle("-fx-background-color: transparent");
-                            GridPane pane = new GridPane();
-                            pane.getStyleClass().add("gridpane");
-                            pane.add(label, 1, 0);
-                            pane.add(button, 2, 0);
-                            setGraphic(pane);
-
-                            button.setOnAction(event -> {
-                                groupConversation.add(user.getId());
-                                button.setVisible(false);
-                            });
-                        }
-                    }
-
-                });
-        groupView.setPrefHeight(35 * modelUserFriends.size());
-    }
 
     public void setConversation(Long to) {
-        List<Message> messages = messageService.getConversation(userService.exists(email).getId(), to);
+        List<Message> messages = messageService.getConversation(myId, to);
 
         modelMessages.setAll(messages);
     }
@@ -537,13 +511,13 @@ public class HomeController implements Observer<MessageChangeEvent> {
                 if (!x.equals(userService.exists(email).getId()))
                     recipients.add(x);
             });
-            MessageDTO messageDTO = new MessageDTO(userService.exists(email).getId(), recipients, message, LocalDateTime.now(), null);
+            MessageDTO messageDTO = new MessageDTO(myId, recipients, message, LocalDateTime.now(), null);
             messageService.sendMessageGroup(groupFinal, messageDTO);
             writeMessageField.setText("");
         } else {
             List<Long> tos = new ArrayList<>();
             tos.add(to);
-            messageService.sendMessage(userService.exists(email).getId(), tos, message);
+            messageService.sendMessage(myId, tos, message);
             writeMessageField.setText("");
         }
     }
@@ -551,14 +525,14 @@ public class HomeController implements Observer<MessageChangeEvent> {
     public void onXClicked(MouseEvent mouseEvent) {
         searchField.setVisible(false);
         xImage.setVisible(false);
-        listView.setVisible(false);
+        paginationSearch.setVisible(false);
     }
 
     public void myProfileClicked(MouseEvent mouseEvent) {
         // create a new stage for the popup dialog.
         try {
             FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(getClass().getResource("/views/userProfile.fxml"));
+            loader.setLocation(getClass().getResource("/views/myProfile.fxml"));
 
             AnchorPane root = loader.load();
 
@@ -581,33 +555,6 @@ public class HomeController implements Observer<MessageChangeEvent> {
         }
     }
 
-    public void onSearchedClicked(MouseEvent mouseEvent) {
-        int poz = listView.getSelectionModel().getSelectedIndex();
-        List<User> userList = userService.filter1(userService.exists(email).getId(), searchField.getText().toString());
-
-        User user = userList.get(poz);
-        try {
-            FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(getClass().getResource("/views/friendProfile.fxml"));
-            AnchorPane root = loader.load();
-
-            // Create the dialog Stage.
-            Stage dialogStage = new Stage();
-            dialogStage.setTitle("My profile");
-            dialogStage.initModality(Modality.WINDOW_MODAL);
-            //dialogStage.initOwner(primaryStage);
-            Scene scene = new Scene(root);
-            dialogStage.setScene(scene);
-
-            FriendProfileController friendProfileController = loader.getController();
-            friendProfileController.setServices(userService, friendshipService, friendRequestService, dialogStage, email, user.getEmail());
-
-            dialogStage.show();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
     @Override
     public void update(MessageChangeEvent messageChangeEvent) {
@@ -626,48 +573,12 @@ public class HomeController implements Observer<MessageChangeEvent> {
     }
 
 
-    public void setConversationGroup(MouseEvent mouseEvent) {
-        final String[] name = {""};
-        groupConversation.forEach(x -> {
-
-            name[0] = name[0] + userService.getUserByID(x).getFirstName() + userService.getUserByID(x).getLastName() + " ";
-        });
-        Group gr = new Group(name[0], new ArrayList<>());
-        gr.setMembers(groupConversation);
-        groupFinal.setId(gr.getId());
-        groupFinal.setMembers(gr.getMembers());
-        groupFinal.setMessages(gr.getMessages());
-        groupConversation.clear();
-        messageService.saveGroup(gr);
-        setGroupImage.setVisible(false);
-
-    }
-
-    public void createGroupConversation(MouseEvent mouseEvent) {
-        addingFriendsToConversation.setVisible(true);
-        setGroupImage.setVisible(true);
-    }
-
-    public void onAddingFriendsToGroupList(MouseEvent mouseEvent) {
-    }
-
-    public void onAddingFriendsField(KeyEvent keyEvent) {
-        groupView.setVisible(true);
-        setModelUserFriends();
-        setCreateGroupView();
-        if (addingFriendsToConversation.getText().isEmpty())
-            groupView.setVisible(false);
-    }
-
     public void friendsOrGroups(ActionEvent actionEvent) {
         if (friendsGroupsCheckBox.isSelected()) {
-            setGroupView();
-            groupsView.setVisible(true);
-            chatView.setVisible(false);
+            listofGroups();
+
         } else {
-            setFriendsList();
-            groupsView.setVisible(false);
-            chatView.setVisible(true);
+            listofFriends();
         }
     }
 
@@ -685,7 +596,7 @@ public class HomeController implements Observer<MessageChangeEvent> {
             dialogStage.setScene(scene);
 
             MessagesController messagesController = loader.getController();
-            messagesController.setServices(messageService,friendshipService,userService, dialogStage, email);
+            messagesController.setServices(messageService,friendshipService, friendRequestService, userService, dialogStage, email);
 
             dialogStage.show();
 

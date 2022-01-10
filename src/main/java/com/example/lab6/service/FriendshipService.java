@@ -1,9 +1,6 @@
 package com.example.lab6.service;
 
-import com.example.lab6.model.Friendship;
-import com.example.lab6.model.FriendshipDTO;
-import com.example.lab6.model.Tuple;
-import com.example.lab6.model.User;
+import com.example.lab6.model.*;
 import com.example.lab6.model.validators.ValidationException;
 import com.example.lab6.repository.UserRepository;
 import com.example.lab6.repository.paging.PagingRepository;
@@ -13,6 +10,7 @@ import com.example.lab6.utils.observer.Observer;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -120,10 +118,17 @@ public class FriendshipService implements Observable<UserChangeEvent> {
 
     }
 
+
+
+
     public List<FriendshipDTO> getMyFriendsOnPage(int leftLimit,int rightLimit, Long id) {
         List<FriendshipDTO> friendslist = getFriendships(id);
         return friendslist.stream().skip(leftLimit)
                 .limit(rightLimit)
                 .collect(Collectors.toList());
     }
+
+
+
+
 }

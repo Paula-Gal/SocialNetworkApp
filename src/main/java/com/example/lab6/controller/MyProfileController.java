@@ -1,9 +1,6 @@
 package com.example.lab6.controller;
 
-import com.example.lab6.model.FriendRequestDTO;
-import com.example.lab6.model.FriendshipDTO;
-import com.example.lab6.model.MessageDTO;
-import com.example.lab6.model.User;
+import com.example.lab6.model.*;
 import com.example.lab6.service.FriendRequestService;
 import com.example.lab6.service.FriendshipService;
 import com.example.lab6.service.MessageService;
@@ -14,14 +11,25 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
+import javafx.geometry.Rectangle2D;
+import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
+import javafx.stage.Modality;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
@@ -34,23 +42,33 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.lang.Math.ceil;
+
 
 public class MyProfileController implements Observer<FriendRequestChangeEvent> {
 
     public Label nameLabel;
     public ImageView profilePhoto;
-    public ListView friendsRequestsView;
+
     public GridPane hamburgerMenu;
-    public DatePicker datePicker;
-    public ImageView dateImage;
+
+
     public TextField searchField;
-    public ListView listView;
-    public Label labelDateSaved;
-    public Label labelPdfGenerated;
-    public Label userSavedLabel;
-    public ImageView xImage;
+
+    public Pagination pagination;
+    public ImageView ImageX;
+    public VBox raport1VBox;
+    public DatePicker endDatePicker;
+    public DatePicker startDatePicker;
+    public Label activityRaportLabel;
+    public ImageView ImageXRaport;
+    public Label activityRaportLabel1;
+    public DatePicker startDatePicker1;
+    public DatePicker endDatePicker1;
+    public Pagination paginationSearch;
+    public VBox raport2VBox;
     private Boolean ByMe = false;
-    private int selected_report = 1;
+
 
     private LocalDateTime start;
     private LocalDateTime end;
@@ -65,47 +83,25 @@ public class MyProfileController implements Observer<FriendRequestChangeEvent> {
 
     Stage stage;
     private String email;
+    private Long myId;
 
-    ObservableList<User> modelRequests = FXCollections.observableArrayList();
-    ObservableList<String> modelUser = FXCollections.observableArrayList();
 
     @FXML
     public void initialize() {
 
         profilePhoto.setImage(new Image("/images/profile.png"));
-        friendsRequestsView.setVisible(false);
+
         hamburgerMenu.setVisible(false);
+        pagination.setVisible(false);
 
-        labelDateSaved.setVisible(false);
-        labelPdfGenerated.setVisible(false);
-        userSavedLabel.setVisible(false);
-        datePicker.setVisible(false);
-        searchField.setVisible(false);
-        dateImage.setVisible(false);
-        listView.setVisible(false);
-        xImage.setVisible(false);
-    }
 
-    public void setModelRequests() {
 
-        List<FriendRequestDTO> requests = friendRequestService.getFriendRequest(from);
-        List<User> users = new ArrayList<>();
-        requests.forEach(x -> {
-            users.add(x.getUserFrom());
+        ImageX.setVisible(false);
+        raport1VBox.setVisible(false);
+        activityRaportLabel.setVisible(false);
+        ImageXRaport.setVisible(false);
+        raport2VBox.setVisible(false);
 
-        });
-        modelRequests.setAll(users);
-    }
-
-    public void setModelRequestsByMe() {
-
-        List<FriendRequestDTO> requests = friendRequestService.getMyFriendsRequestes(from);
-        List<User> users = new ArrayList<>();
-        requests.forEach(x -> {
-            users.add(x.getUserTo());
-
-        });
-        modelRequests.setAll(users);
     }
 
     public void setServices(UserService userService, FriendshipService friendshipService, FriendRequestService friendRequestService, MessageService messageService, Stage stage, String email) {
@@ -115,11 +111,166 @@ public class MyProfileController implements Observer<FriendRequestChangeEvent> {
         this.messageService = messageService;
         this.stage = stage;
         this.email = email;
+        this.myId = userService.exists(email).getId();
         nameLabel.setText(userService.exists(email).getFirstName() + " " + userService.exists(email).getLastName());
         setProfilePicture();
         this.from = userService.exists(email).getId();
         friendRequestService.addObserver(this);
     }
+
+
+    public int itemsPerPage() {
+        return 10;
+    }
+
+    public void listofFriendRequests() {
+
+        pagination.getStyleClass().add("/style/pagination");
+        pagination.getStyleClass().add("/style/pagination-control");
+        pagination.getStyleClass().add("/style/bullet-button");
+        pagination.getStyleClass().add("/style/toggle-button");
+        pagination.getStyleClass().add("/style/button");
+        pagination.getStyleClass().add("/style/control-box");
+        pagination.setPageFactory(new Callback<Integer, Node>() {
+
+            @Override
+            public Node call(Integer pageIndex) {
+                return createPageForListOfFriendRequests(pageIndex);
+            }
+        });
+
+        int nr_friends = friendRequestService.getFriendRequest(myId).size();
+        double nr = (double) (nr_friends) / (double) itemsPerPage();
+
+        pagination.setPageCount((int) ceil(nr));
+
+    }
+
+    public VBox createPageForListOfFriendRequests(int pageIndex) {
+        VBox box = new VBox();
+
+        int page = pageIndex * itemsPerPage();
+
+        List<FriendRequestDTO> friendRequestDTOS = friendRequestService.getFriendRequestsOnPage((pageIndex) * itemsPerPage(), itemsPerPage(), myId);
+
+
+
+        int nr = 0;
+        for (int i = page; i < page + friendRequestDTOS.size(); i++) {
+            HBox row = new HBox();
+            int index = nr;
+            Button acceptBtn = new Button("Accept");
+            Button rejectBtn = new Button("Reject");
+            Label label = new Label();
+
+            acceptBtn.getStyleClass().add("/style/button-accept-reject");
+            acceptBtn.setStyle("-fx-background-color:linear-gradient(to left, #d53369, #cbad6d);-fx-background-radius: 60;-fx-text-fill: black;");
+            //acceptBtn.setStyle("-fx-background-radius: 60");
+
+            rejectBtn.setStyle("-fx-background-color:linear-gradient(to left, #d53369, #cbad6d);-fx-background-radius: 60;-fx-text-fill: black;");
+
+            acceptBtn.setPrefWidth(90);
+            rejectBtn.setPrefWidth(90);
+            label.setText(friendRequestDTOS.get(index).getFrom());
+         
+            GridPane pane = new GridPane();
+
+            pane.getStyleClass().add("gridpane");
+            pane.add(label, 1, 0);
+            pane.add(acceptBtn, 3, 0);
+            pane.add(rejectBtn, 4, 0);
+            pane.setHgap(5);
+            pane.setAlignment(Pos.CENTER_LEFT);
+
+            box.getChildren().add(pane);
+
+
+            acceptBtn.setOnAction(event -> {
+                friendRequestService.acceptFriendRequest(friendRequestDTOS.get(index).getUserFrom().getId(), myId);
+            });
+
+            rejectBtn.setOnAction(event -> {
+                friendRequestService.rejectFriendRequest(friendRequestDTOS.get(index).getUserFrom().getId(), myId);
+            });
+
+            nr++;
+        }
+
+        return box;
+    }
+
+    public void listofFriendRequestsByMe() {
+
+        pagination.getStyleClass().add("/style/pagination");
+        pagination.getStyleClass().add("/style/pagination-control");
+        pagination.getStyleClass().add("/style/bullet-button");
+        pagination.getStyleClass().add("/style/toggle-button");
+        pagination.getStyleClass().add("/style/button");
+        pagination.getStyleClass().add("/style/control-box");
+        pagination.setPageFactory(new Callback<Integer, Node>() {
+
+            @Override
+            public Node call(Integer pageIndex) {
+                return createPageForListOfFriendRequestsByMe(pageIndex);
+            }
+        });
+
+        int nr_friends = friendRequestService.getMyFriendsRequestes(myId).size();
+        double nr = (double) (nr_friends) / (double) itemsPerPage();
+
+        pagination.setPageCount((int) ceil(nr));
+
+    }
+
+    public VBox createPageForListOfFriendRequestsByMe(int pageIndex) {
+        VBox box = new VBox();
+        Rectangle2D bounds = Screen.getPrimary().getVisualBounds();
+        double t = bounds.getMinX() + (bounds.getWidth() - stage.getWidth()) * 0.3;
+        double y = bounds.getMinY() + (bounds.getHeight() - stage.getHeight()) * 0.7;
+
+        box.setLayoutX(t);
+        box.setLayoutY(y);
+        box.setAlignment(Pos.CENTER);
+        int page = pageIndex * itemsPerPage();
+
+        List<FriendRequestDTO> friendRequestDTOS = friendRequestService.getFriendRequestsByMeOnPage((pageIndex) * itemsPerPage(), itemsPerPage(), myId);
+
+
+
+        int nr = 0;
+        for (int i = page; i < page + friendRequestDTOS.size(); i++) {
+
+            int index = nr;
+            Button deleteBtn = new Button("Accept");
+            Label label = new Label();
+
+
+            label.setText(friendRequestDTOS.get(index).getFrom());
+            label.setPrefWidth(120);
+            deleteBtn.setPrefWidth(90);
+            deleteBtn.setStyle("-fx-background-color:linear-gradient(to left, #d53369, #cbad6d);-fx-background-radius: 60;-fx-text-fill: black;");
+
+            GridPane pane = new GridPane();
+
+            pane.getStyleClass().add("gridpane");
+            pane.add(label, 1, 0);
+            pane.add(deleteBtn, 3, 0);
+            box.getChildren().add(pane);
+
+
+
+
+            deleteBtn.setOnAction(event -> {
+                friendRequestService.deleteFriendRequest(myId, friendRequestDTOS.get(index).getUserFrom().getId());
+            });
+
+            nr++;
+        }
+        return box;
+    }
+
+
+
 
     private void setProfilePicture() {
         if (userService.findPhoto(email) != null)
@@ -151,138 +302,44 @@ public class MyProfileController implements Observer<FriendRequestChangeEvent> {
             hamburgerMenu.setVisible(true);
     }
 
-    public void setFriendsRequestsView() {
-        friendsRequestsView.setItems(modelRequests);
-        friendsRequestsView.setCellFactory(param -> new ListCell<User>() {
-            private final Button acceptBtn = new Button("Accept");
-            private final Button rejectBtn = new Button("Reject");
-            private final Label label = new Label();
 
-            @Override
-            public void updateItem(User user, boolean empty) {
-                if (empty)
-                    setGraphic(null);
-                else {
-
-                    label.setText(user.getFirstName() + " " + user.getLastName());
-                    label.setPrefWidth(90);
-                    GridPane pane = new GridPane();
-
-                    pane.getStyleClass().add("gridpane");
-                    pane.add(label, 0, 0);
-                    pane.add(acceptBtn, 1, 0);
-                    pane.add(rejectBtn, 2, 0);
-                    setGraphic(pane);
-
-                    acceptBtn.setOnAction(event -> {
-                        friendRequestService.acceptFriendRequest(user.getId(), from);
-                    });
-
-                    rejectBtn.setOnAction(event -> {
-                        friendRequestService.rejectFriendRequest(user.getId(), from);
-                    });
-
-                }
-            }
-        });
-    }
-
-    public void setFriendsRequestsViewByMe() {
-        friendsRequestsView.setItems(modelRequests);
-        friendsRequestsView.setCellFactory(param -> new ListCell<User>() {
-            private final Button deleteBtn = new Button("Delete");
-            private final Label label = new Label();
-
-            @Override
-            public void updateItem(User user, boolean empty) {
-                if (empty)
-                    setGraphic(null);
-                else {
-
-                    label.setText(user.getFirstName() + " " + user.getLastName());
-                    label.setPrefWidth(90);
-                    GridPane pane = new GridPane();
-
-                    pane.getStyleClass().add("gridpane");
-                    pane.add(label, 0, 0);
-                    pane.add(deleteBtn, 1, 0);
-
-                    setGraphic(pane);
-
-                    deleteBtn.setOnAction(event -> {
-                        friendRequestService.deleteFriendRequest(from, user.getId());
-                    });
-
-                }
-            }
-        });
-    }
 
     public void onMyFriendsRequests(MouseEvent mouseEvent) {
+        pagination.setVisible(true);
+        listofFriendRequests();
+        ImageX.setVisible(true);
         ByMe = false;
-        setModelRequests();
-        setFriendsRequestsView();
-        friendsRequestsView.setVisible(true);
-        datePicker.setVisible(false);
-        dateImage.setVisible(false);
-        labelDateSaved.setVisible(false);
-        labelPdfGenerated.setVisible(false);
+
     }
 
     public void onSendByMe(MouseEvent mouseEvent) {
+        pagination.setVisible(true);
+        ImageX.setVisible(true);
+        listofFriendRequestsByMe();
         ByMe = true;
-        setModelRequestsByMe();
-        setFriendsRequestsViewByMe();
-        friendsRequestsView.setVisible(true);
-        datePicker.setVisible(false);
-        dateImage.setVisible(false);
-        labelDateSaved.setVisible(false);
-        labelPdfGenerated.setVisible(false);
+
+
     }
 
     public void onActivityReport(MouseEvent mouseEvent) {
         start = null;
         end = null;
-        selected_report = 1;
-        datePicker.setVisible(true);
-        dateImage.setVisible(true);
-        datePicker.setPromptText("Start date");
+        raport1VBox.setVisible(true);
+        ImageXRaport.setVisible(true);
+        raport2VBox.setVisible(false);
+
     }
 
     public void onMessagesReport(MouseEvent mouseEvent) {
         start = null;
         end = null;
-        selected_report = 2;
-        labelDateSaved.setVisible(false);
-        labelPdfGenerated.setVisible(false);
-        datePicker.setVisible(true);
-        dateImage.setVisible(true);
-        datePicker.setPromptText("Start date");
+        raport2VBox.setVisible(true);
+        ImageXRaport.setVisible(true);
+        raport1VBox.setVisible(false);
+
     }
 
-    public void onResetDatePicker(MouseEvent mouseEvent) {
-    }
 
-    public void onReady(MouseEvent mouseEvent) throws IOException {
-        if (start != null) {
-            datePicker.setPromptText("End date");
-            end = datePicker.getValue().atTime(LocalTime.MAX);
-            datePicker.getEditor().clear();
-            if (selected_report == 1) {
-                labelDateSaved.setVisible(true);
-                activityReport();
-                labelPdfGenerated.setVisible(true);
-            } else {
-                labelDateSaved.setVisible(true);
-                searchField.setVisible(true);
-                xImage.setVisible(true);
-            }
-        } else {
-            datePicker.setPromptText("Start Date");
-            start = datePicker.getValue().atStartOfDay();
-            datePicker.getEditor().clear();
-        }
-    }
 
     private void activityReport() throws IOException {
         List<FriendshipDTO> friendships = userService.getFriendshipsByDate(start, end, userService.exists(email).getId());
@@ -406,51 +463,199 @@ public class MyProfileController implements Observer<FriendRequestChangeEvent> {
         document.close();
     }
 
-    public void setModelUser() {
-        if (!searchField.getText().isEmpty()) {
-            List<User> userList = userService.filter1(userService.exists(email).getId(), searchField.getText().toString());
-            List<String> users = new ArrayList<>();
-            userList.forEach(x -> {
-                users.add(x.getFirstName() + " " + x.getLastName());
-                modelUser.setAll(users);
+
+
+    public void listofSearching() {
+
+        paginationSearch.getStyleClass().add("/style/pagination");
+        paginationSearch.getStyleClass().add("/style/pagination-control");
+        paginationSearch.getStyleClass().add("/style/bullet-button");
+        paginationSearch.getStyleClass().add("/style/toggle-button");
+        paginationSearch.getStyleClass().add("/style/button");
+        paginationSearch.getStyleClass().add("/style/control-box");
+        paginationSearch.setPageFactory(new Callback<Integer, Node>() {
+
+            @Override
+            public Node call(Integer pageIndex) {
+                return createPageForListOfSearching(pageIndex);
+            }
+        });
+
+        int nr_searchs = userService.filter1(myId, searchField.getText()).size();
+        double nr = (double) (nr_searchs) / (double) itemsPerPage();
+
+        paginationSearch.setPageCount((int) ceil(nr));
+
+    }
+
+    public int itemsPerPageForRaport() {
+        return 3;
+    }
+
+    public VBox createPageForListOfSearching(int pageIndex) {
+        VBox box = new VBox();
+        Rectangle2D bounds = Screen.getPrimary().getVisualBounds();
+        double t = bounds.getMinX() + (bounds.getWidth() - stage.getWidth()) * 0.3;
+        double y = bounds.getMinY() + (bounds.getHeight() - stage.getHeight()) * 0.7;
+
+        box.setLayoutX(t);
+        box.setLayoutY(y);
+        box.setAlignment(Pos.CENTER);
+        int page = pageIndex * itemsPerPage();
+
+        List<User> userList = userService.getSearchOnPage((pageIndex) * itemsPerPageForRaport(), itemsPerPageForRaport(),myId, searchField.getText().toString());
+
+        List<UserDTO> users = new ArrayList<>();
+        userList.forEach(x -> {
+            if (userService.findPhoto(x.getEmail()) == null) {
+                UserDTO userDto = new UserDTO(x);
+                userDto.setUrlPhoto("/images/profile.png");
+                userDto.setEmailDTO(x.getEmail());
+                users.add(userDto);
+            } else {
+                UserDTO userDto = new UserDTO(x);
+                userDto.setUrlPhoto(userService.findPhoto(x.getEmail()));
+                userDto.setEmailDTO(x.getEmail());
+                users.add(userDto);
+            }
+
+        });
+        int nr = 0;
+        for (int i = page; i < page + userList.size(); i++) {
+            VBox row = new VBox();
+            int index = nr;
+            ImageView imageView = new ImageView();
+            Button button = new Button();
+            Label label = new Label();
+
+            imageView.setImage(new Image(users.get(index).getUrlPhoto()));
+            imageView.setFitHeight(40);
+            imageView.setFitWidth(40);
+            ImageView img = new ImageView(new Image("/images/seeProfile.png"));
+            img.setFitWidth(20);
+            img.setFitHeight(20);
+
+            button.setGraphic(img);
+            button.setStyle("-fx-background-color: transparent");
+            label.setText("  " + users.get(index).getNume());
+            label.setPrefWidth(160);
+
+            GridPane pane = new GridPane();
+            pane.getStyleClass().add("gridpane");
+            pane.add(imageView, 0, 0);
+            pane.add(label, 1, 0);
+            pane.add(button, 3, 0);
+
+            box.getChildren().add(pane);
+            label.setOnMouseClicked(event -> {
+
+                fromUser = userList.get(index).getId();
+                searchField.setText(userList.get(index).getFirstName() +  " " + userList.get(index).getFirstName());
+
             });
-        } else
-            listView.setVisible(false);
+            button.setOnAction(event -> {
+                try {
+                    FXMLLoader loader = new FXMLLoader();
+                    loader.setLocation(getClass().getResource("/views/friendProfile.fxml"));
+                    AnchorPane root = loader.load();
+
+                    // Create the dialog Stage.
+                    Stage dialogStage = new Stage();
+                    dialogStage.setTitle("My profile");
+                    dialogStage.initModality(Modality.WINDOW_MODAL);
+                    //dialogStage.initOwner(primaryStage);
+                    Scene scene = new Scene(root);
+                    dialogStage.setScene(scene);
+
+                    FriendProfileController friendProfileController = loader.getController();
+                    friendProfileController.setServices(userService, friendshipService, friendRequestService, dialogStage, email, users.get(index).getEmailDTO());
+
+                    dialogStage.show();
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            });
+
+            nr++;
+        }
+
+        return box;
     }
 
-    public void onSearchField(KeyEvent keyEvent) {
-        listView.setVisible(true);
-        setModelUser();
-        listView.setItems(null);
-        //listView.setPrefHeight(26*modelUser.size());
-        listView.setItems(modelUser);
-    }
 
-    public void onSearchedClicked(MouseEvent mouseEvent) throws IOException {
-        int poz = listView.getSelectionModel().getSelectedIndex();
-        List<User> userList = userService.filter1(userService.exists(email).getId(), searchField.getText().toString());
 
-        userSavedLabel.setVisible(true);
-        fromUser = userList.get(poz).getId();
-        messagesReport();
-        labelPdfGenerated.setVisible(true);
-    }
 
-    public void onXClicked(MouseEvent mouseEvent) {
-        searchField.setVisible(false);
-        xImage.setVisible(false);
-        listView.setVisible(false);
-        userSavedLabel.setVisible(false);
-    }
 
     @Override
     public void update(FriendRequestChangeEvent friendRequestChangeEvent) {
         if (ByMe) {
-            setModelRequestsByMe();
-            setModelRequestsByMe();
+            listofFriendRequests();
         } else {
-            setModelRequests();
-            setFriendsRequestsView();
+            listofFriendRequestsByMe();
         }
     }
+
+    public void onXPaginationClicked(MouseEvent mouseEvent) {
+        pagination.setVisible(false);
+        ImageX.setVisible(false);
+    }
+
+    public void onGenerateBtn(ActionEvent actionEvent) throws IOException {
+        if(startDatePicker.getValue() != null && endDatePicker.getValue() != null){
+            if(startDatePicker.getValue().isBefore(endDatePicker.getValue())) {
+                start = startDatePicker.getValue().atStartOfDay();
+                end = endDatePicker.getValue().atTime(LocalTime.MAX);
+                activityReport();
+                activityRaportLabel.setVisible(true);
+                activityRaportLabel.setText("The PDF was generated");
+                startDatePicker.getEditor().clear();
+                endDatePicker.getEditor().clear();
+            }
+            else{
+                activityRaportLabel.setVisible(true);
+                activityRaportLabel.setText("The dates are incorrect");
+            }
+        }
+        else{
+            activityRaportLabel.setVisible(true);
+            activityRaportLabel.setText("You need to pick both dates!!");
+        }
+
+    }
+
+    public void onXRaport1Clicked(MouseEvent mouseEvent) {
+        raport1VBox.setVisible(false);
+        raport2VBox.setVisible(false);
+        ImageXRaport.setVisible(false);
+    }
+
+    public void onGenerateBtn1(ActionEvent actionEvent) throws IOException {
+        if(startDatePicker1.getValue() != null && endDatePicker1.getValue() != null && !searchField.getText().isEmpty()){
+            if(startDatePicker1.getValue().isBefore(endDatePicker1.getValue())) {
+                start = startDatePicker1.getValue().atStartOfDay();
+                end = endDatePicker1.getValue().atTime(LocalTime.MAX);
+                messagesReport();
+                activityRaportLabel1.setVisible(true);
+                activityRaportLabel1.setText("The PDF was generated");
+                startDatePicker1.getEditor().clear();
+                endDatePicker1.getEditor().clear();
+            }
+            else{
+                activityRaportLabel1.setVisible(true);
+                activityRaportLabel1.setText("The dates are incorrect");
+            }
+        }
+        else{
+            activityRaportLabel1.setVisible(true);
+            activityRaportLabel1.setText("You need to pick both dates!!");
+        }
+    }
+
+    public void onSearchField(KeyEvent keyEvent) {
+        listofSearching();
+    }
+
+
 }

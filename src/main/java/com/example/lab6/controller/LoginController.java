@@ -1,5 +1,6 @@
 package com.example.lab6.controller;
 
+import com.example.lab6.model.PageDTO;
 import com.example.lab6.model.User;
 import com.example.lab6.service.FriendRequestService;
 import com.example.lab6.service.FriendshipService;
@@ -53,7 +54,7 @@ public class LoginController {
         passwordShowTextField.setVisible(false);
     }
 
-    public void showUserDialog(String id) {
+    public void showUserDialog(String email) {
         // create a new stage for the popup dialog.
         try {
             FXMLLoader loader = new FXMLLoader();
@@ -69,9 +70,9 @@ public class LoginController {
             Scene scene = new Scene(root);
             dialogStage.setScene(scene);
             dialogStage.setMaximized(true);
-
+            PageDTO page = new PageDTO(userService.exists(email), userService.exists(email).getFriendsList());
             HomeController userViewController = loader.getController();
-            userViewController.setServices(userService, friendshipService, friendRequestService, messageService, dialogStage, id);
+            userViewController.setServices(userService, friendshipService, friendRequestService, messageService, dialogStage, email, page);
 
             dialogStage.show();
         } catch (IOException e) {
@@ -125,33 +126,7 @@ public class LoginController {
         this.stage = stage;
     }
 
-    public void onHandleUsers() {
-        showAllUsers();
-    }
 
-    private void showAllUsers() {
-        try {
-            // create a new stage for the popup dialog.
-            FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(getClass().getResource("/views/allUsersView.fxml"));
-
-            AnchorPane root = loader.load();
-
-            // Create the dialog Stage.
-            Stage dialogStage = new Stage();
-            dialogStage.setTitle("All users");
-            dialogStage.initModality(Modality.WINDOW_MODAL);
-            Scene scene = new Scene(root);
-            dialogStage.setScene(scene);
-
-            AllUsersController allUsersController = loader.getController();
-            allUsersController.setService(userService, dialogStage);
-
-            dialogStage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
     @FXML
     void viewpass() {

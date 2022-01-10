@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class FriendRequestService implements Observable<FriendRequestChangeEvent> {
     Repository<Tuple<Long, Long>, Friendship> repoFriendship;
@@ -178,6 +179,21 @@ public class FriendRequestService implements Observable<FriendRequestChangeEvent
 
         return requestlist;
     }
+
+    public List<FriendRequestDTO> getFriendRequestsOnPage(int leftLimit,int rightLimit, Long id) {
+        List<FriendRequestDTO> friendslist = getFriendRequest(id);
+        return friendslist.stream().skip(leftLimit)
+                .limit(rightLimit)
+                .collect(Collectors.toList());
+    }
+
+    public List<FriendRequestDTO> getFriendRequestsByMeOnPage(int leftLimit,int rightLimit, Long id) {
+        List<FriendRequestDTO> friendslist = getMyFriendsRequestes(id);
+        return friendslist.stream().skip(leftLimit)
+                .limit(rightLimit)
+                .collect(Collectors.toList());
+    }
+
 
     private List<Observer> observers = new ArrayList<>();
     @Override

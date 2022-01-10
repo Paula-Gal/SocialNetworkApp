@@ -204,3 +204,9 @@
     -fx-background-radius: 20;
 }
 
+.pagination > .pagination-control > .control-box {
+    -fx-alignment: center;
+    -fx-padding: 0.416em 1.1em 0 0;
+}
+
+

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Pagination?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane nodeOrientation="RIGHT_TO_LEFT" prefHeight="794.0" prefWidth="1175.0" stylesheets="/style/profile.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.lab6.controller.MyProfileController">
+    <children>
+        <AnchorPane layoutX="868.0" layoutY="48.0" prefHeight="707.0" prefWidth="253.0" styleClass="anchor-style" AnchorPane.bottomAnchor="50.0" AnchorPane.rightAnchor="40" AnchorPane.topAnchor="50.0">
+            <children>
+                <ImageView fx:id="profilePhoto" fitHeight="100" fitWidth="80" layoutX="42.0" layoutY="26.0" pickOnBounds="true" preserveRatio="true" styleClass="profile-photo" AnchorPane.leftAnchor="90" />
+                <Label fx:id="nameLabel" contentDisplay="TOP" layoutX="61.0" layoutY="182.0" prefHeight="31.0" prefWidth="141.0" styleClass="name" />
+                <Label layoutX="76.0" layoutY="150.0" onMouseClicked="#onEditLabelClicked" styleClass="label-edit" text="Edit profile picture!" />
+            </children>
+        </AnchorPane>
+        <Button layoutX="16.0" layoutY="87.0" mnemonicParsing="false" onAction="#onMenuButton" prefHeight="30.0" prefWidth="30.0" styleClass="button-menu" AnchorPane.leftAnchor="90" AnchorPane.topAnchor="90" />
+        <GridPane fx:id="hamburgerMenu" alignment="CENTER_RIGHT" layoutX="103.0" layoutY="153.0" styleClass="anchor-style" AnchorPane.leftAnchor="150" AnchorPane.topAnchor="150">
+            <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="154.40001220703127" minWidth="10.0" prefWidth="154.40001220703127" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="171.20001220703125" minWidth="10.0" prefWidth="47.19998779296873" />
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
+            </rowConstraints>
+            <children>
+                <Label alignment="CENTER_RIGHT" contentDisplay="CENTER" onMouseClicked="#onMyFriendsRequests" prefHeight="18.0" prefWidth="170.0" text="My Friends Requests" />
+                <Label alignment="CENTER_RIGHT" onMouseClicked="#onSendByMe" prefHeight="18.0" prefWidth="183.0" text="Sent by me" GridPane.rowIndex="1" />
+                <ImageView fitHeight="32.0" fitWidth="44.0" pickOnBounds="true" preserveRatio="true" styleClass="image-myfriendrquests" GridPane.columnIndex="1" />
+                <ImageView fitHeight="30.0" fitWidth="42.0" pickOnBounds="true" preserveRatio="true" styleClass="image-myfriendrquestssend" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                <Label alignment="CENTER_RIGHT" contentDisplay="CENTER" onMouseClicked="#onActivityReport" prefHeight="18.0" prefWidth="170.0" text="Activity Report" GridPane.rowIndex="2" />
+                <ImageView fitHeight="30.0" fitWidth="42.0" pickOnBounds="true" preserveRatio="true" styleClass="image-activity-report" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                <Label alignment="CENTER_RIGHT" contentDisplay="CENTER" onMouseClicked="#onMessagesReport" prefHeight="18.0" prefWidth="170.0" text="Messages Report" GridPane.rowIndex="3" />
+                <ImageView fitHeight="30.0" fitWidth="42.0" pickOnBounds="true" preserveRatio="true" styleClass="image-messages-report" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            </children>
+        </GridPane>
+      <Pagination fx:id="pagination" layoutX="351.0" layoutY="123.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="133.0" prefWidth="336.0" AnchorPane.leftAnchor="400" AnchorPane.topAnchor="150">
+         <padding>
+            <Insets bottom="10.0" top="10.0" />
+         </padding></Pagination>
+      <ImageView fx:id="ImageX" fitHeight="25.0" fitWidth="25.0" layoutX="351.0" layoutY="50.0" onMouseClicked="#onXPaginationClicked" pickOnBounds="true" preserveRatio="true" styleClass="x-style" AnchorPane.leftAnchor="400" AnchorPane.topAnchor="110" />
+      <VBox fx:id="raport1VBox" alignment="TOP_RIGHT" layoutX="202.0" layoutY="442.0" prefHeight="258.0" prefWidth="174.0" AnchorPane.TopAnchor="400" AnchorPane.leftAnchor="170">
+         <children>
+            <Label prefHeight="50.0" styleClass="label-white-text" text="Select start date" />
+              <DatePicker fx:id="startDatePicker" nodeOrientation="LEFT_TO_RIGHT" promptText="Start Date" />
+            <Label prefHeight="50.0" styleClass="label-white-text" text="Select end date" />
+            <DatePicker fx:id="endDatePicker" nodeOrientation="LEFT_TO_RIGHT" promptText="EndDate" />
+            <Label />
+            <Button contentDisplay="CENTER" mnemonicParsing="false" onAction="#onGenerateBtn" prefHeight="41.0" prefWidth="99.0" styleClass="button-accept-reject" text="Generate pdf">
+               <VBox.margin>
+                  <Insets right="40.0" />
+               </VBox.margin>
+            </Button>
+            <Label fx:id="activityRaportLabel" alignment="CENTER" contentDisplay="CENTER" prefHeight="56.0" prefWidth="174.0" styleClass="label-white-text" />
+         </children>
+      </VBox>
+      <ImageView fx:id="ImageXRaport" fitHeight="25.0" fitWidth="25.0" layoutX="153.0" layoutY="417.0" onMouseClicked="#onXRaport1Clicked" pickOnBounds="true" preserveRatio="true" styleClass="x-style" />
+      <VBox fx:id="raport2VBox" alignment="TOP_RIGHT" layoutX="166.0" layoutY="361.0" prefHeight="420.0" prefWidth="174.0" spacing="15.0" AnchorPane.leftAnchor="166.0" AnchorPane.topAnchor="415">
+         <children>
+            <Label prefHeight="50.0" styleClass="label-white-text" text="Select start date" />
+            <DatePicker fx:id="startDatePicker1" nodeOrientation="LEFT_TO_RIGHT" promptText="Start Date" />
+            <Label prefHeight="50.0" styleClass="label-white-text" text="Select end date" />
+            <DatePicker fx:id="endDatePicker1" nodeOrientation="LEFT_TO_RIGHT" promptText="EndDate" />
+            <TextField fx:id="searchField" alignment="CENTER_RIGHT" onKeyTyped="#onSearchField" prefHeight="44.0" prefWidth="174.0" promptText="Search a friend" />
+            <Pagination fx:id="paginationSearch" nodeOrientation="LEFT_TO_RIGHT" prefHeight="114.0" prefWidth="174.0">
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
+            </Pagination>
+            <Button contentDisplay="CENTER" mnemonicParsing="false" onAction="#onGenerateBtn1" prefHeight="41.0" prefWidth="99.0" styleClass="button-accept-reject" text="Generate pdf">
+               <VBox.margin>
+                  <Insets right="40.0" />
+               </VBox.margin>
+            </Button>
+            <Label fx:id="activityRaportLabel1" alignment="CENTER" contentDisplay="CENTER" prefHeight="56.0" prefWidth="174.0" styleClass="label-white-text" />
+         </children>
+      </VBox>
+    </children>
+</AnchorPane>

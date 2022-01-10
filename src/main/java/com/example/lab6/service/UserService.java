@@ -146,6 +146,14 @@ public class UserService implements Observable<UserChangeEvent> {
         //notifyObservers(new UserChangeEvent(ChangeEventType.UPDATE, ));
 
     }
+
+    public List<User> searchingFriends(int leftLimit, int rightLimit, Long id, String string){
+        List<User> users = friends(id, string);
+        return users.stream().skip(leftLimit)
+                .limit(rightLimit)
+                .collect(Collectors.toList());
+    }
+
     private List<Observer<UserChangeEvent>> observers = new ArrayList<>();
 
 
@@ -227,5 +235,14 @@ public class UserService implements Observable<UserChangeEvent> {
     public User getUserByID(Long userID) {
         return repoUser.findOne(userID);
     }
+
+
+    public List<User> getSearchOnPage(int leftLimit,int rightLimit, Long id, String string) {
+        List<User> users = filter1(id, string);
+        return users.stream().skip(leftLimit)
+                .limit(rightLimit)
+                .collect(Collectors.toList());
+    }
+
 }
 
