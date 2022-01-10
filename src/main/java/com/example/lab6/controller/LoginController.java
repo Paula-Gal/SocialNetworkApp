@@ -1,10 +1,7 @@
 package com.example.lab6.controller;
 
 import com.example.lab6.model.User;
-import com.example.lab6.service.FriendRequestService;
-import com.example.lab6.service.FriendshipService;
-import com.example.lab6.service.MessageService;
-import com.example.lab6.service.UserService;
+import com.example.lab6.service.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -41,10 +38,21 @@ public class LoginController {
     FriendshipService friendshipService;
     MessageService messageService;
     FriendRequestService friendRequestService;
+    EventService eventService;
     private String email;
 
     @FXML
     private TextField loginField;
+
+    public void setServices(UserService service, FriendshipService fservice, MessageService messageService, FriendRequestService friendRequestService, EventService eventService, Stage stage) {
+
+        this.userService = service;
+        this.friendshipService = fservice;
+        this.messageService = messageService;
+        this.friendRequestService = friendRequestService;
+        this.stage = stage;
+        this.eventService = eventService;
+    }
 
     public void initialize() {
         logo.setImage(new Image("/images/mountain.png"));
@@ -71,7 +79,7 @@ public class LoginController {
             dialogStage.setMaximized(true);
 
             HomeController userViewController = loader.getController();
-            userViewController.setServices(userService, friendshipService, friendRequestService, messageService, dialogStage, id);
+            userViewController.setServices(userService, friendshipService, friendRequestService, messageService, eventService, dialogStage, id);
 
             dialogStage.show();
         } catch (IOException e) {
@@ -110,19 +118,9 @@ public class LoginController {
     @FXML
     public void handleCreateAccountDialog(MouseEvent ev) {
         showCreateAccountDialog(null);
-
     }
 
     public void loginLabel(InputMethodEvent inputMethodEvent) {
-    }
-
-    public void setServices(UserService service, FriendshipService fservice, MessageService messageService, FriendRequestService friendRequestService, Stage stage) {
-
-        this.userService = service;
-        this.friendshipService = fservice;
-        this.messageService = messageService;
-        this.friendRequestService = friendRequestService;
-        this.stage = stage;
     }
 
     public void onHandleUsers() {

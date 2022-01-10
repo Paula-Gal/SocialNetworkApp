@@ -139,9 +139,9 @@ public class MyProfileController implements Observer<FriendRequestChangeEvent> {
 
         profilePhoto.setImage(new Image(path.toURI().toString()));
         if (userService.findPhoto(email) != null)
-            userService.updatePictre(email, path.toURI().toString());
+            userService.updatePicture(email, path.toURI().toString());
         else
-            userService.savePictre(email, path.toURI().toString());
+            userService.savePicture(email, path.toURI().toString());
     }
 
     public void onMenuButton(ActionEvent actionEvent) {
