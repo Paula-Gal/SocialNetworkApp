@@ -10,7 +10,6 @@ import com.example.lab6.utils.observer.Observer;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -117,18 +116,11 @@ public class FriendshipService implements Observable<UserChangeEvent> {
 
     }
 
-
-
-
-    public List<FriendshipDTO> getMyFriendsOnPage(int leftLimit,int rightLimit, Long id) {
     public List<FriendshipDTO> getMyFriendsOnPage(int leftLimit, int rightLimit, Long id) {
         List<FriendshipDTO> friendslist = getFriendships(id);
         return friendslist.stream().skip(leftLimit)
                 .limit(rightLimit)
                 .collect(Collectors.toList());
     }
-
-
-
 
 }

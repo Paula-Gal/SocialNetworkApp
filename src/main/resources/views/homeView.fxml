@@ -67,24 +67,19 @@
          </children>
       </AnchorPane>
       <HBox layoutX="98.0" layoutY="256.0" prefHeight="100.0" prefWidth="200.0" />
-      <Label fx:id="createConvLabel" layoutX="1016.0" layoutY="40.0" onMouseClicked="#createGroupConversation" styleClass="label-createGroup" text="Create a group conversation" AnchorPane.rightAnchor="67.0" AnchorPane.topAnchor="140.0" />
-      <TextField fx:id="addingFriendsToConversation" layoutX="1017.0" layoutY="69.0" onKeyTyped="#onAddingFriendsField" AnchorPane.rightAnchor="87" AnchorPane.topAnchor="170.0" />
-      <ImageView fx:id="setGroupImage" fitHeight="26.0" fitWidth="23.0" layoutX="1200.0" layoutY="69.0" onMouseClicked="#setConversationGroup" pickOnBounds="true" preserveRatio="true" styleClass="image-setGroup" AnchorPane.rightAnchor="40.0" AnchorPane.topAnchor="170.0" />
-      <ListView fx:id="groupView" layoutX="1016.0" layoutY="95.0" onMouseClicked="#onAddingFriendsToGroupList" prefHeight="26.0" prefWidth="150.0" AnchorPane.rightAnchor="87" />
-      <ListView fx:id="groupsView" layoutX="1016.0" layoutY="134.0" prefHeight="38.0" prefWidth="224.0" styleClass="list-view, list-cell" AnchorPane.rightAnchor="40.0" AnchorPane.topAnchor="300.0" />
       <CheckBox fx:id="friendsGroupsCheckBox" layoutX="918.0" layoutY="145.0" mnemonicParsing="false" onAction="#friendsOrGroups" styleClass="label-checkbox" text="Groups" AnchorPane.rightAnchor="280.0" AnchorPane.topAnchor="300.0" />
       <Pagination fx:id="pagination" layoutX="1196.0" layoutY="300.0" prefHeight="129.0" prefWidth="200.0" AnchorPane.rightAnchor="40.0" AnchorPane.topAnchor="300.0" />
       <Pagination fx:id="paginationSearch" layoutX="232.0" layoutY="329.0" prefHeight="87.0" prefWidth="200.0" />
       <AnchorPane fx:id="anchorPagination" layoutX="307.0" layoutY="70.0" prefHeight="200.0" prefWidth="200.0" />
-      <ScrollPane fx:id="scroller" layoutX="530.0" layoutY="149.0" prefHeight="720.0" prefWidth="650.0" styleClass="list-view, rounded-scroll-pane, scroll-background" AnchorPane.rightAnchor="600" AnchorPane.topAnchor="230">
+      <ImageView fx:id="closeEventsImage" fitHeight="30.0" fitWidth="30.0" layoutX="860.0" layoutY="182.0" onMouseClicked="#closeEvents" pickOnBounds="true" preserveRatio="true" styleClass="image-x-events" AnchorPane.rightAnchor="550" />
+      <ScrollPane fx:id="scroller" layoutX="347.0" layoutY="159.0" prefHeight="720.0" prefWidth="650.0" AnchorPane.rightAnchor="600.0" AnchorPane.topAnchor="230.0">
          <content>
-            <VBox fx:id="eventsBox" alignment="TOP_CENTER" layoutX="100.0" prefHeight="800.0" prefWidth="400.0" styleClass="list-view-event" AnchorPane.rightAnchor="400" AnchorPane.topAnchor="250" />
+            <VBox fx:id="eventsBox" alignment="TOP_CENTER" prefHeight="800.0" prefWidth="400.0" styleClass="list-view-event" />
          </content>
          <padding>
-            <Insets left="150.0" />
+            <Insets left="100.0" />
          </padding>
       </ScrollPane>
-      <ImageView fx:id="closeEventsImage" fitHeight="30.0" fitWidth="30.0" layoutX="860.0" layoutY="182.0" onMouseClicked="#closeEvents" pickOnBounds="true" preserveRatio="true" styleClass="image-x-events" AnchorPane.rightAnchor="550" />
-      <StackPane AnchorPane.rightAnchor="630" AnchorPane.bottomAnchor="150" fx:id="stackpane" layoutX="930.0" layoutY="356.0" prefHeight="150.0" prefWidth="200.0" />
+      <StackPane fx:id="stackpane" layoutX="930.0" layoutY="356.0" prefHeight="150.0" prefWidth="200.0" AnchorPane.bottomAnchor="150" AnchorPane.rightAnchor="630" />
    </children>
 </AnchorPane>

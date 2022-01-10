@@ -22,8 +22,6 @@ public class GroupDbRepository implements Repository<Long, Group> {
         this.password = password;
     }
 
-
-
     @Override
     public Group findOne(Long aLong) {
 
@@ -61,7 +59,7 @@ public class GroupDbRepository implements Repository<Long, Group> {
     }
 
     private Group saveMessagesToUsers(Group group) {
-        String sql = "select * from messages_groups where recepient_group = " + group.getId();
+        String sql = "select * from messages_groups where recipient_group = " + group.getId();
         List<MessageDTO> messageDTOList = new ArrayList<>();
         try (Connection connection = DriverManager.getConnection(url, username, password);
              PreparedStatement statement = connection.prepareStatement(sql);
@@ -127,7 +125,6 @@ public class GroupDbRepository implements Repository<Long, Group> {
 
     }
 
-
     @Override
     public Group save(Group entity) {
         if (entity == null)
@@ -146,7 +143,6 @@ public class GroupDbRepository implements Repository<Long, Group> {
                 saveUsersToGroup(id,  entity.getMembers());
             }
 
-
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -155,8 +151,7 @@ public class GroupDbRepository implements Repository<Long, Group> {
 
     private void saveMessages(MessageDTO messages, Long idGroup) {
 
-
-        String sql = "INSERT INTO messages_groups (date, \"from\", message, \"original_message\", recepient_group) VALUES (?, ? , ? ,? , ?)";
+        String sql = "INSERT INTO messages_groups (date, \"from\", message, \"original_message\", recipient_group) VALUES (?, ? , ? ,? , ?)";
 
         try (Connection connection = DriverManager.getConnection(url, username, password);
              PreparedStatement ps = connection.prepareStatement(sql)) {
@@ -209,6 +204,4 @@ public class GroupDbRepository implements Repository<Long, Group> {
         saveMessages(entity.getMessages().get(entity.getMessages().size()-1), entity.getId());
         return null;
     }
-
-
 }

@@ -2,16 +2,14 @@ package com.example.lab6;
 
 import com.example.lab6.controller.SplashScreenController;
 import com.example.lab6.model.*;
+import com.example.lab6.model.validators.EventValidator;
 import com.example.lab6.model.validators.FriendshipValidator;
 import com.example.lab6.model.validators.UserValidator;
 import com.example.lab6.repository.Repository;
 import com.example.lab6.repository.UserRepository;
 import com.example.lab6.repository.db.*;
 import com.example.lab6.repository.paging.PagingRepository;
-import com.example.lab6.service.FriendRequestService;
-import com.example.lab6.service.FriendshipService;
-import com.example.lab6.service.MessageService;
-import com.example.lab6.service.UserService;
+import com.example.lab6.service.*;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -35,11 +33,6 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        repoDb = new UserDbRepository("jdbc:postgresql://localhost:5432/userApp", "postgres", "qwaszx12", new UserValidator());
-        repoDbf = new FriendshipDbRepository("jdbc:postgresql://localhost:5432/userApp", "postgres","qwaszx12", new FriendshipValidator());
-        messageDb = new MessageDbRepository("jdbc:postgresql://localhost:5432/userApp", "postgres", "qwaszx12");
-        frRequestDb = new FriendRequestDbRepository("jdbc:postgresql://localhost:5432/userApp", "postgres", "qwaszx12");
-        repoDbGroup = new GroupDbRepository("jdbc:postgresql://localhost:5432/userApp", "postgres", "qwaszx12");
         repoDb = new UserDbRepository("jdbc:postgresql://localhost:5432/socialnetworkapp", "postgres", "paula123", new UserValidator());
         repoDbf = new FriendshipDbRepository("jdbc:postgresql://localhost:5432/socialnetworkapp", "postgres", "paula123", new FriendshipValidator());
         messageDb = new MessageDbRepository("jdbc:postgresql://localhost:5432/socialnetworkapp", "postgres", "paula123");

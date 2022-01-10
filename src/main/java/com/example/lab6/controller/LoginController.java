@@ -80,8 +80,7 @@ public class LoginController {
             dialogStage.setMaximized(true);
             PageDTO page = new PageDTO(userService.exists(email), userService.exists(email).getFriendsList());
             HomeController userViewController = loader.getController();
-            userViewController.setServices(userService, friendshipService, friendRequestService, messageService, dialogStage, email, page);
-            userViewController.setServices(userService, friendshipService, friendRequestService, messageService, eventService, dialogStage, id);
+            userViewController.setServices(userService, friendshipService, friendRequestService, messageService, eventService, dialogStage, email, page);
 
             dialogStage.show();
         } catch (IOException e) {
@@ -133,25 +132,6 @@ public class LoginController {
         this.friendRequestService = friendRequestService;
         this.stage = stage;
     }
-
-    public void onHandleUsers() {
-        showAllUsers();
-    }
-
-    private void showAllUsers() {
-        try {
-            // create a new stage for the popup dialog.
-            FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(getClass().getResource("/views/allUsersView.fxml"));
-
-            AnchorPane root = loader.load();
-
-            // Create the dialog Stage.
-            Stage dialogStage = new Stage();
-            dialogStage.setTitle("All users");
-            dialogStage.initModality(Modality.WINDOW_MODAL);
-            Scene scene = new Scene(root);
-            dialogStage.setScene(scene);
 
 
     @FXML
