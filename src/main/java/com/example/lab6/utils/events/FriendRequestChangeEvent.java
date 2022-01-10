@@ -2,7 +2,7 @@ package com.example.lab6.utils.events;
 
 import com.example.lab6.model.FriendRequest;
 
-public class FriendRequestChangeEvent implements Event {
+public class FriendRequestChangeEvent implements EventObs {
     FriendRequest olddata, data;
     ChangeEventType type;
 

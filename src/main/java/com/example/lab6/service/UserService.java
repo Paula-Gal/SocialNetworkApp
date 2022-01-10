@@ -196,11 +196,11 @@ public class UserService implements Observable<UserChangeEvent> {
         return (hashedInputPassword).equals(exists(email).getPassword());
     }
 
-    public void savePictre(String email, String url) {
+    public void savePicture(String email, String url) {
         repoUser.savePicture(email, url);
     }
 
-    public void updatePictre(String email, String url) {
+    public void updatePicture(String email, String url) {
         repoUser.updatePicture(email, url);
     }
 

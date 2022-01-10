@@ -25,10 +25,13 @@ public class Main extends Application {
     PagingRepository<Long, MessageDTO> messageDb;
     Repository<Tuple<Long, Long>, FriendRequest> frRequestDb;
     Repository<Long, Group> repoDbGroup;
+
     UserService userService;
     FriendshipService friendshipService;
     MessageService messageService;
     FriendRequestService friendRequestService;
+    EventDbRepository repoEvents;
+    EventService eventService;
 
     @Override
     public void start(Stage stage) throws IOException {
@@ -37,27 +40,31 @@ public class Main extends Application {
         messageDb = new MessageDbRepository("jdbc:postgresql://localhost:5432/userApp", "postgres", "qwaszx12");
         frRequestDb = new FriendRequestDbRepository("jdbc:postgresql://localhost:5432/userApp", "postgres", "qwaszx12");
         repoDbGroup = new GroupDbRepository("jdbc:postgresql://localhost:5432/userApp", "postgres", "qwaszx12");
+        repoDb = new UserDbRepository("jdbc:postgresql://localhost:5432/socialnetworkapp", "postgres", "paula123", new UserValidator());
+        repoDbf = new FriendshipDbRepository("jdbc:postgresql://localhost:5432/socialnetworkapp", "postgres", "paula123", new FriendshipValidator());
+        messageDb = new MessageDbRepository("jdbc:postgresql://localhost:5432/socialnetworkapp", "postgres", "paula123");
+        frRequestDb = new FriendRequestDbRepository("jdbc:postgresql://localhost:5432/socialnetworkapp", "postgres", "paula123");
+        repoDbGroup = new GroupDbRepository("jdbc:postgresql://localhost:5432/socialnetworkapp", "postgres", "paula123");
+        repoEvents = new EventDbRepository("jdbc:postgresql://localhost:5432/socialnetworkapp", "postgres", "paula123");
 
-
+        eventService =  new EventService(repoEvents, repoDb,new EventValidator());
         userService = new UserService(repoDb, repoDbf, new UserValidator());
         friendshipService = new FriendshipService(repoDb, repoDbf);
         messageService = new MessageService(messageDb, repoDb, repoDbf, repoDbGroup);
         friendRequestService = new FriendRequestService(frRequestDb, repoDb, repoDbf);
-        //                //stage.setFullScreen(trueice(frRequestDb, repoDb, repoDbf);
-//        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("/views/login-view.fxml"));
+
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("/views/splash-screen.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
         stage.setTitle("BeSocial");
         stage.setScene(scene);
-        //LoginController helloController = fxmlLoader.getController();
+
         SplashScreenController splashScreenController = fxmlLoader.getController();
         stage.setMaximized(true);
-        splashScreenController.setServices(userService, friendshipService, messageService, friendRequestService, stage);
+        splashScreenController.setServices(userService, friendshipService, messageService, friendRequestService, eventService, stage);
         stage.show();
         splashScreenController.run();
 
     }
-
 
     public static void main(String[] args) {
         launch();
