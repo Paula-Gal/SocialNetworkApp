@@ -5,6 +5,7 @@
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Pagination?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -12,14 +13,15 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Line?>
 
 <AnchorPane nodeOrientation="RIGHT_TO_LEFT" prefHeight="794.0" prefWidth="1175.0" stylesheets="/style/profile.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.lab6.controller.MyProfileController">
     <children>
-        <AnchorPane layoutX="868.0" layoutY="48.0" prefHeight="707.0" prefWidth="253.0" styleClass="anchor-style" AnchorPane.bottomAnchor="50.0" AnchorPane.rightAnchor="40" AnchorPane.topAnchor="50.0">
+        <AnchorPane layoutX="868.0" layoutY="48.0" prefHeight="163.0" prefWidth="375.0" styleClass="anchor-style" AnchorPane.bottomAnchor="472.0" AnchorPane.rightAnchor="50" AnchorPane.topAnchor="200.0">
             <children>
-                <ImageView fx:id="profilePhoto" fitHeight="100" fitWidth="80" layoutX="42.0" layoutY="26.0" pickOnBounds="true" preserveRatio="true" styleClass="profile-photo" AnchorPane.leftAnchor="90" />
-                <Label fx:id="nameLabel" contentDisplay="TOP" layoutX="61.0" layoutY="182.0" prefHeight="31.0" prefWidth="141.0" styleClass="name" />
-                <Label layoutX="76.0" layoutY="150.0" onMouseClicked="#onEditLabelClicked" styleClass="label-edit" text="Edit profile picture!" />
+                <ImageView fx:id="profilePhoto" fitHeight="100" fitWidth="80" layoutX="152.0" layoutY="24.0" pickOnBounds="true" preserveRatio="true" styleClass="profile-photo" AnchorPane.TopAnchor="60.0" AnchorPane.leftAnchor="152.0" />
+                <Label fx:id="nameLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="-1.0" layoutY="162.0" prefHeight="31.0" prefWidth="375.0" styleClass="name" AnchorPane.bottomAnchor="50" />
+                <Label alignment="CENTER" contentDisplay="CENTER" layoutX="138.0" layoutY="145.0" onMouseClicked="#onEditLabelClicked" styleClass="label-edit" text="Edit profile picture!" textAlignment="CENTER"  AnchorPane.TopAnchor="170.0"/>
             </children>
         </AnchorPane>
         <Button layoutX="16.0" layoutY="87.0" mnemonicParsing="false" onAction="#onMenuButton" prefHeight="30.0" prefWidth="30.0" styleClass="button-menu" AnchorPane.leftAnchor="90" AnchorPane.topAnchor="90" />
@@ -45,11 +47,11 @@
                 <ImageView fitHeight="30.0" fitWidth="42.0" pickOnBounds="true" preserveRatio="true" styleClass="image-messages-report" GridPane.columnIndex="1" GridPane.rowIndex="3" />
             </children>
         </GridPane>
-      <Pagination fx:id="pagination" layoutX="351.0" layoutY="123.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="133.0" prefWidth="336.0" AnchorPane.leftAnchor="400" AnchorPane.topAnchor="150">
+      <Pagination fx:id="pagination" layoutX="351.0" layoutY="123.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="133.0" prefWidth="336.0" AnchorPane.leftAnchor="170" AnchorPane.topAnchor="410">
          <padding>
             <Insets bottom="10.0" top="10.0" />
          </padding></Pagination>
-      <ImageView fx:id="ImageX" fitHeight="25.0" fitWidth="25.0" layoutX="351.0" layoutY="50.0" onMouseClicked="#onXPaginationClicked" pickOnBounds="true" preserveRatio="true" styleClass="x-style" AnchorPane.leftAnchor="400" AnchorPane.topAnchor="110" />
+      <ImageView fx:id="ImageX" fitHeight="25.0" fitWidth="25.0" layoutX="351.0" layoutY="50.0" onMouseClicked="#onXPaginationClicked" pickOnBounds="true" preserveRatio="true" styleClass="x-style" AnchorPane.leftAnchor="170" AnchorPane.topAnchor="370" />
       <VBox fx:id="raport1VBox" alignment="TOP_RIGHT" layoutX="202.0" layoutY="442.0" prefHeight="258.0" prefWidth="174.0" AnchorPane.TopAnchor="400" AnchorPane.leftAnchor="170">
          <children>
             <Label prefHeight="50.0" styleClass="label-white-text" text="Select start date" />
@@ -86,5 +88,33 @@
             <Label fx:id="activityRaportLabel1" alignment="CENTER" contentDisplay="CENTER" prefHeight="56.0" prefWidth="174.0" styleClass="label-white-text" />
          </children>
       </VBox>
+      <VBox alignment="TOP_RIGHT" layoutX="357.0" layoutY="330.0" prefHeight="133.0" prefWidth="569.0" styleClass="vbox" AnchorPane.rightAnchor="700" AnchorPane.topAnchor="50">
+         <children>
+            <TextField fx:id="postField" alignment="CENTER_RIGHT" prefHeight="73.0" prefWidth="569.0" promptText="?What are you thinking today" styleClass="post-field">
+               <VBox.margin>
+                  <Insets left="30.0" right="30.0" />
+               </VBox.margin></TextField>
+            <Line endX="100.0" startX="-475.57550048828125" startY="0.9999855160713196" />
+            <AnchorPane prefHeight="56.0" prefWidth="577.0">
+               <children>
+                  <Button layoutX="54.0" layoutY="3.0" mnemonicParsing="false" onAction="#onPostButton" prefHeight="40.0" prefWidth="80.0" styleClass="button-post" text="Post" AnchorPane.leftAnchor="30.0" AnchorPane.topAnchor="8.0" />
+                  <ImageView fx:id="uploadImage" fitHeight="40.0" fitWidth="40.0" layoutX="494.0" layoutY="13.0" nodeOrientation="RIGHT_TO_LEFT" onMouseClicked="#onUploadImage" pickOnBounds="true" preserveRatio="true" styleClass="upload-image" AnchorPane.rightAnchor="30.0" AnchorPane.topAnchor="8.0" />
+                  <ImageView fx:id="toUploadImage" fitHeight="40.0" fitWidth="40.0" layoutX="429.0" layoutY="13.0" nodeOrientation="RIGHT_TO_LEFT" pickOnBounds="true" preserveRatio="true" styleClass="upload-image" AnchorPane.rightAnchor="90.0" AnchorPane.topAnchor="8.0" />
+               </children>
+            </AnchorPane>
+         </children>
+      </VBox>
+      <ScrollPane fx:id="scrollerPost" layoutX="547.0" layoutY="361.0" nodeOrientation="LEFT_TO_RIGHT" onScroll="#onScroll" prefHeight="632.0" prefWidth="569.0" styleClass="scroll-post" AnchorPane.rightAnchor="700" AnchorPane.topAnchor="200">
+         <content>
+            <VBox fx:id="vBoxPost" alignment="TOP_CENTER" fillWidth="false" prefHeight="637.0" prefWidth="453.0">
+               <padding>
+                  <Insets left="20.0" right="20.0" top="20.0" />
+               </padding>
+            </VBox>
+         </content>
+         <padding>
+            <Insets left="50.0" right="50.0" />
+         </padding>
+      </ScrollPane>
     </children>
 </AnchorPane>

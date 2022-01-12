@@ -34,7 +34,7 @@
             <ImageView fx:id="imageName" fitHeight="50.0" fitWidth="178.0" layoutX="45.0" layoutY="4.0" pickOnBounds="true" preserveRatio="true" />
          </children>
       </AnchorPane>
-      <Label fx:id="welcomeText" layoutX="7.0" layoutY="82.0" prefHeight="104.0" prefWidth="337.0" styleClass="area-style" AnchorPane.leftAnchor="220" AnchorPane.topAnchor="130" />
+      <Label fx:id="welcomeText" layoutX="7.0" layoutY="82.0" prefHeight="104.0" prefWidth="638.0" styleClass="area-style" AnchorPane.leftAnchor="220" AnchorPane.topAnchor="130" />
       <TextField fx:id="searchField" layoutX="380.0" layoutY="160.0" onKeyTyped="#onSearchField" prefHeight="26.0" prefWidth="224.0" promptText="Search user..." styleClass="text-field" AnchorPane.leftAnchor="220" AnchorPane.topAnchor="300" />
       <ImageView fitHeight="20.0" fitWidth="17.0" layoutX="583.0" layoutY="166.0" onMouseClicked="#onXClicked" pickOnBounds="true" preserveRatio="true" styleClass="x-style" AnchorPane.leftAnchor="430" AnchorPane.topAnchor="300" fx:id="xImage" />
       <AnchorPane fx:id="conversation" layoutX="673.0" layoutY="407.0" prefHeight="392.0" prefWidth="325.0" styleClass="chat-style" AnchorPane.bottomAnchor="0" AnchorPane.rightAnchor="330">
@@ -81,5 +81,17 @@
          </padding>
       </ScrollPane>
       <StackPane fx:id="stackpane" layoutX="930.0" layoutY="356.0" prefHeight="150.0" prefWidth="200.0" AnchorPane.bottomAnchor="150" AnchorPane.rightAnchor="630" />
+      <ScrollPane fx:id="scrollerPosts" layoutX="357.0" layoutY="169.0" onScroll="#onScrollerPosts" prefHeight="632.0" prefWidth="569.0" styleClass="scroll-post" AnchorPane.rightAnchor="600.0" AnchorPane.topAnchor="230.0">
+         <content>
+            <VBox fx:id="vBoxPosts" alignment="CENTER" prefHeight="637.0" prefWidth="453.0" styleClass="list-view-event">
+               <padding>
+                  <Insets left="20.0" right="20.0" top="20.0" />
+               </padding></VBox>
+         </content>
+         <padding>
+            <Insets left="50.0" right="50.0" />
+         </padding>
+      </ScrollPane>
+      <Label layoutX="1220.0" layoutY="262.0" text="My friends" AnchorPane.rightAnchor="140.0" AnchorPane.topAnchor="260.0" styleClass="label-myfriends"/>
    </children>
 </AnchorPane>

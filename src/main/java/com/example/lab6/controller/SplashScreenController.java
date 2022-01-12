@@ -21,6 +21,7 @@ public class SplashScreenController extends Thread {
     MessageService messageService;
     FriendRequestService friendRequestService;
     EventService eventService;
+    PostService postService;
 
     public void initialize() {
         logoImage.setVisible(true);
@@ -28,13 +29,14 @@ public class SplashScreenController extends Thread {
     }
 
 
-    public void setServices(UserService userService, FriendshipService friendshipService, MessageService messageService, FriendRequestService friendRequestService, EventService eventService, Stage stage) {
+    public void setServices(UserService userService, FriendshipService friendshipService, MessageService messageService, FriendRequestService friendRequestService, EventService eventService, PostService postService, Stage stage) {
         this.userService = userService;
         this.friendshipService = friendshipService;
         this.messageService = messageService;
         this.friendRequestService = friendRequestService;
         this.stage = stage;
         this.eventService = eventService;
+        this.postService = postService;
     }
 
     @Override
@@ -58,7 +60,7 @@ public class SplashScreenController extends Thread {
                 dialogStage.setScene(scene);
 
                 LoginController loginController = loader.getController();
-                loginController.setServices(userService, friendshipService, messageService, friendRequestService, eventService, dialogStage);
+                loginController.setServices(userService, friendshipService, messageService, friendRequestService, eventService, postService, dialogStage);
 
                 dialogStage.show();
             } catch (IOException e) {

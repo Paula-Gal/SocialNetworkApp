@@ -98,10 +98,11 @@ public class UserService implements Observable<UserChangeEvent> {
         List<User> usersList = new ArrayList<>();
         userIterable.forEach(usersList::add);
 
-        Predicate<User> firstName = x -> x.getFirstName().toLowerCase(Locale.ROOT).contains(str.toLowerCase(Locale.ROOT));
-        Predicate<User> lastName = x -> x.getLastName().toLowerCase(Locale.ROOT).contains(str.toLowerCase(Locale.ROOT));
+        Predicate<User> firstName = x -> x.getFirstName().toLowerCase(Locale.ROOT).startsWith(str.toLowerCase(Locale.ROOT));
+        Predicate<User> lastName = x -> x.getLastName().toLowerCase(Locale.ROOT).startsWith(str.toLowerCase(Locale.ROOT));
         Predicate<User> friends = x -> !x.getFriendsList().contains(repoUser.findOne(id));
         Predicate<User> user = x -> !x.getId().equals(id);
+
 
 
         Predicate<User> userPredicate = firstName.or(lastName);
@@ -134,8 +135,8 @@ public class UserService implements Observable<UserChangeEvent> {
                 usersList.add(repoUser.findOne(x.getE1()));
         });
 
-        Predicate<User> firstName = x -> x.getFirstName().toLowerCase(Locale.ROOT).contains(str.toLowerCase(Locale.ROOT));
-        Predicate<User> lastName = x -> x.getLastName().toLowerCase(Locale.ROOT).contains(str.toLowerCase(Locale.ROOT));
+        Predicate<User> firstName = x -> x.getFirstName().toLowerCase(Locale.ROOT).startsWith(str.toLowerCase(Locale.ROOT));
+        Predicate<User> lastName = x -> x.getLastName().toLowerCase(Locale.ROOT).startsWith(str.toLowerCase(Locale.ROOT));
         //Predicate<User> friends = x -> x.getFriendsList().contains(repoUser.findOne(id));
 
         Predicate<User> userPredicate = firstName.or(lastName);

@@ -5,14 +5,14 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane prefHeight="589.0" prefWidth="775.0" styleClass="anchor-style" stylesheets="/style/friend.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.lab6.controller.FriendProfileController">
+<AnchorPane prefHeight="565.0" prefWidth="774.0" styleClass="anchor-style" stylesheets="/style/friend.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.lab6.controller.FriendProfileController">
    <children>
-      <AnchorPane layoutX="261.0" layoutY="60.0" prefHeight="707.0" prefWidth="253.0" styleClass="anchor-style">
+      <AnchorPane layoutX="261.0" layoutY="70.0" prefHeight="349.0" prefWidth="253.0" styleClass="anchor-style">
          <children>
-            <ImageView fx:id="profilePhoto" fitHeight="132.0" fitWidth="166.0" layoutX="42.0" layoutY="26.0" pickOnBounds="true" preserveRatio="true" />
-            <Label fx:id="nameLabel" contentDisplay="TOP" layoutX="61.0" layoutY="182.0" prefHeight="31.0" prefWidth="141.0" styleClass="name" />
-            <Button fx:id="addButton" layoutX="106.0" layoutY="232.0" mnemonicParsing="false" onAction="#onAddButton" text="Add" />
-            <Button fx:id="removeButton" layoutX="97.0" layoutY="232.0" mnemonicParsing="false" onAction="#onRemoveButton" text="Remove" />
+            <ImageView fx:id="profilePhoto" fitHeight="110.0" fitWidth="110.0" layoutX="77.0" layoutY="58.0" pickOnBounds="true" preserveRatio="true" />
+            <Label fx:id="nameLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="61.0" layoutY="182.0" prefHeight="31.0" prefWidth="141.0" styleClass="name" />
+            <Button fx:id="addButton" layoutX="83.0" layoutY="232.0" mnemonicParsing="false" onAction="#onAddButton" prefHeight="41.0" prefWidth="97.0" styleClass="button" text="Add" />
+            <Button fx:id="removeButton" layoutX="83.0" layoutY="232.0" mnemonicParsing="false" onAction="#onRemoveButton" prefHeight="41.0" prefWidth="97.0" styleClass="button" text="Remove" />
          </children>
       </AnchorPane>
    </children>

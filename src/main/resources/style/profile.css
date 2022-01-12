@@ -185,8 +185,90 @@
 
 }
 .button-accept-reject:hover {
-    -fx-background-color:linear-gradient(to left, #fc6e99, #cbad6d);
+    -fx-background-color: linear-gradient(to left, #fc6e99, #cbad6d);
     /*animation: animate 10s linear infinite;*/
     -fx-cursor: pointer;
     -fx-text-fill: white;
+}
+
+.upload-image{
+    -fx-image: url("/images/uploadPhoto.png");
+    -fx-background-size: cover;
+}
+
+.button-post{
+    -fx-background-color: linear-gradient(to left, #9515f5, #fd18d7);
+    /*animation: animate 10s linear infinite;*/
+    -fx-text-fill: white;
+    -fx-font-family: Poppins-Medium;
+    -fx-font-size: 15;
+    -fx-cursor: pointer;
+}
+
+.button-post:hover{
+    -fx-background-color: linear-gradient(to right, #9515f5, #fd18d7);
+    /*animation: animate 10s linear infinite;*/
+    -fx-cursor: pointer;
+    -fx-text-fill: white;
+    -fx-font-family: Poppins-Medium;
+    -fx-font-size: 15;
+}
+
+.hbox{
+    -fx-background-color: white;
+    -fx-background-radius: 0 0 40 40;
+}
+.vbox{
+    -fx-background-color: white;
+    -fx-background-radius: 40;
+}
+
+
+.post-field{
+    -fx-background-color: white;
+    -fx-background-radius: 40 40 0 0;
+}
+
+.vbox-post{
+    -fx-background-color: #9cc8ff;
+    -fx-background-radius: 40;
+    -fx-padding: 20;
+}
+.hbox-post{
+    -fx-background-color:#9cc8ff;
+    -fx-background-radius: 0 0 40 40;
+}
+.scroll-post {
+    -fx-background-image: url("/images/images.jpg");
+    -fx-background-size: cover;
+    -fx-background-radius: 40;
+    -fx-border-radius: 40;
+}
+
+.label-name-post{
+    -fx-font-size: 13;
+    -fx-font-family: Poppins-Bold;
+    -fx-padding: 5;
+    -fx-text-fill: white;
+}
+
+.label-description-post{
+    -fx-font-size: 20;
+    -fx-font-family: Poppins-Bold;
+    -fx-padding: 7;
+    -fx-text-fill: white;
+}
+
+.label-date-post{
+    -fx-font-size: 12;
+    -fx-font-family: Poppins-Bold;
+    -fx-padding: 7;
+    -fx-text-fill: #606060;
+}
+
+.vbox-posts{
+    -fx-background-color: red;
+
+
+    -fx-opacity: 0.4;
 }

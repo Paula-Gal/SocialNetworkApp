@@ -40,12 +40,14 @@ public class LoginController {
     MessageService messageService;
     FriendRequestService friendRequestService;
     EventService eventService;
+    PostService postService;
+
     private String email;
 
     @FXML
     private TextField loginField;
 
-    public void setServices(UserService service, FriendshipService fservice, MessageService messageService, FriendRequestService friendRequestService, EventService eventService, Stage stage) {
+    public void setServices(UserService service, FriendshipService fservice, MessageService messageService, FriendRequestService friendRequestService, EventService eventService,  PostService postService, Stage stage) {
 
         this.userService = service;
         this.friendshipService = fservice;
@@ -53,6 +55,7 @@ public class LoginController {
         this.friendRequestService = friendRequestService;
         this.stage = stage;
         this.eventService = eventService;
+        this.postService = postService;
     }
 
     public void initialize() {
@@ -80,7 +83,7 @@ public class LoginController {
             dialogStage.setMaximized(true);
             PageDTO page = new PageDTO(userService.exists(email), userService.exists(email).getFriendsList());
             HomeController userViewController = loader.getController();
-            userViewController.setServices(userService, friendshipService, friendRequestService, messageService, eventService, dialogStage, email, page);
+            userViewController.setServices(userService, friendshipService, friendRequestService, messageService, eventService, postService, dialogStage, email, page);
 
             dialogStage.show();
         } catch (IOException e) {

@@ -1,10 +1,7 @@
 package com.example.lab6.controller;
 
 import com.example.lab6.model.*;
-import com.example.lab6.service.FriendRequestService;
-import com.example.lab6.service.FriendshipService;
-import com.example.lab6.service.MessageService;
-import com.example.lab6.service.UserService;
+import com.example.lab6.service.*;
 import com.example.lab6.utils.events.FriendRequestChangeEvent;
 import com.example.lab6.utils.observer.Observer;
 import javafx.collections.FXCollections;
@@ -12,6 +9,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
@@ -21,10 +19,9 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.input.ScrollEvent;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Screen;
@@ -39,6 +36,7 @@ import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -67,7 +65,16 @@ public class MyProfileController implements Observer<FriendRequestChangeEvent> {
     public DatePicker endDatePicker1;
     public Pagination paginationSearch;
     public VBox raport2VBox;
+    public ImageView uploadImage;
+    public ImageView toUploadImage;
+    public String toUploadImageURL;
+    public TextField postField;
+    public ScrollPane scrollerPost;
+    public VBox vBoxPost;
     private Boolean ByMe = false;
+    public int leftLimitPosts = 0;
+    public int numberOfPost;
+    public int postOnPage = 2;
 
 
     private LocalDateTime start;
@@ -77,6 +84,7 @@ public class MyProfileController implements Observer<FriendRequestChangeEvent> {
     private FriendshipService friendshipService;
     private FriendRequestService friendRequestService;
     private MessageService messageService;
+    private PostService postService;
     private Long to;
     private Long from;
     private Long fromUser;
@@ -101,14 +109,17 @@ public class MyProfileController implements Observer<FriendRequestChangeEvent> {
         activityRaportLabel.setVisible(false);
         ImageXRaport.setVisible(false);
         raport2VBox.setVisible(false);
+        toUploadImage.setVisible(false);
+
 
     }
 
-    public void setServices(UserService userService, FriendshipService friendshipService, FriendRequestService friendRequestService, MessageService messageService, Stage stage, String email) {
+    public void setServices(UserService userService, FriendshipService friendshipService, FriendRequestService friendRequestService, MessageService messageService,  PostService postService, Stage stage, String email) {
         this.userService = userService;
         this.friendshipService = friendshipService;
         this.friendRequestService = friendRequestService;
         this.messageService = messageService;
+        this.postService = postService;
         this.stage = stage;
         this.email = email;
         this.myId = userService.exists(email).getId();
@@ -116,6 +127,7 @@ public class MyProfileController implements Observer<FriendRequestChangeEvent> {
         setProfilePicture();
         this.from = userService.exists(email).getId();
         friendRequestService.addObserver(this);
+        initializePost();
     }
 
 
@@ -140,9 +152,14 @@ public class MyProfileController implements Observer<FriendRequestChangeEvent> {
         });
 
         int nr_friends = friendRequestService.getFriendRequest(myId).size();
-        double nr = (double) (nr_friends) / (double) itemsPerPage();
 
-        pagination.setPageCount((int) ceil(nr));
+        if(nr_friends == 0)
+            pagination.setPageCount(1);
+        else{
+            double nr = (double) (nr_friends) / (double) itemsPerPage();
+            pagination.setPageCount((int) ceil(nr));
+        }
+
 
     }
 
@@ -216,9 +233,11 @@ public class MyProfileController implements Observer<FriendRequestChangeEvent> {
         });
 
         int nr_friends = friendRequestService.getMyFriendsRequestes(myId).size();
-        double nr = (double) (nr_friends) / (double) itemsPerPage();
+        if(nr_friends == 0)
+            pagination.setPageCount(1);
+        { double nr = (double) (nr_friends) / (double) itemsPerPage();
 
-        pagination.setPageCount((int) ceil(nr));
+        pagination.setPageCount((int)(nr));}
 
     }
 
@@ -658,4 +677,117 @@ public class MyProfileController implements Observer<FriendRequestChangeEvent> {
     }
 
 
+    public void onPostButton(ActionEvent actionEvent) {
+        if(!postField.getText().isEmpty() || !toUploadImageURL.isEmpty()){
+            Post post = new Post(myId, toUploadImageURL, postField.getText(), LocalDateTime.now());
+            postService.addPost(post);
+            toUploadImage.setVisible(false);
+            postField.clear();
+            toUploadImageURL = "";
+            initializePost();
+        }
+    }
+
+    public void onUploadImage(MouseEvent mouseEvent) {
+        FileChooser fileChooser = new FileChooser();
+
+        String userDirectory = System.getProperty("user.home");
+        File userD = new File(userDirectory);
+        if (!userD.canRead())
+            userD = new File("c:/");
+        fileChooser.setInitialDirectory(userD);
+        File path = fileChooser.showOpenDialog(stage);
+
+        toUploadImage.setVisible(true);
+        toUploadImage.setImage(new Image(path.toURI().toString()));
+        toUploadImageURL = toUploadImage.getImage().getUrl();
+
+    }
+
+    private void initializePost(){
+        vBoxPost.getChildren().clear();
+        numberOfPost = postService.getMyPosts(myId).size();
+
+        int nr = leftLimitPosts+postOnPage;
+        if(nr > numberOfPost)
+            nr = numberOfPost;
+        List<Post> postList = postService.getMyPostsOnPage(leftLimitPosts, nr-leftLimitPosts, myId);
+
+        postList.forEach(x->{
+            VBox box = new VBox();
+            box.getStyleClass().add("vbox-post");
+            HBox hbox = new HBox();
+            box.setPrefWidth(400);
+            box.setFillWidth(true);
+            ImageView profile = new ImageView();
+            if (userService.findPhoto(userService.getUserByID(x.getAdmin()).getEmail()) == null)
+                profile.setImage(new Image("/images/profile.png"));
+            else
+                profile.setImage(new Image(userService.findPhoto(userService.getUserByID(x.getAdmin()).getEmail())));
+
+            profile.setFitHeight(50);
+            profile.setFitWidth(50);
+
+            VBox data = new VBox();
+            Label name = new Label();
+            name.setText(userService.getUserByID(x.getAdmin()).getFirstName() + " " + userService.getUserByID(x.getAdmin()).getLastName());
+            name.getStyleClass().add("label-name-post");
+            data.getChildren().add(name);
+            Label date = new Label("Posted on " + x.getDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
+            date.getStyleClass().add("label-date-post");
+            data.getChildren().add(date);
+
+            hbox.getChildren().add(profile);
+            hbox.getChildren().add(data);
+            hbox.setSpacing(20);
+            hbox.setAlignment(Pos.CENTER_LEFT);
+            box.getChildren().add(hbox);
+
+            if(x.getDescription() != null){
+
+                Label description = new Label(x.getDescription());
+                description.setAlignment(Pos.CENTER);
+
+                description.getStyleClass().add("label-description-post");
+                box.getChildren().add(description);
+            }
+            if(x.getUrl() != null){
+                ImageView img = new ImageView();
+                img.setImage(new Image(x.getUrl()));
+                HBox rowImage = new HBox();
+                img.setFitWidth(160);
+                img.setFitHeight(160);
+                rowImage.getChildren().add(img);
+                rowImage.setAlignment(Pos.CENTER);
+                box.getChildren().add(rowImage);
+            }
+
+            box.setSpacing(10);
+            box.getStyleClass().add("vbox-post");
+            vBoxPost.getChildren().add(box);
+
+        });
+
+
+        vBoxPost.setSpacing(20);
+        scrollerPost.setContent(vBoxPost);
+        scrollerPost.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        scrollerPost.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        scrollerPost.setVvalue(0.5);
+        scrollerPost.setHvalue(0.5);
+
+
+    }
+
+    public void onScroll(ScrollEvent scrollEvent) {
+        if(scrollEvent.getDeltaY()<0 && (leftLimitPosts+postOnPage)<numberOfPost){ //scroll up
+            leftLimitPosts ++;
+            initializePost();
+        }
+        if(scrollEvent.getDeltaY()>0 && leftLimitPosts > 0){ //scroll down and there are messages left
+            leftLimitPosts--;
+            initializePost();
+        }
+
+    }
 }
