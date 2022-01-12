@@ -36,15 +36,16 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        repoDb = new UserDbRepository("jdbc:postgresql://localhost:5432/userApp", "postgres", "qwaszx12", new UserValidator());
-        repoDbf = new FriendshipDbRepository("jdbc:postgresql://localhost:5432/userApp", "postgres", "qwaszx12", new FriendshipValidator());
-        messageDb = new MessageDbRepository("jdbc:postgresql://localhost:5432/userApp", "postgres", "qwaszx12");
-        frRequestDb = new FriendRequestDbRepository("jdbc:postgresql://localhost:5432/userApp", "postgres", "qwaszx12");
-        repoDbGroup = new GroupDbRepository("jdbc:postgresql://localhost:5432/userApp", "postgres", "qwaszx12");
-        repoEvents = new EventDbRepository("jdbc:postgresql://localhost:5432/userApp", "postgres", "qwaszx12");
-        repoPost = new PostDbRepository("jdbc:postgresql://localhost:5432/userApp", "postgres", "qwaszx12");
 
-        eventService =  new EventService(repoEvents, repoDb,new EventValidator());
+        repoDb = new UserDbRepository("jdbc:postgresql://localhost:5432/socialnetworkapp", "postgres", "paula123", new UserValidator());
+        repoDbf = new FriendshipDbRepository("jdbc:postgresql://localhost:5432/socialnetworkapp", "postgres","paula123", new FriendshipValidator());
+        messageDb = new MessageDbRepository("jdbc:postgresql://localhost:5432/socialnetworkapp", "postgres", "paula123");
+        frRequestDb = new FriendRequestDbRepository("jdbc:postgresql://localhost:5432/socialnetworkapp", "postgres", "paula123");
+        repoDbGroup = new GroupDbRepository("jdbc:postgresql://localhost:5432/socialnetworkapp", "postgres", "paula123");
+        repoEvents = new EventDbRepository("jdbc:postgresql://localhost:5432/socialnetworkapp", "postgres", "paula123");
+        repoPost = new PostDbRepository("jdbc:postgresql://localhost:5432/socialnetworkapp", "postgres", "paula123");
+
+        eventService = new EventService(repoEvents, repoDb, new EventValidator());
         userService = new UserService(repoDb, repoDbf, new UserValidator());
         friendshipService = new FriendshipService(repoDb, repoDbf);
         messageService = new MessageService(messageDb, repoDb, repoDbf, repoDbGroup);
@@ -61,7 +62,6 @@ public class Main extends Application {
         splashScreenController.setServices(userService, friendshipService, messageService, friendRequestService, eventService, postService, stage);
         stage.show();
         splashScreenController.run();
-
     }
 
     public static void main(String[] args) {

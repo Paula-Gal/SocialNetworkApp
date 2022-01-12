@@ -47,7 +47,7 @@ public class LoginController {
     @FXML
     private TextField loginField;
 
-    public void setServices(UserService service, FriendshipService fservice, MessageService messageService, FriendRequestService friendRequestService, EventService eventService,  PostService postService, Stage stage) {
+    public void setServices(UserService service, FriendshipService fservice, MessageService messageService, FriendRequestService friendRequestService, EventService eventService, PostService postService, Stage stage) {
 
         this.userService = service;
         this.friendshipService = fservice;
@@ -135,7 +135,6 @@ public class LoginController {
         this.friendRequestService = friendRequestService;
         this.stage = stage;
     }
-
 
     @FXML
     void viewpass() {

@@ -256,7 +256,53 @@
     -fx-spacing: 20;
 }
 
+.background-event-category-selected:selected {
+    -fx-background-color: white;
+    -fx-background-radius: 35;
+    -fx-text-fill: black;
+    -fx-background-position: center center;
+    -fx-padding: 15px 15px 15px 15px;
+    -fx-spacing: 20;
+    -fx-content-display: block;
+}
+.background-event-category-selected:cell-selection {
+    -fx-background-color: white;
+    -fx-background-radius: 35;
+    -fx-text-fill: black;
+    -fx-background-position: center center;
+    -fx-padding: 15px 15px 15px 15px;
+    -fx-spacing: 20;
+    -fx-content-display: block;
+}
+
 .background-event-category:hover {
+    -fx-background-color: #FF75B7;
+    -fx-background-radius: 35;
+    -fx-text-fill: black;
+    -fx-background-position: center center;
+    -fx-padding: 15px 15px 15px 15px;
+    -fx-spacing: 20;
+}
+
+.background-event-category:focused {
+    -fx-background-color: #FF75B7;
+    -fx-background-radius: 35;
+    -fx-text-fill: black;
+    -fx-background-position: center center;
+    -fx-padding: 15px 15px 15px 15px;
+    -fx-spacing: 20;
+}
+
+.background-event-category:visited {
+    -fx-background-color: #FF75B7;
+    -fx-background-radius: 35;
+    -fx-text-fill: black;
+    -fx-background-position: center center;
+    -fx-padding: 15px 15px 15px 15px;
+    -fx-spacing: 20;
+}
+
+.background-event-category:cell-selection {
     -fx-background-color: #FF75B7;
     -fx-background-radius: 35;
     -fx-text-fill: black;
@@ -320,4 +366,31 @@
     -fx-padding: 7;
     -fx-text-fill: white;
 }
+.hover-remove:hover {
+    -fx-background-color: white;
+}
 
+.hover-remove:hover {
+    -fx-background-color: #FF75B7;
+}
+
+.scroll-post-events {
+    -fx-background-size: cover;
+    -fx-background-radius: 40;
+    -fx-border-radius: 40;
+}
+
+.vbox-event{
+    -fx-background-color: #9cc8ff;
+    -fx-background-radius: 40;
+    -fx-padding: 20;
+}
+
+.background-event-category-hover {
+    -fx-background-color: #FF75B7;
+    -fx-background-radius: 35;
+    -fx-text-fill: black;
+    -fx-background-position: center center;
+    -fx-padding: 15px 15px 15px 15px;
+    -fx-spacing: 20;
+}

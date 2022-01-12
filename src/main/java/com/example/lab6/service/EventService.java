@@ -4,12 +4,13 @@ import com.example.lab6.model.Event;
 import com.example.lab6.model.User;
 import com.example.lab6.model.validators.EventValidator;
 import com.example.lab6.model.validators.ValidationException;
+import com.example.lab6.repository.EventRepository;
 import com.example.lab6.repository.UserRepository;
-import com.example.lab6.repository.paging.PagingRepository;
 import com.example.lab6.utils.events.EventChangeEvent;
 import com.example.lab6.utils.observer.Observable;
 import com.example.lab6.utils.observer.Observer;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
@@ -17,11 +18,11 @@ import java.util.stream.Collectors;
 
 public class EventService implements Observable<EventChangeEvent> {
 
-    PagingRepository<Long, Event> repoEvent;
+   EventRepository<Long, Event> repoEvent;
     UserRepository<Long, User> repoUser;
     EventValidator eventValidator;
 
-    public EventService(PagingRepository<Long, Event> repoEvent, UserRepository<Long, User> repoUser, EventValidator eventValidator) {
+    public EventService(EventRepository<Long, Event> repoEvent, UserRepository<Long, User> repoUser, EventValidator eventValidator) {
         this.repoEvent = repoEvent;
         this.repoUser = repoUser;
         this.eventValidator = eventValidator;
@@ -36,10 +37,16 @@ public class EventService implements Observable<EventChangeEvent> {
         }
     }
 
-    public List<Event> getAllEvents() {
+    public List<Event> getAllEvents(Long id) {
         Iterable<Event> list = repoEvent.findAll();
+
         List<Event> events = new ArrayList<>();
+
         list.forEach(events::add);
+
+        Predicate<Event> event = x -> !x.getSubscribers().contains(id);
+
+        events = events.stream().filter(event).collect(Collectors.toList());
 
         return events;
     }
@@ -70,6 +77,13 @@ public class EventService implements Observable<EventChangeEvent> {
         return myEventsList;
     }
 
+    public void removeEvent(Long id) {
+        Event event = repoEvent.findOne(id);
+        repoEvent.remove(event);
+    }
+
+    private final List<Observer<EventChangeEvent>> observers = new ArrayList<>();
+
     @Override
     public void addObserver(Observer<EventChangeEvent> e) {
 
@@ -82,6 +96,37 @@ public class EventService implements Observable<EventChangeEvent> {
 
     @Override
     public void notifyObservers(EventChangeEvent t) {
+        observers.forEach(x -> x.update(t));
+    }
 
+    public void unsubscribe(Long idEvent, Long idUser) {
+        Event event = repoEvent.findOne(idEvent);
+
+        repoEvent.delete(event, idUser);
+    }
+
+    public void subscribe(Long idEvent, Long myId) {
+        Event event = repoEvent.findOne(idEvent);
+        List<Long> subs;
+        List<Long> subscribers = new ArrayList<>();
+        subs = event.getSubscribers();
+        subscribers.add(myId);
+
+    /*    if (subs != null) {
+            subs.forEach(x -> {
+                subscribers.add(x);
+            });
+        }*/
+        event.setSubscribers(subscribers);
+
+        repoEvent.update(event);
+    }
+
+    public void saveNotificationDate(Long user, Long event) {
+      repoEvent.saveLastNotificationDate(event, user);
+    }
+
+    public LocalDateTime getLastNotificationDate(Long user, Long event) {
+        return repoEvent.getLastNotificationDate(event, user);
     }
 }

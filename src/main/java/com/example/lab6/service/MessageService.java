@@ -4,9 +4,7 @@ import com.example.lab6.model.*;
 import com.example.lab6.model.validators.ValidationException;
 import com.example.lab6.repository.Repository;
 import com.example.lab6.repository.UserRepository;
-import com.example.lab6.repository.paging.Page;
 import com.example.lab6.repository.paging.Pageable;
-import com.example.lab6.repository.paging.PageableImplementation;
 import com.example.lab6.repository.paging.PagingRepository;
 import com.example.lab6.utils.events.ChangeEventType;
 import com.example.lab6.utils.events.MessageChangeEvent;
@@ -17,7 +15,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -82,14 +79,10 @@ public class MessageService implements Observable<MessageChangeEvent> {
     }
 
 
-    public void sendMessageGroup(Group group,  MessageDTO messageDTO)
-    {
-
-            group.addMessage(messageDTO);
-            repoGroup.update(group);
-            notifyObservers(new MessageChangeEvent(ChangeEventType.ADD, messageDTO));
-
-
+    public void sendMessageGroup(Group group, MessageDTO messageDTO) {
+        group.addMessage(messageDTO);
+        repoGroup.update(group);
+        notifyObservers(new MessageChangeEvent(ChangeEventType.ADD, messageDTO));
     }
 
     /**
@@ -152,7 +145,6 @@ public class MessageService implements Observable<MessageChangeEvent> {
 
         MessageDTO messageDTO = new MessageDTO(fromUser, recipients, message, LocalDateTime.now(), toMessage);
         repoMessage.save(messageDTO);
-
     }
 
     /**
@@ -230,7 +222,7 @@ public class MessageService implements Observable<MessageChangeEvent> {
 
         messages.forEach(x -> {
             Long to = x.getTo().get(0);
-            Long from  = x.getFrom();
+            Long from = x.getFrom();
             if (to.equals(loggedUser) && from.equals(fromUser)) {
                 MessageDTO message = new MessageDTO(x.getFrom(), tos, x.getMessage(), x.getDate(), x.getReply());
                 messageDTOS.add(message);
@@ -282,17 +274,16 @@ public class MessageService implements Observable<MessageChangeEvent> {
         return convertMessages(result);
     }
 
-    public void saveGroup(Group group){
+    public void saveGroup(Group group) {
         repoGroup.save(group);
     }
 
-    public List<Group> getGroups(){
+    public List<Group> getGroups() {
         Iterable<Group> groupIterable = repoGroup.findAll();
         List<Group> groups = new ArrayList<>();
         groupIterable.forEach(groups::add);
-       return groups;
+        return groups;
     }
-
 
     @Override
     public void removeObserver(Observer<MessageChangeEvent> e) {
@@ -310,23 +301,20 @@ public class MessageService implements Observable<MessageChangeEvent> {
 //        this.pageable = pageable;
 //    }
 
-
-
-
-    public List<Group> myGroups(Long id){
+    public List<Group> myGroups(Long id) {
         Iterable<Group> groupIterable = repoGroup.findAll();
         List<Group> groupList = new ArrayList<>();
         groupIterable.forEach(groupList::add);
 
         List<Group> myGroups = new ArrayList<>();
 
-        Predicate<Group> myGroup = x->x.getMembers().contains(id);
+        Predicate<Group> myGroup = x -> x.getMembers().contains(id);
         groupList.stream().filter(myGroup).forEach(myGroups::add);
 
         return myGroups;
     }
 
-    public List<Group> getGroupsOnPage(int leftLimit,int rightLimit, Long id ){
+    public List<Group> getGroupsOnPage(int leftLimit, int rightLimit, Long id) {
         Iterable<Group> groupIterable = repoGroup.findAll();
         List<Group> groups = myGroups(id);
         return groups.stream().skip(leftLimit)
@@ -334,14 +322,13 @@ public class MessageService implements Observable<MessageChangeEvent> {
                 .collect(Collectors.toList());
     }
 
-
-    public List<Group> filterName(String string, Long id){
+    public List<Group> filterName(String string, Long id) {
         Iterable<Group> groupIterable = repoGroup.findAll();
         List<Group> groupList = new ArrayList<>();
         groupIterable.forEach(groupList::add);
 
-        Predicate<Group> name = x->x.getName().contains(string);
-        Predicate<Group> inGroup = x->x.getMembers().contains(id);
+        Predicate<Group> name = x -> x.getName().contains(string);
+        Predicate<Group> inGroup = x -> x.getMembers().contains(id);
         Predicate<Group> filter = name.and(inGroup);
 
         List<Group> myGroups = new ArrayList<>();
@@ -349,9 +336,9 @@ public class MessageService implements Observable<MessageChangeEvent> {
 
         return myGroups;
 
-
     }
-    public List<Group> getSearchingGroupsOnPage(int leftLimit,int rightLimit, Long id, String string ){
+
+    public List<Group> getSearchingGroupsOnPage(int leftLimit, int rightLimit, Long id, String string) {
 
         List<Group> groups = filterName(string, id);
         return groups.stream().skip(leftLimit)
@@ -361,24 +348,25 @@ public class MessageService implements Observable<MessageChangeEvent> {
 
     /**
      * return all the friendships of a user
+     *
      * @param id
      * @return
      */
-    public List<FriendshipDTO> getFriendships(Long id){
-        if(repoUser.findOne(id) == null)
+    public List<FriendshipDTO> getFriendships(Long id) {
+        if (repoUser.findOne(id) == null)
             throw new ValidationException("Invalid id");
         User user = repoUser.findOne(id);
         List<FriendshipDTO> friendslist = new ArrayList<>();
         Iterable<Friendship> friendshipIterable = repoFriendship.findAll();
 
-        Predicate<Friendship> firstfriend = x->x.getE1().equals(id);
-        Predicate<Friendship> secondfriend = x->x.getE2().equals(id);
+        Predicate<Friendship> firstfriend = x -> x.getE1().equals(id);
+        Predicate<Friendship> secondfriend = x -> x.getE2().equals(id);
         Predicate<Friendship> friendshipPredicate = firstfriend.or(secondfriend);
         List<Friendship> list = new ArrayList<>();
         friendshipIterable.forEach(list::add);
-        list.stream().filter(friendshipPredicate).map(x ->{
-            if(x.getE1().equals(id))
-                return  new FriendshipDTO(repoUser.findOne(x.getE2()), x.getDate());
+        list.stream().filter(friendshipPredicate).map(x -> {
+            if (x.getE1().equals(id))
+                return new FriendshipDTO(repoUser.findOne(x.getE2()), x.getDate());
             else
                 return new FriendshipDTO(repoUser.findOne(x.getE1()), x.getDate());
         }).forEach(friendslist::add);
@@ -390,13 +378,14 @@ public class MessageService implements Observable<MessageChangeEvent> {
     public List<FriendshipDTO> getMyFriendsWithMessages(Long id) {
         List<FriendshipDTO> friendslist = getFriendships(id);
         List<FriendshipDTO> friendshipDTOS = new ArrayList<>();
-        friendslist.forEach(x->{
-            if(getConversation(id, x.getUser().getId()).size() > 0)
+        friendslist.forEach(x -> {
+            if (getConversation(id, x.getUser().getId()).size() > 0)
                 friendshipDTOS.add(x);
         });
         return friendshipDTOS;
     }
-    public List<FriendshipDTO> getMyConversationPage(int leftLimit,int rightLimit, Long id) {
+
+    public List<FriendshipDTO> getMyConversationPage(int leftLimit, int rightLimit, Long id) {
         List<FriendshipDTO> friendslist = getMyFriendsWithMessages(id);
         return friendslist.stream().skip(leftLimit)
                 .limit(rightLimit)
@@ -410,12 +399,10 @@ public class MessageService implements Observable<MessageChangeEvent> {
                 .collect(Collectors.toList());
     }
 
-    public List<Message> getGroupMessagesOnPage(int leftLimit, int rightLimit, Long id) {
-        List<Message> messages = convertMessages(repoGroup.findOne(id).getMessages());
+    public List<Message> getGroupMessagesOnPage(int leftLimit, int rightLimit, List<Message> messages) {
         return messages.stream().skip(leftLimit)
                 .limit(rightLimit)
                 .collect(Collectors.toList());
     }
-
 }
 
