@@ -1,9 +1,8 @@
 package com.example.lab6.utils.events;
 
-import com.example.lab6.model.Message;
 import com.example.lab6.model.MessageDTO;
 
-public class MessageChangeEvent implements Event{
+public class MessageChangeEvent implements EventObs {
     ChangeEventType type;
     MessageDTO olddata, data;
 

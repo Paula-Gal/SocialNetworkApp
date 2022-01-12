@@ -1,9 +1,6 @@
 package com.example.lab6.controller;
 
-import com.example.lab6.service.FriendRequestService;
-import com.example.lab6.service.FriendshipService;
-import com.example.lab6.service.MessageService;
-import com.example.lab6.service.UserService;
+import com.example.lab6.service.*;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
@@ -23,6 +20,8 @@ public class SplashScreenController extends Thread {
     FriendshipService friendshipService;
     MessageService messageService;
     FriendRequestService friendRequestService;
+    EventService eventService;
+    PostService postService;
 
     public void initialize() {
         logoImage.setVisible(true);
@@ -30,12 +29,14 @@ public class SplashScreenController extends Thread {
     }
 
 
-    public void setServices(UserService userService, FriendshipService friendshipService, MessageService messageService, FriendRequestService friendRequestService, Stage stage) {
+    public void setServices(UserService userService, FriendshipService friendshipService, MessageService messageService, FriendRequestService friendRequestService, EventService eventService, PostService postService, Stage stage) {
         this.userService = userService;
         this.friendshipService = friendshipService;
         this.messageService = messageService;
         this.friendRequestService = friendRequestService;
         this.stage = stage;
+        this.eventService = eventService;
+        this.postService = postService;
     }
 
     @Override
@@ -59,13 +60,12 @@ public class SplashScreenController extends Thread {
                 dialogStage.setScene(scene);
 
                 LoginController loginController = loader.getController();
-                loginController.setServices(userService, friendshipService, messageService, friendRequestService, dialogStage);
+                loginController.setServices(userService, friendshipService, messageService, friendRequestService, eventService, postService, dialogStage);
 
                 dialogStage.show();
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
 
         } catch (InterruptedException e) {
             e.printStackTrace();

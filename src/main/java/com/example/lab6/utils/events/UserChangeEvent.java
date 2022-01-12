@@ -2,7 +2,7 @@ package com.example.lab6.utils.events;
 
 import com.example.lab6.model.User;
 
-public class UserChangeEvent implements Event {
+public class UserChangeEvent implements EventObs {
     private ChangeEventType type;
     private User data;
     private User oldData;

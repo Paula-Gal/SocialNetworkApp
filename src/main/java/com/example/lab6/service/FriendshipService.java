@@ -10,7 +10,6 @@ import com.example.lab6.utils.observer.Observer;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -23,18 +22,17 @@ public class FriendshipService implements Observable<UserChangeEvent> {
      * @param repoUser
      * @param repoFriendship
      */
-    public FriendshipService(UserRepository repoUser, PagingRepository<Tuple<Long,Long>,Friendship> repoFriendship) {
-        this.repoUser =  repoUser;
+    public FriendshipService(UserRepository repoUser, PagingRepository<Tuple<Long, Long>, Friendship> repoFriendship) {
+        this.repoUser = repoUser;
         this.repoFriendship = repoFriendship;
     }
 
     /**
-     *
      * @param entity
      * @return entity if saved
      * throw Validate Exception if the ID already exists or it is invalid
      */
-    public Friendship add(Friendship entity){
+    public Friendship add(Friendship entity) {
         Long id1 = entity.getE1();
         Long id2 = entity.getE2();
 
@@ -51,23 +49,22 @@ public class FriendshipService implements Observable<UserChangeEvent> {
         return repoFriendship.save(entity);
     }
 
-    public Friendship exists(Long id1, Long id2){
+    public Friendship exists(Long id1, Long id2) {
 
         Tuple<Long, Long> ship = new Tuple<>(id1, id2);
-        if(repoFriendship.findOne(ship) != null)
+        if (repoFriendship.findOne(ship) != null)
             return repoFriendship.findOne(ship);
 
-        return  null;
+        return null;
 
     }
 
     /**
-     *
      * @param id1 must be not null
      * @param id2 must be not null
      */
-    public void removeFriendship(Long id1, Long id2){
-        if(repoUser.findOne(id1)== null || repoUser.findOne(id2) == null)
+    public void removeFriendship(Long id1, Long id2) {
+        if (repoUser.findOne(id1) == null || repoUser.findOne(id2) == null)
             throw new ValidationException("Nu exista");
         Tuple<Long, Long> ship = new Tuple<>(id1, id2);
         repoFriendship.remove(repoFriendship.findOne(ship));
@@ -76,24 +73,25 @@ public class FriendshipService implements Observable<UserChangeEvent> {
 
     /**
      * return all the friendships of a user
+     *
      * @param id
      * @return
      */
-    public List<FriendshipDTO> getFriendships(Long id){
-        if(repoUser.findOne(id) == null)
+    public List<FriendshipDTO> getFriendships(Long id) {
+        if (repoUser.findOne(id) == null)
             throw new ValidationException("Invalid id");
         User user = repoUser.findOne(id);
         List<FriendshipDTO> friendslist = new ArrayList<>();
         Iterable<Friendship> friendshipIterable = repoFriendship.findAll();
 
-        Predicate<Friendship> firstfriend = x->x.getE1().equals(id);
-        Predicate<Friendship> secondfriend = x->x.getE2().equals(id);
+        Predicate<Friendship> firstfriend = x -> x.getE1().equals(id);
+        Predicate<Friendship> secondfriend = x -> x.getE2().equals(id);
         Predicate<Friendship> friendshipPredicate = firstfriend.or(secondfriend);
         List<Friendship> list = new ArrayList<>();
         friendshipIterable.forEach(list::add);
-        list.stream().filter(friendshipPredicate).map(x ->{
-            if(x.getE1().equals(id))
-                return  new FriendshipDTO(repoUser.findOne(x.getE2()), x.getDate());
+        list.stream().filter(friendshipPredicate).map(x -> {
+            if (x.getE1().equals(id))
+                return new FriendshipDTO(repoUser.findOne(x.getE2()), x.getDate());
             else
                 return new FriendshipDTO(repoUser.findOne(x.getE1()), x.getDate());
         }).forEach(friendslist::add);
@@ -118,17 +116,11 @@ public class FriendshipService implements Observable<UserChangeEvent> {
 
     }
 
-
-
-
-    public List<FriendshipDTO> getMyFriendsOnPage(int leftLimit,int rightLimit, Long id) {
+    public List<FriendshipDTO> getMyFriendsOnPage(int leftLimit, int rightLimit, Long id) {
         List<FriendshipDTO> friendslist = getFriendships(id);
         return friendslist.stream().skip(leftLimit)
                 .limit(rightLimit)
                 .collect(Collectors.toList());
     }
-
-
-
 
 }

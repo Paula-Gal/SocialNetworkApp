@@ -32,10 +32,12 @@
 .button-messages {
     /*-fx-position: absolute;*/
     /*-fx-transform: translate(-50%, -50%);*/
-    -fx-width: 60px;
+    /*-fx-width: 60px;
     -fx-height: 30px;
+
+     */
     -fx-text-align: center;
-    -fx-line-height: 50px;
+
     -fx-font-size: 12px;
     -fx-font-family: Poppins-Bold;
     -fx-box-sizing: border-box;
@@ -142,9 +144,11 @@
 
 }
 
-.background-mymessage {
+.background-mymessages {
     -fx-background-color: #c570e5;
     -fx-background-radius: 40;
+    -fx-font-size: 15;
+    -fx-font-family: Poppins-Regular;
     -fx-text-fill: white;
     -fx-background-position: right center;
     -fx-text-alignment: right;
@@ -152,10 +156,12 @@
 
 }
 
-.background-message {
+.background-messages{
     -fx-background-color: #cebade;
     -fx-background-radius: 40;
+    -fx-font-size: 15;
     -fx-text-fill: black;
+    -fx-font-family: Poppins-Regular;
     -fx-background-position: left center;
     -fx-padding: 10;
 }
@@ -213,6 +219,7 @@
     -fx-border-radius: 20;
     -fx-padding: 5;
 }
+
 
 
 

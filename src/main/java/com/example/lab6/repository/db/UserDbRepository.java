@@ -20,8 +20,6 @@ public class UserDbRepository implements UserRepository<Long, User> {
         this.username = username;
         this.password = password;
         this.validator = validator;
-
-
     }
 
     @Override

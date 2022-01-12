@@ -104,7 +104,34 @@
     -fx-background-position: right center;
     -fx-text-alignment: right;
     -fx-padding: 10;
+}
 
+.events-background {
+    -fx-background-color: #c570e5;
+    -fx-background-radius: 40;
+    -fx-text-fill: grey;
+    -fx-background-position: center center;
+    -fx-text-alignment: right;
+    -fx-padding: 30;
+}
+
+.scroll-background {
+    -fx-background-radius: 40;
+    -fx-background-color: white;
+}
+
+.rounded-scroll-pane > .scroll-bar:horizontal .thumb,
+.rounded-scroll-pane > .scroll-bar:vertical .thumb {
+    -fx-background-color : #dddddd;
+    -fx-background-insets : 2.0, 0.0, 0.0;
+    -fx-background-radius : 2em;
+}
+
+.rounded-scroll-pane > .scroll-bar:horizontal .thumb:hover,
+.rounded-scroll-pane > .scroll-bar:vertical .thumb:hover {
+    -fx-background-color : #9e9e9e;
+    -fx-background-insets : 2.0, 0.0, 0.0;
+    -fx-background-radius : 2em;
 }
 
 .background-message {
@@ -113,6 +140,7 @@
     -fx-text-fill: black;
     -fx-background-position: left center;
     -fx-padding: 10;
+    -fx-spacing: 20;
 }
 
 .label-conversation {
@@ -180,7 +208,6 @@
 
 .pagination .pagination-control .toggle-button:selected {
     -fx-background-color: #c570e5;
-
 }
 
 .pagination .toggle-button .button{
@@ -204,9 +231,93 @@
     -fx-background-radius: 20;
 }
 
+.list-view-event {
+    -fx-background-radius: 40;
+    -fx-pref-height: 200;
+}
+
+.event-image {
+    -fx-pref-height: 50px;
+    -fx-pref-width: 50px;
+}
+
+.image-x-events {
+    -fx-image: url("/images/cancel-event.png");
+    -fx-pref-width: 40;
+    -fx-pref-height: 40;
+}
+
+.background-event-category {
+    -fx-background-color: white;
+    -fx-background-radius: 35;
+    -fx-text-fill: black;
+    -fx-background-position: center center;
+    -fx-padding: 15px 15px 15px 15px;
+    -fx-spacing: 20;
+}
+
+.background-event-category:hover {
+    -fx-background-color: #FF75B7;
+    -fx-background-radius: 35;
+    -fx-text-fill: black;
+    -fx-background-position: center center;
+    -fx-padding: 15px 15px 15px 15px;
+    -fx-spacing: 20;
+}
+
+.back-color-category {
+    -fx-background-color: #c570e5;
+    -fx-background-radius: 20;
+}
+
+.image-add-event {
+    -fx-image: url("/images/evv.png");
+    -fx-pref-height: 30;
+    -fx-pref-width: 30;
+}
 .pagination > .pagination-control > .control-box {
     -fx-alignment: center;
     -fx-padding: 0.416em 1.1em 0 0;
 }
 
+.scroll-post {
+    -fx-background-image: url("/images/images.jpg");
+    -fx-background-size: cover;
+    -fx-background-radius: 40;
+    -fx-border-radius: 40;
+}
+
+.vbox-post{
+    -fx-background-color: #9cc8ff;
+    -fx-background-radius: 40;
+    -fx-padding: 20;
+}
+
+.label-name-post{
+    -fx-font-size: 13;
+    -fx-font-family: Poppins-Bold;
+    -fx-padding: 5;
+    -fx-text-fill: white;
+}
+
+.label-description-post{
+    -fx-font-size: 20;
+    -fx-font-family: Poppins-Bold;
+    -fx-padding: 7;
+    -fx-text-fill: white;
+}
+
+.label-date-post{
+    -fx-font-size: 12;
+    -fx-font-family: Poppins-Bold;
+    -fx-padding: 7;
+    -fx-text-fill: #606060;
+}
+
+.label-myfriends{
+    -fx-font-size: 16;
+    -fx-font-family: Poppins-Bold;
+    -fx-padding: 7;
+    -fx-text-fill: white;
+}
 

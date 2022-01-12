@@ -1,15 +1,14 @@
 package com.example.lab6.controller;
 
 import com.example.lab6.model.*;
-import com.example.lab6.service.FriendRequestService;
-import com.example.lab6.service.FriendshipService;
-import com.example.lab6.service.MessageService;
-import com.example.lab6.service.UserService;
+import com.example.lab6.service.*;
+import com.example.lab6.utils.EventListType;
 import com.example.lab6.utils.events.MessageChangeEvent;
 import com.example.lab6.utils.observer.Observer;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
@@ -21,9 +20,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.input.ScrollEvent;
+import javafx.scene.layout.*;
 import javafx.stage.Modality;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -31,6 +29,7 @@ import javafx.util.Callback;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,35 +42,43 @@ public class HomeController implements Observer<MessageChangeEvent> {
     public TextField searchField;
     public Label searchLabel;
 
-
-  //  public ListView<UserDTO> chatView;
     public Label conversationLabel;
     public ListView conversationList;
     public TextField writeMessageField;
 
     public AnchorPane conversation;
-    //public TextField addingFriendsToConversation;
-    //public ListView groupView;
-    public ImageView setGroupImage;
-    //public ListView groupsView;
     public CheckBox friendsGroupsCheckBox;
     public ImageView imageName;
 
     public Label messagesLabel;
     public Pagination pagination;
     public Pagination paginationSearch;
+    public VBox eventsBox;
+    public ScrollPane scroller;
+    public ImageView closeEventsImage;
+    public StackPane stackpane;
+    public ScrollPane scrollerPosts;
+    public VBox vBoxPosts;
     private UserService userService;
     private FriendshipService friendshipService;
     private FriendRequestService friendRequestService;
     private MessageService messageService;
+    private EventService eventService;
+    private PostService postService;
+
+
+    private EventListType eventListType = EventListType.AllEvents;
 
     Stage stage;
     private Long myId;
     private Long to;
-    private Group groupFinal = new Group();
-    private List<Long> groupConversation = new ArrayList<>();
+    private final Group groupFinal = new Group();
+    private final List<Long> groupConversation = new ArrayList<>();
     private String email;
     private PageDTO pageDTO;
+    public int leftLimitPosts = 0;
+    public int numberOfPost;
+    public int postOnPage = 2;
 
     ObservableList<Message> modelMessages = FXCollections.observableArrayList();
 
@@ -86,24 +93,37 @@ public class HomeController implements Observer<MessageChangeEvent> {
         paginationSearch.setVisible(false);
         conversation.setVisible(false);
 
+        eventsBox.setVisible(false);
+        scroller.setVisible(false);
+        closeEventsImage.setVisible(false);
+
+        conversationLabel.setVisible(false);
+
+        stackpane.setVisible(true);
+
     }
 
-    public void setServices(UserService userService, FriendshipService friendshipService, FriendRequestService friendRequestService, MessageService messageService, Stage stage, String email, PageDTO page) {
+    public void setServices(UserService userService, FriendshipService friendshipService, FriendRequestService friendRequestService, MessageService messageService, EventService eventService, PostService postService, Stage stage, String email, PageDTO page) {
         this.userService = userService;
         this.friendshipService = friendshipService;
         this.friendRequestService = friendRequestService;
         this.stage = stage;
         this.email = email;
+        this.eventService = eventService;
         this.messageService = messageService;
+        this.postService = postService;
         this.myId = userService.exists(email).getId();
         this.pageDTO = page;
         welcomeText.setText("Welcome, " + pageDTO.getAdmin().getFirstName() + " " + pageDTO.getAdmin().getLastName() + "!");
         listofFriends();
+        welcomeText.setText("Welcome, " + userService.exists(email).getFirstName() + " " + userService.exists(email).getLastName() + "!");
+        //setFriendsList();
         messageService.addObserver(this);
-
+        initializePost();
+        // start();
+        //anchorPagination.getChildren().add(pagination);
 
     }
-
 
     public int itemsPerPage() {
         return 10;
@@ -126,9 +146,13 @@ public class HomeController implements Observer<MessageChangeEvent> {
         });
 
         int nr_friends = friendshipService.getFriendships(myId).size();
-        double nr = (double) (nr_friends) / (double) itemsPerPage();
+        if(nr_friends == 0)
+            pagination.setPageCount(1);
+        else {
+            double nr = (double) (nr_friends) / (double) itemsPerPage();
 
-        pagination.setPageCount((int) ceil(nr));
+            pagination.setPageCount((int) ceil(nr));
+        }
 
     }
 
@@ -194,8 +218,6 @@ public class HomeController implements Observer<MessageChangeEvent> {
                 conversation.setVisible(true);
                 conversationList.scrollTo(modelMessages.size() - 1);
                 to = users.get(index).getIdUser();
-                setConversation(to);
-                setConversationList();
             });
             button.setOnAction(event -> {
                 try {
@@ -284,16 +306,12 @@ public class HomeController implements Observer<MessageChangeEvent> {
                 groupFinal.setId(groups.get(index).getId());
                 groupFinal.setMembers(groups.get(index).getMembers());
                 groupFinal.setMessages(groups.get(index).getMessages());
-                setModelMessages(groups.get(index));
-
-                setConversationListGroup();
             });
 
             nr++;
         }
         return box;
     }
-
 
 
     public void listofSearching() {
@@ -377,7 +395,7 @@ public class HomeController implements Observer<MessageChangeEvent> {
 
                     // Create the dialog Stage.
                     Stage dialogStage = new Stage();
-                    dialogStage.setTitle("My profile");
+                    dialogStage.setTitle("User profile");
                     dialogStage.initModality(Modality.WINDOW_MODAL);
                     //dialogStage.initOwner(primaryStage);
                     Scene scene = new Scene(root);
@@ -408,7 +426,6 @@ public class HomeController implements Observer<MessageChangeEvent> {
         xImage.setVisible(true);
     }
 
-
     public void onSearchField(KeyEvent keyEvent) {
         if(searchField.getText().isEmpty())
         {
@@ -418,7 +435,6 @@ public class HomeController implements Observer<MessageChangeEvent> {
             paginationSearch.setVisible(true);
             listofSearching();
         }
-
     }
 
 
@@ -438,11 +454,8 @@ public class HomeController implements Observer<MessageChangeEvent> {
                             label.setText(message.getMessage());
 
                             if (message.getFrom().getId().equals(myId)) {
-                                // label.setTextAlignment(TextAlignment.RIGHT);
-                                // getStyleClass().add("background-mymessage");
                                 label.getStyleClass().add("background-mymessage");
                                 setAlignment(Pos.CENTER_RIGHT);
-                                //setText(message.getMessage());
 
                             } else {
                                 label.getStyleClass().add("background-message");
@@ -475,12 +488,9 @@ public class HomeController implements Observer<MessageChangeEvent> {
                         } else {
 
                             if (message.getFrom().getId().equals(myId)) {
-                                // label.setTextAlignment(TextAlignment.RIGHT);
-                                // getStyleClass().add("background-mymessage");
                                 label.setText(message.getMessage());
                                 label.getStyleClass().add("background-mymessage");
                                 setAlignment(Pos.CENTER_RIGHT);
-                                //setText(message.getMessage());
 
                             } else {
                                 label.setText(message.getFrom().getFirstName() + ": " + message.getMessage());
@@ -493,8 +503,6 @@ public class HomeController implements Observer<MessageChangeEvent> {
 
                 });
     }
-
-
 
 
     public void setConversation(Long to) {
@@ -546,7 +554,7 @@ public class HomeController implements Observer<MessageChangeEvent> {
             dialogStage.setMaximized(true);
 
             MyProfileController userProfileController = loader.getController();
-            userProfileController.setServices(userService, friendshipService, friendRequestService, messageService, dialogStage, email);
+            userProfileController.setServices(userService, friendshipService, friendRequestService, messageService, postService, dialogStage, email);
 
             dialogStage.show();
 
@@ -554,7 +562,6 @@ public class HomeController implements Observer<MessageChangeEvent> {
             e.printStackTrace();
         }
     }
-
 
     @Override
     public void update(MessageChangeEvent messageChangeEvent) {
@@ -605,7 +612,256 @@ public class HomeController implements Observer<MessageChangeEvent> {
         }
     }
 
+    private void openAddEventPage() {
+        try {
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getResource("/views/add-event-view.fxml"));
+
+            AnchorPane root = loader.load();
+
+            // Create the dialog Stage.
+            Stage dialogStage = new Stage();
+            dialogStage.setTitle("Add new event");
+            Scene scene = new Scene(root);
+            dialogStage.setScene(scene);
+
+            AddEventController addEventController  = new AddEventController();
+            addEventController.setServices(eventService,dialogStage,email);
+
+            dialogStage.show();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void logout(MouseEvent mouseEvent) {
         stage.close();
+    }
+
+    public void openEvents() {
+
+        scrollerPosts.setVisible(false);
+        List<Event> events = new ArrayList<>();
+
+        switch (eventListType) {
+            case AllEvents -> events = eventService.getAllEvents();
+            case MyEvents -> events = eventService.getMyEvents(userService.exists(email).getId());
+            case CreatedByMeEvents -> events = eventService.getCreatedByMeEvents(userService.exists(email).getId());
+        }
+        eventsBox.setVisible(true);
+        scroller.setVisible(true);
+        closeEventsImage.setVisible(true);
+        eventsBox.getChildren().clear();
+
+        HBox filteredEvents = new HBox();
+        filteredEvents.getStyleClass().add("back-color-category");
+        Label allEvents = new Label("All Events");
+        allEvents.getStyleClass().add("background-event-category");
+        filteredEvents.getChildren().add(allEvents);
+
+        Label myEvents = new Label("My Events");
+        myEvents.getStyleClass().add("background-event-category");
+        filteredEvents.getChildren().add(myEvents);
+
+        Label createdByMe = new Label("Created by me");
+        createdByMe.getStyleClass().add("background-event-category");
+        filteredEvents.getChildren().add(createdByMe);
+
+        filteredEvents.setSpacing(30);
+
+        eventsBox.getChildren().add(filteredEvents);
+
+        myEvents.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                eventListType = EventListType.MyEvents;
+                stackpane.setVisible(false);
+                openEvents();
+            }
+        });
+
+        allEvents.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                eventListType = EventListType.AllEvents;
+                stackpane.setVisible(false);
+                openEvents();
+            }
+        });
+
+        createdByMe.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                eventListType = EventListType.CreatedByMeEvents;
+                ImageView imageView = new ImageView();
+                imageView.getStyleClass().add("image-add-event");
+                imageView.setFitWidth(55);
+                imageView.setFitHeight(55);
+                imageView.setVisible(true);
+                stackpane.setAlignment(Pos.BOTTOM_RIGHT);
+
+                stackpane.getChildren().add(imageView);
+                stackpane.setVisible(true);
+
+                imageView.setOnMouseClicked(e -> {
+                    openAddEventPage();
+                });
+                openEvents();
+            }
+        });
+
+        eventsBox.setSpacing(20);
+        events.forEach(x -> {
+            HBox row = new HBox();
+            VBox elem = new VBox();
+            VBox imageEventBox = new VBox();
+
+            ImageView eventImage = new ImageView();
+            Label title = new Label();
+            Label description = new Label();
+            Label startDate = new Label();
+            Label endDate = new Label();
+            Label location = new Label();
+
+            title.setText(x.getName());
+            description.setText(x.getDescription());
+            startDate.setText(x.getStart().toString());
+            endDate.setText(x.getEnd().toString());
+            location.setText(x.getLocation());
+
+            eventImage.setImage(new Image("/images/event-image.png"));
+            eventImage.getStyleClass().add("event-image");
+            row.getStyleClass().add("events-background");
+            scroller.getStyleClass().add("scroll-background");
+            scroller.getStyleClass().add("rounded-scroll-pane");
+
+            eventImage.setFitHeight(50);
+            eventImage.setFitWidth(50);
+
+            imageEventBox.getChildren().add(eventImage);
+            elem.getChildren().add(title);
+            elem.getChildren().add(description);
+            elem.getChildren().add(location);
+            elem.getChildren().add(startDate);
+            elem.getChildren().add(endDate);
+
+            title.setAlignment(Pos.CENTER);
+            description.setAlignment(Pos.CENTER);
+
+            row.getChildren().add(imageEventBox);
+            row.setSpacing(20);
+            row.getChildren().add(elem);
+            eventsBox.getChildren().add(row);
+        });
+
+        scroller.setContent(eventsBox);
+        scroller.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        scroller.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        //scroller.setFitToWidth(eventsBox.isFillWidth());
+        scroller.setVvalue(0);
+        scroller.setHvalue(0);
+        //   }
+    }
+
+    public void openPosts(MouseEvent mouseEvent) {
+        scroller.setVisible(false);
+        scrollerPosts.setVisible(true);
+    }
+
+    public void closeEvents(MouseEvent mouseEvent) {
+        scrollerPosts.setVisible(true);
+        scroller.setVisible(false);
+        eventsBox.setVisible(false);
+        closeEventsImage.setVisible(false);
+        conversationLabel.setVisible(false);
+        friendsGroupsCheckBox.setVisible(false);
+    }
+
+    public void initializePost(){
+        vBoxPosts.getChildren().clear();
+        numberOfPost = postService.getAllPosts().size();
+
+        int nr = leftLimitPosts+postOnPage;
+        if(nr > numberOfPost)
+            nr = numberOfPost;
+        List<Post> postList = postService.getPostsOnPage(leftLimitPosts, nr-leftLimitPosts);
+
+        postList.forEach(x->{
+            VBox box = new VBox();
+            box.getStyleClass().add("vbox-post");
+            HBox hbox = new HBox();
+            box.setPrefWidth(400);
+            box.setFillWidth(true);
+            ImageView profile = new ImageView();
+            if (userService.findPhoto(userService.getUserByID(x.getAdmin()).getEmail()) == null)
+                profile.setImage(new Image("/images/profile.png"));
+            else
+                profile.setImage(new Image(userService.findPhoto(userService.getUserByID(x.getAdmin()).getEmail())));
+
+            profile.setFitHeight(50);
+            profile.setFitWidth(50);
+
+            VBox data = new VBox();
+            Label name = new Label();
+            name.setText(userService.getUserByID(x.getAdmin()).getFirstName() + " " + userService.getUserByID(x.getAdmin()).getLastName());
+            name.getStyleClass().add("label-name-post");
+            data.getChildren().add(name);
+            Label date = new Label("Posted on " + x.getDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
+            date.getStyleClass().add("label-date-post");
+            data.getChildren().add(date);
+
+            hbox.getChildren().add(profile);
+            hbox.getChildren().add(data);
+            hbox.setSpacing(20);
+            hbox.setAlignment(Pos.CENTER_LEFT);
+            box.getChildren().add(hbox);
+
+            if(x.getDescription() != ""){
+
+                Label description = new Label(x.getDescription());
+                description.setAlignment(Pos.CENTER);
+
+                description.getStyleClass().add("label-description-post");
+                box.getChildren().add(description);
+            }
+            if(x.getUrl() != ""){
+                ImageView img = new ImageView();
+                img.setImage(new Image(x.getUrl()));
+                HBox rowImage = new HBox();
+                img.setFitWidth(160);
+                img.setFitHeight(160);
+                rowImage.getChildren().add(img);
+                rowImage.setAlignment(Pos.CENTER);
+                box.getChildren().add(rowImage);
+            }
+
+            box.setSpacing(10);
+            box.getStyleClass().add("vbox-post");
+            vBoxPosts.getChildren().add(box);
+
+        });
+
+
+        vBoxPosts.setSpacing(20);
+        scrollerPosts.setContent(vBoxPosts);
+        scrollerPosts.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        scrollerPosts.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        scrollerPosts.setVvalue(0.5);
+        scrollerPosts.setHvalue(0.5);
+
+
+    }
+
+
+    public void onScrollerPosts(ScrollEvent scrollEvent) {
+        if(scrollEvent.getDeltaY()<0 && (leftLimitPosts+postOnPage)<numberOfPost){ //scroll up
+            leftLimitPosts ++;
+            initializePost();
+        }
+        if(scrollEvent.getDeltaY()>0 && leftLimitPosts > 0){ //scroll down and there are messages left
+            leftLimitPosts--;
+            initializePost();
+        }
     }
 }

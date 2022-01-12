@@ -7,6 +7,9 @@ import com.example.lab6.service.MessageService;
 import com.example.lab6.service.UserService;
 import com.example.lab6.utils.events.MessageChangeEvent;
 import com.example.lab6.utils.observer.Observer;
+import javafx.beans.value.ChangeListener;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -17,8 +20,10 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -31,10 +36,12 @@ import javafx.util.Callback;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static java.lang.Math.ceil;
+
 
 public class MessagesController implements Observer<MessageChangeEvent> {
 
@@ -54,6 +61,7 @@ public class MessagesController implements Observer<MessageChangeEvent> {
     public VBox members;
     public ImageView menuImage;
 
+    private int leftLimit = 0;
 
     private AtomicBoolean friendsBool = new AtomicBoolean();
 
@@ -68,11 +76,13 @@ public class MessagesController implements Observer<MessageChangeEvent> {
     private Long myId;
     private Long friendId;
     private Group groupFinal = new Group();
+    private int numberOfMessages;
 
     private List<Long> newMembersForGroup = new ArrayList<>();
 
     private List<FriendshipDTO> model = new ArrayList<>();
-  //  @FXML
+
+
     public Pagination pagination;
 
     public void initialize() {
@@ -86,6 +96,7 @@ public class MessagesController implements Observer<MessageChangeEvent> {
         plusGroupImage.setVisible(false);
         menuImage.setVisible(false);
         scrollerMembers.setVisible(false);
+
     }
 
     public void setServices(MessageService messageService, FriendshipService friendshipService,FriendRequestService friendRequestService, UserService userService, Stage dialogStage, String email) {
@@ -98,17 +109,22 @@ public class MessagesController implements Observer<MessageChangeEvent> {
         messageService.addObserver(this);
         friendsChat();
         this.myId = this.userService.exists(email).getId();
+        friendsBool.set(true);
     }
 
     public int itemsPerPage() {
         return 2;
     }
 
+    public int messagesPerPage() {
+        return 5;
+    }
+
     @Override
     public void update(MessageChangeEvent messageChangeEvent) {
 
         if(friendsBool.get()){
-            setConversation(friendId);
+            setConversation1(friendId);
         } else {
             setConversationGroup(groupFinal);
 
@@ -131,10 +147,16 @@ public class MessagesController implements Observer<MessageChangeEvent> {
             }
         });
 
-        int nr_friends = friendshipService.getFriendships(userService.exists(email).getId()).size();
-        double nr = (double) (nr_friends) / (double) itemsPerPage();
+        int nr_friends = messageService.getMyFriendsWithMessages(userService.exists(email).getId()).size();
 
-        pagination.setPageCount((int) ceil(nr));
+
+        if(nr_friends == 0)
+            pagination.setPageCount(1);
+        else{
+            double nr = (double) (nr_friends) / (double) itemsPerPage();
+            pagination.setPageCount((int)ceil(nr));
+        }
+
 
     }
 
@@ -202,9 +224,12 @@ public class MessagesController implements Observer<MessageChangeEvent> {
                     userImage.setImage(new Image("/images/profile.png"));
                 userName.setVisible(true);
                 userName.setText("Your conversation with " + users.get(index).getNume());
-//
+
+
                 friendId = users.get(index).getIdUser();
-                setConversation(friendId);
+                numberOfMessages = messageService.getConversation(myId, friendId).size();
+                setConversation1(friendId);
+                leftLimit = 0;
                 // emailTo = user.getEmail();
                 //setConversationList();
             });
@@ -252,22 +277,24 @@ public class MessagesController implements Observer<MessageChangeEvent> {
                 else
                     profilePhoto.setImage(new Image("/images/profile.png"));
 
-                profilePhoto.setFitWidth(40);
-                profilePhoto.setFitHeight(40);
+                profilePhoto.setFitWidth(50);
+                profilePhoto.setFitHeight(50);
                 text.setText(x.getMessage());
                 if (x.getFrom().getId().equals(myId)) {
-                    text.getStyleClass().add("background-mymessage");
+                    text.getStyleClass().add("background-mymessages");
                     text.setAlignment(Pos.CENTER_RIGHT);
 
                     row.getChildren().add(text);
                     row.getChildren().add(profilePhoto);
                     row.setAlignment(Pos.CENTER_RIGHT);
+                    row.setPrefHeight(100);
 
                 } else {
-                    text.getStyleClass().add("background-message");
+                    text.getStyleClass().add("background-messages");
                     row.getChildren().add(profilePhoto);
                     row.getChildren().add(text);
                     row.setAlignment(Pos.CENTER_LEFT);
+                    row.setPrefHeight(100);
 
                 }
 
@@ -280,6 +307,61 @@ public class MessagesController implements Observer<MessageChangeEvent> {
       scroller.setFitToWidth(chat.isFillWidth());
       scroller.setVvalue(1.0);
       scroller.setHvalue(1.0);
+      scroller.setPannable(true);
+    }
+
+    private void setConversation1(Long friendId) {
+
+        chat.getChildren().clear();
+        numberOfMessages = messageService.getConversation(myId, friendId).size();
+
+        int nr = leftLimit+messagesPerPage();
+        if(nr > numberOfMessages)
+            nr = numberOfMessages;
+
+        chat.setFillWidth(true);
+        List<Message> messages = messageService.getMyMessagesOnPage(leftLimit, nr-leftLimit, myId, friendId);
+        Collections.reverse(messages);
+        messages.forEach(x -> {
+            HBox row = new HBox();
+            ImageView profilePhoto = new ImageView();
+            Label text = new Label();
+            if (userService.findPhoto(x.getFrom().getEmail()) != null)
+                profilePhoto.setImage(new Image(userService.findPhoto(x.getFrom().getEmail())));
+            else
+                profilePhoto.setImage(new Image("/images/profile.png"));
+
+            profilePhoto.setFitWidth(45);
+            profilePhoto.setFitHeight(45);
+            text.setText(x.getMessage());
+            if (x.getFrom().getId().equals(myId)) {
+                text.getStyleClass().add("background-mymessages");
+                text.setAlignment(Pos.CENTER_RIGHT);
+
+                row.getChildren().add(text);
+                row.getChildren().add(profilePhoto);
+                row.setAlignment(Pos.CENTER_RIGHT);
+                row.setPrefHeight(100);
+
+            } else {
+                text.getStyleClass().add("background-messages");
+                row.getChildren().add(profilePhoto);
+                row.getChildren().add(text);
+                row.setAlignment(Pos.CENTER_LEFT);
+                row.setPrefHeight(100);
+
+            }
+
+            chat.getChildren().add(row);
+
+        });
+        
+        chat.setSpacing(5);
+        scroller.setContent(chat);
+        scroller.setFitToWidth(chat.isFillWidth());
+        scroller.setVvalue(0.5);
+        scroller.setHvalue(0.5);
+
     }
 
 
@@ -297,10 +379,14 @@ public class MessagesController implements Observer<MessageChangeEvent> {
             }
         });
 
-        int nr_groups = messageService.myGroups(myId).size();
-        double nr = (double) (nr_groups) / (double) itemsPerPage();
 
-        pagination.setPageCount((int) ceil(nr));
+        int nr_groups = messageService.myGroups(myId).size();
+        if(nr_groups == 0)
+            pagination.setPageCount(1);
+        else
+        { double nr = (double) (nr_groups) / (double) itemsPerPage();
+
+        pagination.setPageCount((int)(nr));}
     }
 
     public VBox createPageForGroupsChat(int pageIndex) {
@@ -346,7 +432,8 @@ public class MessagesController implements Observer<MessageChangeEvent> {
                 groupFinal.setId(groups.get(index).getId());
                 groupFinal.setMembers(groups.get(index).getMembers());
                 groupFinal.setMessages(groups.get(index).getMessages());
-                setConversationGroup(groupFinal);
+                leftLimit = 0;
+                setConversationGroup1(groupFinal);
             });
 
             nr++;
@@ -380,6 +467,53 @@ public class MessagesController implements Observer<MessageChangeEvent> {
             } else {
                 text.setText(x.getFrom().getLastName() + " " + x.getFrom().getFirstName() + ":" + x.getMessage());
                 text.getStyleClass().add("background-message");
+                row.getChildren().add(profilePhoto);
+                row.getChildren().add(text);
+                row.setAlignment(Pos.CENTER_LEFT);
+
+            }
+
+            chat.getChildren().add(row);
+        });
+        chat.setSpacing(5);
+
+        scroller.setContent(chat);
+        scroller.setFitToWidth(chat.isFillWidth());
+        scroller.setVvalue(1.0f);
+        scroller.setHvalue(1.0);
+    }
+
+    private void setConversationGroup1(Group groupFinal) {
+        chat.getChildren().clear();
+        numberOfMessages = messageService.convertMessages(groupFinal.getMessages()).size();
+
+        int nr = leftLimit+messagesPerPage();
+        if(nr > numberOfMessages)
+            nr = numberOfMessages;
+        List<Message> messages = messageService.getGroupMessagesOnPage(leftLimit, nr-leftLimit, groupFinal.getId());
+
+        messages.forEach(x -> {
+            HBox row = new HBox();
+            ImageView profilePhoto = new ImageView();
+            Label text = new Label();
+            if (userService.findPhoto(x.getFrom().getEmail()) != null)
+                profilePhoto.setImage(new Image(userService.findPhoto(x.getFrom().getEmail())));
+            else
+                profilePhoto.setImage(new Image("/images/profile.png"));
+            profilePhoto.setFitWidth(45);
+            profilePhoto.setFitHeight(45);
+            if (x.getFrom().getId().equals(myId)) {
+                text.setText(x.getMessage());
+                text.getStyleClass().add("background-mymessages");
+                text.setAlignment(Pos.CENTER_RIGHT);
+
+                row.getChildren().add(text);
+                row.getChildren().add(profilePhoto);
+                row.setAlignment(Pos.CENTER_RIGHT);
+
+            } else {
+                text.setText(x.getFrom().getLastName() + " " + x.getFrom().getFirstName() + ":" + x.getMessage());
+                text.getStyleClass().add("background-messages");
                 row.getChildren().add(profilePhoto);
                 row.getChildren().add(text);
                 row.setAlignment(Pos.CENTER_LEFT);
@@ -840,6 +974,30 @@ public class MessagesController implements Observer<MessageChangeEvent> {
 
         }
     }
+
+
+    public void handleScroll(ScrollEvent scrollEvent) {
+        if(scrollEvent.getDeltaY()>0 && (leftLimit+messagesPerPage())<numberOfMessages){ //scroll up
+            leftLimit ++;
+            setConversation1(friendId);
+        }
+        if(scrollEvent.getDeltaY()<0 && leftLimit > 0){ //scroll down and there are messages left
+            leftLimit--;
+            setConversation1(friendId);
+        }
+    }
+
+    public void onKeyPressed(KeyEvent keyEvent) {
+//        if(keyEvent.getCode().equals(KeyCode.UP)&& (rightLimit-messagesPerPage())>0){ //scroll up
+//            rightLimit--;
+//        }
+//        if(keyEvent.getCode().equals(KeyCode.DOWN) && rightLimit!=numberOfMessages){ //scroll down and there are messages left
+//            rightLimit++;
+//        }
+//        setConversation1(friendId);
+
+    }
+
 
 
 }

@@ -1,4 +1,56 @@
+@font-face {
+    font-family: Poppins-Regular;
+    src: url('../images/fonts/poppins/Poppins-Regular.ttf');
+}
+
+@font-face {
+    font-family: Poppins-Medium;
+    src: url('../images/fonts/poppins/Poppins-Medium.ttf');
+}
+
+@font-face {
+    font-family: Poppins-Bold;
+    src: url('../images/fonts/poppins/Poppins-Bold.ttf');
+}
+
+@font-face {
+    font-family: Poppins-SemiBold;
+    src: url('../images/fonts/poppins/Poppins-SemiBold.ttf');
+}
+
+.root{
+    -fx-background-image:url("/images/purple.jpg");
+    -fx-background-size: cover;
+}
+
 .anchor-style{
     -fx-background-color: white;
     -fx-background-radius: 40;
+}
+
+.name{
+    -fx-font-size: 20px;
+    -fx-text-fill: black;
+    -fx-text-alignment: center;
+}
+
+.button{
+    -fx-background-color:linear-gradient(to left, #d53369, #cbad6d);
+    -fx-text-align: center;
+
+    -fx-font-size: 12px;
+    -fx-font-family: Poppins-Bold;
+    -fx-box-sizing: border-box;
+    -fx-border-radius: 60px;
+    -fx-background-radius: 60;
+    -fx-text-fill: white;
+}
+.button:hover {
+    -fx-background-color:linear-gradient(to right, #d53369, #cbad6d);
+    /*animation: animate 10s linear infinite;*/
+    -fx-cursor: pointer;
+    -fx-text-fill: white;
+}
+.image{
+    -fx-text-alignment: center;
 }
