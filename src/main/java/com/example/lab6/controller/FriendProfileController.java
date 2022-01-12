@@ -32,7 +32,7 @@ public class FriendProfileController {
 
     @FXML
     public void initialize() {
-        profilePhoto.setImage(new Image("/images/profile.png"));
+
   }
 
     public void setServices(UserService userService, FriendshipService friendshipService, FriendRequestService friendRequestService, Stage stage, String email, String email_friend) {
@@ -42,6 +42,12 @@ public class FriendProfileController {
         this.stage = stage;
         this.email = email;
         this.email_friend = email_friend;
+        if(userService.findPhoto(email_friend) != null)
+            profilePhoto.setImage(new Image(userService.findPhoto(email_friend)));
+        else
+            profilePhoto.setImage(new Image("/images/profile.png"));
+        profilePhoto.setFitHeight(110);
+        profilePhoto.setFitWidth(110);
 
         nameLabel.setText(userService.exists(email_friend).getFirstName() + " " + userService.exists(email_friend).getLastName() + "!");
         setProfilePicture();

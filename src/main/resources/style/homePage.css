@@ -280,4 +280,44 @@
     -fx-padding: 0.416em 1.1em 0 0;
 }
 
+.scroll-post {
+    -fx-background-image: url("/images/images.jpg");
+    -fx-background-size: cover;
+    -fx-background-radius: 40;
+    -fx-border-radius: 40;
+}
+
+.vbox-post{
+    -fx-background-color: #9cc8ff;
+    -fx-background-radius: 40;
+    -fx-padding: 20;
+}
+
+.label-name-post{
+    -fx-font-size: 13;
+    -fx-font-family: Poppins-Bold;
+    -fx-padding: 5;
+    -fx-text-fill: white;
+}
+
+.label-description-post{
+    -fx-font-size: 20;
+    -fx-font-family: Poppins-Bold;
+    -fx-padding: 7;
+    -fx-text-fill: white;
+}
+
+.label-date-post{
+    -fx-font-size: 12;
+    -fx-font-family: Poppins-Bold;
+    -fx-padding: 7;
+    -fx-text-fill: #606060;
+}
+
+.label-myfriends{
+    -fx-font-size: 16;
+    -fx-font-family: Poppins-Bold;
+    -fx-padding: 7;
+    -fx-text-fill: white;
+}
 

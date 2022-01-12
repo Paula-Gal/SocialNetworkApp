@@ -9,7 +9,7 @@ public class Post extends Entity<Long> {
     private Long admin;
     private String url;
 
-    public Post(String description, LocalDateTime date, Long admin, String url) {
+    public Post(Long admin, String url, String description, LocalDateTime date) {
         this.description = description;
         this.date = date;
         this.admin = admin;

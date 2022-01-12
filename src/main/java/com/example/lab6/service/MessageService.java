@@ -169,7 +169,8 @@ public class MessageService implements Observable<MessageChangeEvent> {
             if ((mess.getFrom().equals(id1) && mess.getTo().contains(id2)) || (mess.getFrom().equals(id2) && mess.getTo().contains(id1)))
                 result.add(mess);
         }
-        result.sort(Comparator.comparing(MessageDTO::getDate));
+
+        result.sort(Comparator.comparing(MessageDTO::getDate).reversed());
         return convertMessages(result);
     }
 
@@ -308,21 +309,9 @@ public class MessageService implements Observable<MessageChangeEvent> {
     //    public void setPageable(Pageable pageable) {
 //        this.pageable = pageable;
 //    }
-    public Set<MessageDTO> getNextMessages() {
-//        Pageable pageable = new PageableImplementation(this.page, this.size);
-//        Page<MessageTask> studentPage = repo.findAll(pageable);
-//        this.page++;
-//        return studentPage.getContent().collect(Collectors.toSet());
-        this.page++;
-        return getMessagesOnPage(this.page);
-    }
 
-    public Set<MessageDTO> getMessagesOnPage(int page) {
-        this.page=page;
-        Pageable pageable = new PageableImplementation(page, this.size);
-        Page<MessageDTO> messagePage = repoMessage.findAll(pageable);
-        return messagePage.getContent().collect(Collectors.toSet());
-    }
+
+
 
     public List<Group> myGroups(Long id){
         Iterable<Group> groupIterable = repoGroup.findAll();
@@ -410,6 +399,20 @@ public class MessageService implements Observable<MessageChangeEvent> {
     public List<FriendshipDTO> getMyConversationPage(int leftLimit,int rightLimit, Long id) {
         List<FriendshipDTO> friendslist = getMyFriendsWithMessages(id);
         return friendslist.stream().skip(leftLimit)
+                .limit(rightLimit)
+                .collect(Collectors.toList());
+    }
+
+    public List<Message> getMyMessagesOnPage(int leftLimit, int rightLimit, Long id1, Long id2) {
+        List<Message> messages = getConversation(id1, id2);
+        return messages.stream().skip(leftLimit)
+                .limit(rightLimit)
+                .collect(Collectors.toList());
+    }
+
+    public List<Message> getGroupMessagesOnPage(int leftLimit, int rightLimit, Long id) {
+        List<Message> messages = convertMessages(repoGroup.findOne(id).getMessages());
+        return messages.stream().skip(leftLimit)
                 .limit(rightLimit)
                 .collect(Collectors.toList());
     }
