@@ -136,7 +136,6 @@ public class HomeController implements Observer<MessageChangeEvent> {
             }
         }
         notifications.show();
-
     }
 
     public void setServices(UserService userService, FriendshipService friendshipService, FriendRequestService friendRequestService, MessageService messageService, EventService eventService, PostService postService, Stage stage, String email, PageDTO page) {
@@ -232,8 +231,6 @@ public class HomeController implements Observer<MessageChangeEvent> {
 
             pagination.setPageCount((int) ceil(nr));
         }
-
-        pagination.setPageCount((int) ceil(nr));
     }
 
     public VBox createPageForListOfFriends(int pageIndex) {
@@ -688,6 +685,7 @@ public class HomeController implements Observer<MessageChangeEvent> {
             AnchorPane root = loader.load();
 
             // Create the dialog Stage.
+
             Stage dialogStage = new Stage();
             dialogStage.setTitle("Add new event");
             Scene scene = new Scene(root);
@@ -722,6 +720,7 @@ public class HomeController implements Observer<MessageChangeEvent> {
             case MyEvents -> events = eventService.getMyEvents(userService.exists(email).getId());
             case CreatedByMeEvents -> events = eventService.getCreatedByMeEvents(userService.exists(email).getId());
         }
+        eventsBox.getStyleClass().add("vbox-event");
         eventsBox.setVisible(true);
         scroller.setVisible(true);
         closeEventsImage.setVisible(true);
@@ -741,13 +740,14 @@ public class HomeController implements Observer<MessageChangeEvent> {
         createdByMe.getStyleClass().add("background-event-category");
         filteredEvents.getChildren().add(createdByMe);
 
-        filteredEvents.setSpacing(30);
+        filteredEvents.setSpacing(43);
 
         eventsBox.getChildren().add(filteredEvents);
 
         myEvents.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
+                myEvents.getStyleClass().add("background-event-category-hover");
                 eventListType = EventListType.MyEvents;
                 stackpane.setVisible(false);
 //                myEvents.getStyleClass().add("background-event-category-selected ");
@@ -806,15 +806,15 @@ public class HomeController implements Observer<MessageChangeEvent> {
 
             title.setText(x.getName());
             description.setText(x.getDescription());
-            startDate.setText(x.getStart().toString());
-            endDate.setText(x.getEnd().toString());
+            startDate.setText(x.getStart().toLocalDate().toString());
+            endDate.setText(x.getEnd().toLocalDate().toString());
             location.setText(x.getLocation());
 
             eventImage.setImage(new Image("/images/event-image.png"));
             eventImage.getStyleClass().add("event-image");
             row.getStyleClass().add("events-background");
-            scroller.getStyleClass().add("scroll-background");
-            scroller.getStyleClass().add("rounded-scroll-pane");
+//            scroller.getStyleClass().add("scroll-background");
+           // scroller.getStyleClass().add("rounded-scroll-pane");
 
             eventImage.setFitHeight(50);
             eventImage.setFitWidth(50);
@@ -980,10 +980,7 @@ public class HomeController implements Observer<MessageChangeEvent> {
         scrollerPosts.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         scrollerPosts.setVvalue(0.5);
         scrollerPosts.setHvalue(0.5);
-
-
     }
-
 
     public void onScrollerPosts(ScrollEvent scrollEvent) {
         if(scrollEvent.getDeltaY()<0 && (leftLimitPosts+postOnPage)<numberOfPost){ //scroll up

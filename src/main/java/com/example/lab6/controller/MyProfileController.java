@@ -4,12 +4,9 @@ import com.example.lab6.model.*;
 import com.example.lab6.service.*;
 import com.example.lab6.utils.events.FriendRequestChangeEvent;
 import com.example.lab6.utils.observer.Observer;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
@@ -20,8 +17,10 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
-import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Screen;
@@ -102,16 +101,12 @@ public class MyProfileController implements Observer<FriendRequestChangeEvent> {
         hamburgerMenu.setVisible(false);
         pagination.setVisible(false);
 
-
-
         ImageX.setVisible(false);
         raport1VBox.setVisible(false);
         activityRaportLabel.setVisible(false);
         ImageXRaport.setVisible(false);
         raport2VBox.setVisible(false);
         toUploadImage.setVisible(false);
-
-
     }
 
     public void setServices(UserService userService, FriendshipService friendshipService, FriendRequestService friendRequestService, MessageService messageService,  PostService postService, Stage stage, String email) {
@@ -321,9 +316,10 @@ public class MyProfileController implements Observer<FriendRequestChangeEvent> {
             hamburgerMenu.setVisible(true);
     }
 
-
-
     public void onMyFriendsRequests(MouseEvent mouseEvent) {
+        raport1VBox.setVisible(false);
+        raport2VBox.setVisible(false);
+        ImageXRaport.setVisible(false);
         pagination.setVisible(true);
         listofFriendRequests();
         ImageX.setVisible(true);
@@ -332,15 +328,18 @@ public class MyProfileController implements Observer<FriendRequestChangeEvent> {
     }
 
     public void onSendByMe(MouseEvent mouseEvent) {
+        raport1VBox.setVisible(false);
+        raport2VBox.setVisible(false);
+        ImageXRaport.setVisible(false);
         pagination.setVisible(true);
         ImageX.setVisible(true);
         listofFriendRequestsByMe();
         ByMe = true;
-
-
     }
 
     public void onActivityReport(MouseEvent mouseEvent) {
+        pagination.setVisible(false);
+        ImageX.setVisible(false);
         start = null;
         end = null;
         raport1VBox.setVisible(true);
@@ -350,6 +349,8 @@ public class MyProfileController implements Observer<FriendRequestChangeEvent> {
     }
 
     public void onMessagesReport(MouseEvent mouseEvent) {
+        ImageX.setVisible(false);
+        pagination.setVisible(false);
         start = null;
         end = null;
         raport2VBox.setVisible(true);

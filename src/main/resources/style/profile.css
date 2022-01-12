@@ -122,11 +122,10 @@
     -fx-shape: circle;
     -fx-position-shape: center;
     -fx-background-size: contain;
-    -fx-pref-height: 60;
-    -fx-pref-width: 50;
+    -fx-pref-height: 80;
+    -fx-pref-width: 70;
     -fx-background-radius: 100;
 }
-
 
 .pagination-control{
     -fx-background-color: transparent;

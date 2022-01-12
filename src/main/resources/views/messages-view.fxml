@@ -96,9 +96,9 @@
                         <Insets bottom="25.0" left="50.0" top="35.0" />
                      </HBox.margin>
                   </TextField>
-                  <ImageView fx:id="imageSend" fitHeight="47.0" fitWidth="56.0" onMouseClicked="#onSend" pickOnBounds="true" preserveRatio="true" styleClass="image-send">
+                  <ImageView fx:id="imageSend" fitHeight="47.0" fitWidth="56.0" onMouseClicked="#onSend" pickOnBounds="true" preserveRatio="true" styleClass="image-send" AnchorPane.bottomAnchor="10">
                      <HBox.margin>
-                        <Insets bottom="25.0" left="20.0" right="25.0" top="20.0" />
+                        <Insets bottom="25.0" left="20.0" right="25.0" top="30.0" />
                      </HBox.margin>
                   </ImageView>
                </children>

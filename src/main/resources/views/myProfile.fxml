@@ -19,9 +19,9 @@
     <children>
         <AnchorPane layoutX="868.0" layoutY="48.0" prefHeight="163.0" prefWidth="375.0" styleClass="anchor-style" AnchorPane.bottomAnchor="472.0" AnchorPane.rightAnchor="50" AnchorPane.topAnchor="200.0">
             <children>
-                <ImageView fx:id="profilePhoto" fitHeight="100" fitWidth="80" layoutX="152.0" layoutY="24.0" pickOnBounds="true" preserveRatio="true" styleClass="profile-photo" AnchorPane.TopAnchor="60.0" AnchorPane.leftAnchor="152.0" />
+                <ImageView fx:id="profilePhoto" fitHeight="60.0" fitWidth="80.0" layoutX="152.0" layoutY="24.0" pickOnBounds="true" preserveRatio="true" styleClass="profile-photo" AnchorPane.TopAnchor="60.0" AnchorPane.leftAnchor="152.0" />
                 <Label fx:id="nameLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="-1.0" layoutY="162.0" prefHeight="31.0" prefWidth="375.0" styleClass="name" AnchorPane.bottomAnchor="50" />
-                <Label alignment="CENTER" contentDisplay="CENTER" layoutX="138.0" layoutY="145.0" onMouseClicked="#onEditLabelClicked" styleClass="label-edit" text="Edit profile picture!" textAlignment="CENTER"  AnchorPane.TopAnchor="170.0"/>
+                <Label alignment="CENTER" contentDisplay="CENTER" layoutX="138.0" layoutY="145.0" onMouseClicked="#onEditLabelClicked" styleClass="label-edit" text="Edit profile picture!" textAlignment="CENTER" AnchorPane.TopAnchor="170.0" />
             </children>
         </AnchorPane>
         <Button layoutX="16.0" layoutY="87.0" mnemonicParsing="false" onAction="#onMenuButton" prefHeight="30.0" prefWidth="30.0" styleClass="button-menu" AnchorPane.leftAnchor="90" AnchorPane.topAnchor="90" />
