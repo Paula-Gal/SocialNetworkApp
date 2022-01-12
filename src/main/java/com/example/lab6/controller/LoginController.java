@@ -47,7 +47,7 @@ public class LoginController {
     @FXML
     private TextField loginField;
 
-    public void setServices(UserService service, FriendshipService fservice, MessageService messageService, FriendRequestService friendRequestService, EventService eventService,  PostService postService, Stage stage) {
+    public void setServices(UserService service, FriendshipService fservice, MessageService messageService, FriendRequestService friendRequestService, EventService eventService, PostService postService, Stage stage) {
 
         this.userService = service;
         this.friendshipService = fservice;
@@ -136,10 +136,6 @@ public class LoginController {
         this.stage = stage;
     }
 
-<<<<<<< HEAD
-=======
-
->>>>>>> dc748e518bdbdd028dbfc7133ee055874c116f29
     @FXML
     void viewpass() {
         if (hidePasswordCheckbox.isSelected()) {

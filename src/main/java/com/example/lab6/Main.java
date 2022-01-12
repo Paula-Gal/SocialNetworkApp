@@ -36,21 +36,14 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-<<<<<<< HEAD
+
         repoDb = new UserDbRepository("jdbc:postgresql://localhost:5432/socialnetworkapp", "postgres", "paula123", new UserValidator());
         repoDbf = new FriendshipDbRepository("jdbc:postgresql://localhost:5432/socialnetworkapp", "postgres","paula123", new FriendshipValidator());
         messageDb = new MessageDbRepository("jdbc:postgresql://localhost:5432/socialnetworkapp", "postgres", "paula123");
         frRequestDb = new FriendRequestDbRepository("jdbc:postgresql://localhost:5432/socialnetworkapp", "postgres", "paula123");
         repoDbGroup = new GroupDbRepository("jdbc:postgresql://localhost:5432/socialnetworkapp", "postgres", "paula123");
-=======
-        repoDb = new UserDbRepository("jdbc:postgresql://localhost:5432/userApp", "postgres", "qwaszx12", new UserValidator());
-        repoDbf = new FriendshipDbRepository("jdbc:postgresql://localhost:5432/userApp", "postgres", "qwaszx12", new FriendshipValidator());
-        messageDb = new MessageDbRepository("jdbc:postgresql://localhost:5432/userApp", "postgres", "qwaszx12");
-        frRequestDb = new FriendRequestDbRepository("jdbc:postgresql://localhost:5432/userApp", "postgres", "qwaszx12");
-        repoDbGroup = new GroupDbRepository("jdbc:postgresql://localhost:5432/userApp", "postgres", "qwaszx12");
-        repoEvents = new EventDbRepository("jdbc:postgresql://localhost:5432/userApp", "postgres", "qwaszx12");
-        repoPost = new PostDbRepository("jdbc:postgresql://localhost:5432/userApp", "postgres", "qwaszx12");
->>>>>>> dc748e518bdbdd028dbfc7133ee055874c116f29
+        repoEvents = new EventDbRepository("jdbc:postgresql://localhost:5432/socialnetworkapp", "postgres", "paula123");
+        repoPost = new PostDbRepository("jdbc:postgresql://localhost:5432/socialnetworkapp", "postgres", "paula123");
 
         eventService =  new EventService(repoEvents, repoDb,new EventValidator());
         userService = new UserService(repoDb, repoDbf, new UserValidator());
