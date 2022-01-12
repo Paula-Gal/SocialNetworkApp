@@ -14,6 +14,7 @@ public class Event extends Entity<Long> {
     private String location;
     private Long admin;
     private List<Long> subscribers;
+    private LocalDateTime lastNotificationDate;
 
     public Event(String title, LocalDateTime creationDate, LocalDateTime start, LocalDateTime end, String description, String location, Long admin) {
         this.title = title;
@@ -46,6 +47,30 @@ public class Event extends Entity<Long> {
         this.location = location;
         this.admin = admin;
         this.subscribers = subscribers;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public LocalDateTime getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(LocalDateTime creationDate) {
+        this.creationDate = creationDate;
+    }
+
+    public LocalDateTime getLastNotificationDate() {
+        return lastNotificationDate;
+    }
+
+    public void setLastNotificationDate(LocalDateTime lastNotificationDate) {
+        this.lastNotificationDate = lastNotificationDate;
     }
 
     public LocalDateTime getEnd() {

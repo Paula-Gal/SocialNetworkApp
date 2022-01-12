@@ -93,5 +93,6 @@
          </padding>
       </ScrollPane>
       <Label layoutX="1220.0" layoutY="262.0" text="My friends" AnchorPane.rightAnchor="140.0" AnchorPane.topAnchor="260.0" styleClass="label-myfriends"/>
+      <AnchorPane styleClass="notification-style" fx:id="notif" layoutX="980.0" layoutY="416.0" prefHeight="100" prefWidth="150" />
    </children>
 </AnchorPane>

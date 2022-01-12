@@ -3,8 +3,10 @@ package com.example.lab6.controller;
 import com.example.lab6.model.*;
 import com.example.lab6.service.*;
 import com.example.lab6.utils.EventListType;
+import com.example.lab6.utils.NotificationType;
 import com.example.lab6.utils.events.MessageChangeEvent;
 import com.example.lab6.utils.observer.Observer;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -26,10 +28,14 @@ import javafx.stage.Modality;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Callback;
+import javafx.util.Duration;
+import org.controlsfx.control.Notifications;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,6 +63,7 @@ public class HomeController implements Observer<MessageChangeEvent> {
     public ScrollPane scroller;
     public ImageView closeEventsImage;
     public StackPane stackpane;
+    public AnchorPane notif;
     public ScrollPane scrollerPosts;
     public VBox vBoxPosts;
     private UserService userService;
@@ -100,6 +107,35 @@ public class HomeController implements Observer<MessageChangeEvent> {
         conversationLabel.setVisible(false);
 
         stackpane.setVisible(true);
+        notif.setVisible(false);
+
+    }
+
+    public void showNotification(NotificationType notificationType, Event event) {
+
+        Notifications notifications = Notifications.create();
+//        notifications.owner(notif);
+//
+//        notifications.graphic(notif);
+
+        switch (notificationType) {
+            case AWeekBefore -> {
+                notifications.text("7 days reminder");
+                notifications.title(event.getTitle());
+                notifications.hideAfter(Duration.seconds(10));
+            }
+            case ADayBefore -> {
+                notifications.text("1 day reminder");
+                notifications.title(event.getTitle());
+                notifications.hideAfter(Duration.seconds(10));
+            }
+            case Today -> {
+                notifications.text("Today reminder");
+                notifications.title(event.getTitle());
+                notifications.hideAfter(Duration.seconds(10));
+            }
+        }
+        notifications.show();
 
     }
 
@@ -123,6 +159,49 @@ public class HomeController implements Observer<MessageChangeEvent> {
         // start();
         //anchorPagination.getChildren().add(pagination);
 
+        Thread thread = new Thread("Notification Thread") {
+            public void run() {
+                System.out.println("run by: " + getName());
+                Iterable<Event> eventsList = eventService.getMyEvents(myId);
+                LocalDate today = LocalDateTime.now().toLocalDate();
+
+                eventsList.forEach(x -> {
+                    LocalDateTime notificationDate = eventService.getLastNotificationDate(myId, x.getId());
+                    LocalDateTime eventDateStart = x.getStart();
+
+                    LocalDate dateEvent = eventDateStart.toLocalDate();
+                    LocalDate lastNotificationDate;
+
+                    if (notificationDate == null)
+                        lastNotificationDate = LocalDate.now();
+                    else
+                        lastNotificationDate = notificationDate.toLocalDate();
+
+                    long noOfDaysBetween = ChronoUnit.DAYS.between(today, dateEvent);
+                    System.out.println(ChronoUnit.DAYS.between(lastNotificationDate, today));
+
+                    //lastNotificationDate != today.minusDays(7)
+                    if (noOfDaysBetween == 7 && ((ChronoUnit.DAYS.between(lastNotificationDate, today) > 0) || notificationDate == null)) {
+                        showNotification(NotificationType.AWeekBefore, x);
+                        eventService.saveNotificationDate(myId, x.getId());
+                    } else if (noOfDaysBetween == 1 && lastNotificationDate != today.minusDays(1) && (((ChronoUnit.DAYS.between(lastNotificationDate, today) > 0) || notificationDate == null))) {
+                        showNotification(NotificationType.ADayBefore, x);
+                        eventService.saveNotificationDate(myId, x.getId());
+                    } else if (noOfDaysBetween == 0 && ((ChronoUnit.DAYS.between(lastNotificationDate, today) > 0) || notificationDate == null)){
+                        showNotification(NotificationType.Today, x);
+                        eventService.saveNotificationDate(myId, x.getId());
+                    }
+                });
+            }
+        };
+
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                thread.run();
+                System.out.println(thread.getName());
+            }
+        });
     }
 
     public int itemsPerPage() {
@@ -154,6 +233,7 @@ public class HomeController implements Observer<MessageChangeEvent> {
             pagination.setPageCount((int) ceil(nr));
         }
 
+        pagination.setPageCount((int) ceil(nr));
     }
 
     public VBox createPageForListOfFriends(int pageIndex) {
@@ -169,7 +249,7 @@ public class HomeController implements Observer<MessageChangeEvent> {
 
         List<FriendshipDTO> friendshipDTOS = new ArrayList<>();
         friendshipDTOS.addAll(friendshipService.getMyFriendsOnPage((pageIndex) * itemsPerPage(), itemsPerPage(), myId));
-       // friendshipDTOS.addAll(messageService.getMyConversationPage((pageIndex) * itemsPerPage(), itemsPerPage(), userService.exists(email).getId()));
+        // friendshipDTOS.addAll(messageService.getMyConversationPage((pageIndex) * itemsPerPage(), itemsPerPage(), userService.exists(email).getId()));
         List<UserDTO> users = new ArrayList<>();
         friendshipDTOS.forEach(x -> {
             if (userService.findPhoto(x.getUser().getEmail()) == null) {
@@ -183,7 +263,6 @@ public class HomeController implements Observer<MessageChangeEvent> {
                 userDto.setEmailDTO(x.getUser().getEmail());
                 users.add(userDto);
             }
-
         });
 
         int nr = 0;
@@ -241,9 +320,7 @@ public class HomeController implements Observer<MessageChangeEvent> {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-
             });
-
             nr++;
         }
         return box;
@@ -280,7 +357,6 @@ public class HomeController implements Observer<MessageChangeEvent> {
         List<Group> groups = new ArrayList<>();
         groups.addAll(messageService.getGroupsOnPage((pageIndex) * itemsPerPage(), itemsPerPage(), myId));
 
-
         int nr = 0;
         for (int i = page; i < page + groups.size(); i++) {
             VBox row = new VBox();
@@ -313,7 +389,6 @@ public class HomeController implements Observer<MessageChangeEvent> {
         return box;
     }
 
-
     public void listofSearching() {
 
         paginationSearch.getStyleClass().add("/style/pagination");
@@ -334,7 +409,6 @@ public class HomeController implements Observer<MessageChangeEvent> {
         double nr = (double) (nr_searchs) / (double) itemsPerPage();
 
         paginationSearch.setPageCount((int) ceil(nr));
-
     }
 
     public VBox createPageForListOfSearching(int pageIndex) {
@@ -348,7 +422,7 @@ public class HomeController implements Observer<MessageChangeEvent> {
         box.setAlignment(Pos.CENTER);
         int page = pageIndex * itemsPerPage();
 
-        List<User> userList = userService.getSearchOnPage((pageIndex) * itemsPerPage(), itemsPerPage(),myId, searchField.getText().toString());
+        List<User> userList = userService.getSearchOnPage((pageIndex) * itemsPerPage(), itemsPerPage(), myId, searchField.getText().toString());
 
         List<UserDTO> users = new ArrayList<>();
         userList.forEach(x -> {
@@ -372,7 +446,6 @@ public class HomeController implements Observer<MessageChangeEvent> {
 
             Label label = new Label();
             ImageView imageView = new ImageView();
-
 
             imageView.setImage(new Image(users.get(index).getUrlPhoto()));
             imageView.setFitHeight(40);
@@ -416,7 +489,6 @@ public class HomeController implements Observer<MessageChangeEvent> {
         return box;
     }
 
-
     public void onHandleBack(ActionEvent actionEvent) {
         stage.close();
     }
@@ -427,16 +499,13 @@ public class HomeController implements Observer<MessageChangeEvent> {
     }
 
     public void onSearchField(KeyEvent keyEvent) {
-        if(searchField.getText().isEmpty())
-        {
+        if (searchField.getText().isEmpty()) {
             paginationSearch.setVisible(false);
-        }
-        else{
+        } else {
             paginationSearch.setVisible(true);
             listofSearching();
         }
     }
-
 
     public void setConversationList() {
         conversationList.setItems(modelMessages);
@@ -572,7 +641,6 @@ public class HomeController implements Observer<MessageChangeEvent> {
             setConversation(to);
             setConversationList();
         }
-
     }
 
     public void onCloseConversation(MouseEvent mouseEvent) {
@@ -603,7 +671,7 @@ public class HomeController implements Observer<MessageChangeEvent> {
             dialogStage.setScene(scene);
 
             MessagesController messagesController = loader.getController();
-            messagesController.setServices(messageService,friendshipService, friendRequestService, userService, dialogStage, email);
+            messagesController.setServices(messageService, friendshipService, friendRequestService, userService, dialogStage, email);
 
             dialogStage.show();
 
@@ -625,14 +693,19 @@ public class HomeController implements Observer<MessageChangeEvent> {
             Scene scene = new Scene(root);
             dialogStage.setScene(scene);
 
-            AddEventController addEventController  = new AddEventController();
-            addEventController.setServices(eventService,dialogStage,email);
+            AddEventController addEventController = loader.getController();
+            addEventController.setServices(eventService, dialogStage, userService.exists(email).getId());
 
             dialogStage.show();
 
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void refreshList() {
+        eventListType = EventListType.CreatedByMeEvents;
+        openEvents();
     }
 
     public void logout(MouseEvent mouseEvent) {
@@ -645,7 +718,7 @@ public class HomeController implements Observer<MessageChangeEvent> {
         List<Event> events = new ArrayList<>();
 
         switch (eventListType) {
-            case AllEvents -> events = eventService.getAllEvents();
+            case AllEvents -> events = eventService.getAllEvents(userService.exists(email).getId());
             case MyEvents -> events = eventService.getMyEvents(userService.exists(email).getId());
             case CreatedByMeEvents -> events = eventService.getCreatedByMeEvents(userService.exists(email).getId());
         }
@@ -677,6 +750,7 @@ public class HomeController implements Observer<MessageChangeEvent> {
             public void handle(MouseEvent event) {
                 eventListType = EventListType.MyEvents;
                 stackpane.setVisible(false);
+//                myEvents.getStyleClass().add("background-event-category-selected ");
                 openEvents();
             }
         });
@@ -706,6 +780,8 @@ public class HomeController implements Observer<MessageChangeEvent> {
 
                 imageView.setOnMouseClicked(e -> {
                     openAddEventPage();
+                    eventListType = EventListType.CreatedByMeEvents;
+                    openEvents();
                 });
                 openEvents();
             }
@@ -715,9 +791,13 @@ public class HomeController implements Observer<MessageChangeEvent> {
         events.forEach(x -> {
             HBox row = new HBox();
             VBox elem = new VBox();
+            VBox removeImageBox = new VBox();
+            VBox subscribeBox = new VBox();
             VBox imageEventBox = new VBox();
 
             ImageView eventImage = new ImageView();
+            ImageView removeImage = new ImageView();
+
             Label title = new Label();
             Label description = new Label();
             Label startDate = new Label();
@@ -746,12 +826,63 @@ public class HomeController implements Observer<MessageChangeEvent> {
             elem.getChildren().add(startDate);
             elem.getChildren().add(endDate);
 
+
+            switch (eventListType) {
+                case AllEvents -> {
+                    removeImage.setImage(new Image("/images/subs-v2.png"));
+                    removeImage.setFitHeight(60);
+                    removeImage.setFitWidth(60);
+                }
+                case MyEvents -> {
+                    removeImage.setImage(new Image("/images/uns-v1.png"));
+                    removeImage.setFitHeight(65);
+                    removeImage.setFitWidth(65);
+                }
+                case CreatedByMeEvents -> {
+                    removeImage.setImage(new Image("/images/remove.png"));
+                    removeImage.setFitHeight(35);
+                    removeImage.setFitWidth(35);
+                }
+            }
+
+            subscribeBox.setVisible(eventListType.equals(EventListType.AllEvents));
+            removeImageBox.getChildren().add(removeImage);
+
+            removeImage.setOnMouseClicked(y -> {
+
+                switch (eventListType) {
+                    case AllEvents -> {
+                        eventService.subscribe(x.getId(), myId);
+                        if(ChronoUnit.DAYS.between(x.getStart().toLocalDate(), LocalDateTime.now().toLocalDate()) == 0)
+                        {
+                            showNotification(NotificationType.Today, x);
+                            eventService.saveNotificationDate(myId, x.getId());
+                        }
+                        eventListType = EventListType.AllEvents;
+                        openEvents();
+                    }
+
+                    case MyEvents -> {
+                        eventService.unsubscribe(x.getId(), myId);
+                        eventListType = EventListType.MyEvents;
+                        openEvents();
+                    }
+
+                    case CreatedByMeEvents -> {
+                        eventService.removeEvent(x.getId());
+                        eventListType = EventListType.CreatedByMeEvents;
+                        openEvents();
+                    }
+                }
+            });
+
             title.setAlignment(Pos.CENTER);
             description.setAlignment(Pos.CENTER);
 
             row.getChildren().add(imageEventBox);
-            row.setSpacing(20);
+            row.setSpacing(5);
             row.getChildren().add(elem);
+            row.getChildren().add(removeImageBox);
             eventsBox.getChildren().add(row);
         });
 

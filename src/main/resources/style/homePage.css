@@ -256,6 +256,15 @@
     -fx-spacing: 20;
 }
 
+.background-event-category-selected {
+    -fx-background-color: white;
+    -fx-background-radius: 35;
+    -fx-text-fill: black;
+    -fx-background-position: center center;
+    -fx-padding: 15px 15px 15px 15px;
+    -fx-spacing: 20;
+}
+
 .background-event-category:hover {
     -fx-background-color: #FF75B7;
     -fx-background-radius: 35;
@@ -264,6 +273,34 @@
     -fx-padding: 15px 15px 15px 15px;
     -fx-spacing: 20;
 }
+
+.background-event-category:focused {
+    -fx-background-color: #FF75B7;
+    -fx-background-radius: 35;
+    -fx-text-fill: black;
+    -fx-background-position: center center;
+    -fx-padding: 15px 15px 15px 15px;
+    -fx-spacing: 20;
+}
+
+.background-event-category:visited {
+    -fx-background-color: #FF75B7;
+    -fx-background-radius: 35;
+    -fx-text-fill: black;
+    -fx-background-position: center center;
+    -fx-padding: 15px 15px 15px 15px;
+    -fx-spacing: 20;
+}
+
+.background-event-category:cell-selection {
+    -fx-background-color: #FF75B7;
+    -fx-background-radius: 35;
+    -fx-text-fill: black;
+    -fx-background-position: center center;
+    -fx-padding: 15px 15px 15px 15px;
+    -fx-spacing: 20;
+}
+
 
 .back-color-category {
     -fx-background-color: #c570e5;
@@ -320,4 +357,12 @@
     -fx-padding: 7;
     -fx-text-fill: white;
 }
+.hover-remove:hover {
+    -fx-background-color: white;
+}
+
+.hover-remove:hover {
+    -fx-background-color: #FF75B7;
+}
+
 

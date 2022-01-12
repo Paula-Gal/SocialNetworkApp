@@ -11,7 +11,6 @@ import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
@@ -83,6 +82,7 @@ public class MessagesController implements Observer<MessageChangeEvent> {
     private List<FriendshipDTO> model = new ArrayList<>();
 
 
+    //  @FXML
     public Pagination pagination;
 
     public void initialize() {
@@ -99,7 +99,7 @@ public class MessagesController implements Observer<MessageChangeEvent> {
 
     }
 
-    public void setServices(MessageService messageService, FriendshipService friendshipService,FriendRequestService friendRequestService, UserService userService, Stage dialogStage, String email) {
+    public void setServices(MessageService messageService, FriendshipService friendshipService, FriendRequestService friendRequestService, UserService userService, Stage dialogStage, String email) {
         this.messageService = messageService;
         this.stage = dialogStage;
         this.email = email;
@@ -125,6 +125,8 @@ public class MessagesController implements Observer<MessageChangeEvent> {
 
         if(friendsBool.get()){
             setConversation1(friendId);
+        if (friendsBool.get()) {
+            setConversation(friendId);
         } else {
             setConversationGroup(groupFinal);
 
@@ -218,7 +220,7 @@ public class MessagesController implements Observer<MessageChangeEvent> {
             box.getChildren().add(pane);
             label.setOnMouseClicked(event -> {
                 userImage.setVisible(true);
-                if(users.get(index).getUrlPhoto() != null)
+                if (users.get(index).getUrlPhoto() != null)
                     userImage.setImage(new Image(users.get(index).getUrlPhoto()));
                 else
                     userImage.setImage(new Image("/images/profile.png"));
@@ -268,15 +270,21 @@ public class MessagesController implements Observer<MessageChangeEvent> {
         chat.getChildren().clear();
         List<Message> messages = messageService.getConversation(myId, friendId);
 
-            messages.forEach(x -> {
-                HBox row = new HBox();
-                ImageView profilePhoto = new ImageView();
-                Label text = new Label();
-                if (userService.findPhoto(x.getFrom().getEmail()) != null)
-                    profilePhoto.setImage(new Image(userService.findPhoto(x.getFrom().getEmail())));
-                else
-                    profilePhoto.setImage(new Image("/images/profile.png"));
+        messages.forEach(x -> {
+            HBox row = new HBox();
+            ImageView profilePhoto = new ImageView();
+            Label text = new Label();
+            if (userService.findPhoto(x.getFrom().getEmail()) != null)
+                profilePhoto.setImage(new Image(userService.findPhoto(x.getFrom().getEmail())));
+            else
+                profilePhoto.setImage(new Image("/images/profile.png"));
 
+            profilePhoto.setFitWidth(40);
+            profilePhoto.setFitHeight(40);
+            text.setText(x.getMessage());
+            if (x.getFrom().getId().equals(myId)) {
+                text.getStyleClass().add("background-mymessage");
+                text.setAlignment(Pos.CENTER_RIGHT);
                 profilePhoto.setFitWidth(50);
                 profilePhoto.setFitHeight(50);
                 text.setText(x.getMessage());
@@ -284,11 +292,19 @@ public class MessagesController implements Observer<MessageChangeEvent> {
                     text.getStyleClass().add("background-mymessages");
                     text.setAlignment(Pos.CENTER_RIGHT);
 
+                row.getChildren().add(text);
+                row.getChildren().add(profilePhoto);
+                row.setAlignment(Pos.CENTER_RIGHT);
                     row.getChildren().add(text);
                     row.getChildren().add(profilePhoto);
                     row.setAlignment(Pos.CENTER_RIGHT);
                     row.setPrefHeight(100);
 
+            } else {
+                text.getStyleClass().add("background-message");
+                row.getChildren().add(profilePhoto);
+                row.getChildren().add(text);
+                row.setAlignment(Pos.CENTER_LEFT);
                 } else {
                     text.getStyleClass().add("background-messages");
                     row.getChildren().add(profilePhoto);
@@ -296,13 +312,17 @@ public class MessagesController implements Observer<MessageChangeEvent> {
                     row.setAlignment(Pos.CENTER_LEFT);
                     row.setPrefHeight(100);
 
-                }
+            }
 
-                chat.getChildren().add(row);
+            chat.getChildren().add(row);
 
-            });
-            chat.setSpacing(5);
+        });
+        chat.setSpacing(5);
 
+        scroller.setContent(chat);
+        scroller.setFitToWidth(chat.isFillWidth());
+        scroller.setVvalue(1.0);
+        scroller.setHvalue(1.0);
       scroller.setContent(chat);
       scroller.setFitToWidth(chat.isFillWidth());
       scroller.setVvalue(1.0);
@@ -355,7 +375,7 @@ public class MessagesController implements Observer<MessageChangeEvent> {
             chat.getChildren().add(row);
 
         });
-        
+
         chat.setSpacing(5);
         scroller.setContent(chat);
         scroller.setFitToWidth(chat.isFillWidth());
@@ -597,7 +617,7 @@ public class MessagesController implements Observer<MessageChangeEvent> {
             int index = nr;
             ImageView imageView = new ImageView();
             Button button = new Button();
-            Button buttonPlus  = new Button();
+            Button buttonPlus = new Button();
             Label label = new Label();
 
             imageView.setImage(new Image(usersDTO.get(index).getUrlPhoto()));
@@ -628,7 +648,7 @@ public class MessagesController implements Observer<MessageChangeEvent> {
             box.getChildren().add(pane);
             label.setOnMouseClicked(event -> {
                 userImage.setVisible(true);
-                if(usersDTO.get(index).getUrlPhoto() != null)
+                if (usersDTO.get(index).getUrlPhoto() != null)
                     userImage.setImage(new Image(usersDTO.get(index).getUrlPhoto()));
                 else
                     userImage.setImage(new Image("/images/profile.png"));
@@ -638,7 +658,7 @@ public class MessagesController implements Observer<MessageChangeEvent> {
                 setConversation(friendId);
 
             });
-            buttonPlus.setOnAction(event->{
+            buttonPlus.setOnAction(event -> {
                 newMembersForGroup.add(usersDTO.get(index).getIdUser());
                 buttonPlus.setVisible(false);
 
@@ -671,11 +691,10 @@ public class MessagesController implements Observer<MessageChangeEvent> {
     }
 
     public void onSearchField(KeyEvent keyEvent) {
-        if(friendsBool.get()){
+        if (friendsBool.get()) {
             searchFriends();
-        }
-        else{
-            if(addMembersToGroupLabel.isVisible())
+        } else {
+            if (addMembersToGroupLabel.isVisible())
                 searchFriendsForGroup();
             else
                 searchGroups();
@@ -762,7 +781,7 @@ public class MessagesController implements Observer<MessageChangeEvent> {
             box.getChildren().add(pane);
             label.setOnMouseClicked(event -> {
                 userImage.setVisible(true);
-                if(usersDTO.get(index).getUrlPhoto() != null)
+                if (usersDTO.get(index).getUrlPhoto() != null)
                     userImage.setImage(new Image(usersDTO.get(index).getUrlPhoto()));
                 else
                     userImage.setImage(new Image("/images/profile.png"));
@@ -794,7 +813,6 @@ public class MessagesController implements Observer<MessageChangeEvent> {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-
             });
             nr++;
         }
@@ -871,10 +889,6 @@ public class MessagesController implements Observer<MessageChangeEvent> {
         return box;
     }
 
-
-
-
-
     public void onSend(MouseEvent mouseEvent) {
         String message = conversationField.getText();
         if (friendsBool.get()) {
@@ -883,24 +897,20 @@ public class MessagesController implements Observer<MessageChangeEvent> {
             messageService.sendMessage(userService.exists(email).getId(), tos, message);
             conversationField.setText("");
 
-        }
-        else{
+        } else {
             List<Long> recipients = new ArrayList<>();
             groupFinal.getMembers().forEach(x -> {
                 if (!x.equals(userService.exists(email).getId()))
                     recipients.add(x);
-        });
+            });
             MessageDTO messageDTO = new MessageDTO(userService.exists(email).getId(), recipients, message, LocalDateTime.now(), null);
             messageService.sendMessageGroup(groupFinal, messageDTO);
             conversationField.setText("");
+        }
     }
-    }
-
-
-
 
     public void onPlusGroupImage(MouseEvent mouseEvent) {
-        if(nameGroupField.getText() != null) {
+        if (nameGroupField.getText() != null) {
             Group gr = new Group(nameGroupField.getText(), new ArrayList<>());
             gr.setMembers(newMembersForGroup);
             groupFinal.setId(gr.getId());

@@ -1,13 +1,11 @@
 package com.example.lab6.repository.db;
 
 import com.example.lab6.model.FriendRequest;
-import com.example.lab6.model.Friendship;
 import com.example.lab6.model.Status;
 import com.example.lab6.model.Tuple;
 import com.example.lab6.repository.Repository;
 
 import java.sql.*;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
