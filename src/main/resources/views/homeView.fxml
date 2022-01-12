@@ -81,5 +81,6 @@
          </padding>
       </ScrollPane>
       <StackPane fx:id="stackpane" layoutX="930.0" layoutY="356.0" prefHeight="150.0" prefWidth="200.0" AnchorPane.bottomAnchor="150" AnchorPane.rightAnchor="630" />
+      <AnchorPane styleClass="notification-style" fx:id="notif" layoutX="980.0" layoutY="416.0" prefHeight="100" prefWidth="150" />
    </children>
 </AnchorPane>

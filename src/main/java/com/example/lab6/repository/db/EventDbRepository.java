@@ -1,19 +1,18 @@
 package com.example.lab6.repository.db;
 
 import com.example.lab6.model.Event;
-import com.example.lab6.repository.paging.Page;
-import com.example.lab6.repository.paging.Pageable;
-import com.example.lab6.repository.paging.Paginator;
-import com.example.lab6.repository.paging.PagingRepository;
+import com.example.lab6.repository.EventRepository;
 
 import java.sql.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Month;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class EventDbRepository implements PagingRepository<Long, Event> {
+public class EventDbRepository implements EventRepository<Long, Event> {
 
     private String url;
     private String username;
@@ -45,6 +44,16 @@ public class EventDbRepository implements PagingRepository<Long, Event> {
                 LocalDateTime creationDate = resultSet.getTimestamp("creation_date").toLocalDateTime();
                 Event event = new Event(title, creationDate, startDate, endDate, description, location, admin);
                 event.setId(id);
+
+                String sql2 = "SELECT * FROM events_subscribers WHERE \"eventID\" = " + aLong;
+                PreparedStatement statement2 = connection.prepareStatement(sql2);
+                ResultSet resultSet1 = statement2.executeQuery();
+                List<Long> subscribers = new ArrayList<>();
+                while (resultSet1.next()) {
+                    Long subscriber = resultSet1.getLong("userID");
+                    subscribers.add(subscriber);
+                }
+                event.setSubscribers(subscribers);
 
                 return event;
             }
@@ -111,10 +120,10 @@ public class EventDbRepository implements PagingRepository<Long, Event> {
 
             ps.executeUpdate();
             ResultSet rs = ps.getGeneratedKeys();
-            if (rs.next()) {
-                long id = rs.getLong(1);
-                saveSubscribers(id, entity.getSubscribers());
-            }
+//            if (rs.next()) {
+//                long id = rs.getLong(1);
+////                saveSubscribers(id, entity.getSubscribers());
+//            }
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -174,14 +183,16 @@ public class EventDbRepository implements PagingRepository<Long, Event> {
 
             PreparedStatement statement = connection.prepareStatement(sql);
 
-            subs.forEach(x -> {
-                try {
-                    statement.setInt(1, Math.toIntExact(id));
-                    statement.executeUpdate();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            });
+            if (subs != null) {
+                subs.forEach(x -> {
+                    try {
+                        statement.setInt(1, Math.toIntExact(id));
+                        statement.executeUpdate();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                });
+            }
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -190,12 +201,96 @@ public class EventDbRepository implements PagingRepository<Long, Event> {
 
     @Override
     public Event update(Event entity) {
+
+        String sql_subs = "insert into events_subscribers (\"eventID\", \"userID\") values (?,?)";
+
+        try (Connection connection = DriverManager.getConnection(url, username, password);
+             PreparedStatement ps = connection.prepareStatement(sql_subs)) {
+
+            entity.getSubscribers().forEach(x -> {
+                try {
+                    ps.setInt(1, Math.toIntExact(entity.getId()));
+                    ps.setInt(2, Math.toIntExact(x));
+                    ps.executeUpdate();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            });
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         return null;
     }
 
     @Override
-    public Page<Event> findAll(Pageable pageable) {
-        Paginator<Event> paginator = new Paginator<>(pageable, this.findAll());
-        return paginator.paginate();
+    public Event delete(Event entity, Long userID) {
+
+        try {
+            Connection connection = DriverManager.getConnection(url, username, password);
+            String sql = "DELETE FROM events_subscribers WHERE \"eventID\" = ? and \"userID\"= ?";
+
+            PreparedStatement statement = connection.prepareStatement(sql);
+
+            try {
+                statement.setInt(1, Math.toIntExact(entity.getId()));
+                statement.setInt(2, Math.toIntExact(userID));
+                statement.executeUpdate();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    public Event saveLastNotificationDate(Long eventID, Long userID) {
+        try {
+            Connection connection = DriverManager.getConnection(url, username, password);
+            String sql = "update events_subscribers set last_notification_date=? WHERE \"eventID\" = ? and \"userID\"= ?";
+
+            PreparedStatement statement = connection.prepareStatement(sql);
+
+            try {
+                statement.setTimestamp(1, Timestamp.valueOf(LocalDateTime.now()));
+                statement.setInt(2, Math.toIntExact(eventID));
+                statement.setInt(3, Math.toIntExact(userID));
+                statement.executeUpdate();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    public LocalDateTime getLastNotificationDate(Long eventID, Long userID) {
+        String sql = "SELECT last_notification_date FROM events_subscribers WHERE \"eventID\" = ? and \"userID\"= ?";
+
+        try {
+            Connection connection = DriverManager.getConnection(url, username, password);
+            PreparedStatement statement = connection.prepareStatement(sql);
+
+            statement.setInt(1, Math.toIntExact(eventID));
+            statement.setInt(2, Math.toIntExact(userID));
+
+            ResultSet resultSet = statement.executeQuery();
+
+            if (resultSet.next()) {
+                LocalDate dateBefore = LocalDate.of(2030, Month.MAY, 24);
+                LocalDateTime lastNotificationDate = dateBefore.atStartOfDay();
+                lastNotificationDate = resultSet.getObject("last_notification_date", LocalDateTime.class);
+                return lastNotificationDate;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

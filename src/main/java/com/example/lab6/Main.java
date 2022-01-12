@@ -40,7 +40,7 @@ public class Main extends Application {
         repoDbGroup = new GroupDbRepository("jdbc:postgresql://localhost:5432/socialnetworkapp", "postgres", "paula123");
         repoEvents = new EventDbRepository("jdbc:postgresql://localhost:5432/socialnetworkapp", "postgres", "paula123");
 
-        eventService =  new EventService(repoEvents, repoDb,new EventValidator());
+        eventService = new EventService(repoEvents, repoDb, new EventValidator());
         userService = new UserService(repoDb, repoDbf, new UserValidator());
         friendshipService = new FriendshipService(repoDb, repoDbf);
         messageService = new MessageService(messageDb, repoDb, repoDbf, repoDbGroup);
@@ -56,7 +56,6 @@ public class Main extends Application {
         splashScreenController.setServices(userService, friendshipService, messageService, friendRequestService, eventService, stage);
         stage.show();
         splashScreenController.run();
-
     }
 
     public static void main(String[] args) {
