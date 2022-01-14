@@ -7,8 +7,6 @@ import com.example.lab6.utils.NotificationType;
 import com.example.lab6.utils.events.MessageChangeEvent;
 import com.example.lab6.utils.observer.Observer;
 import javafx.application.Platform;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -610,7 +608,6 @@ public class HomeController implements Observer<MessageChangeEvent> {
     private void setConversationGroup(Group groupFinal) {
         conversationList.getChildren().clear();
 
-
         List<Message> messages = messageService.convertMessages(groupFinal.getMessages());
 
        // Collections.reverse(messages);
@@ -1108,6 +1105,7 @@ public class HomeController implements Observer<MessageChangeEvent> {
     public void openPosts(MouseEvent mouseEvent) {
         scroller.setVisible(false);
         scrollerPosts.setVisible(true);
+        initializePost();
     }
 
     public void closeEvents(MouseEvent mouseEvent) {
@@ -1129,7 +1127,6 @@ public class HomeController implements Observer<MessageChangeEvent> {
 
         List<FriendshipDTO> friendshipDTOS = friendshipService.getFriendships(myId);
         List<Post> postList = postService.getHomePostsOnPage(leftLimitPosts, nr-leftLimitPosts, friendshipDTOS);
-        List<Post> postList = postService.getPostsOnPage(leftLimitPosts, nr - leftLimitPosts);
 
         postList.forEach(x -> {
             VBox box = new VBox();
@@ -1162,7 +1159,6 @@ public class HomeController implements Observer<MessageChangeEvent> {
             box.getChildren().add(hbox);
 
             if(x.getDescription() != null){
-            if (x.getDescription() != "") {
 
                 Label description = new Label(x.getDescription());
                 description.setAlignment(Pos.CENTER);
@@ -1170,8 +1166,8 @@ public class HomeController implements Observer<MessageChangeEvent> {
                 description.getStyleClass().add("label-description-post");
                 box.getChildren().add(description);
             }
+
             if(x.getUrl() != null){
-            if (x.getUrl() != "") {
                 ImageView img = new ImageView();
                 img.setImage(new Image(x.getUrl()));
                 HBox rowImage = new HBox();

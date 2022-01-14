@@ -50,15 +50,9 @@
     -fx-text-fill: #ff589e;
     -fx-background-radius: 35;
     -fx-background-color: white;
-    -fx-text-fill: black;
 }
 
 .label-tab:hover:selected {
-    -fx-text-fill: #ff589e;
-    -fx-content-display: block;
-}
-
-.label-tab:hover:pressed {
     -fx-text-fill: #ff589e;
     -fx-content-display: block;
 }
@@ -134,7 +128,7 @@
 
 .date-message-start{
     -fx-text-fill: #646464;
-    -fx-text-alignment: bottom;
+    /*-fx-text-alignment: bottom;*/
     -fx-font-size: 9;
     -fx-font-family: Poppins-Regular;
 }
@@ -289,7 +283,6 @@
     -fx-background-position: center center;
     -fx-padding: 15px 15px 15px 15px;
     -fx-spacing: 20;
-    -fx-content-display: block;
 }
 .background-event-category-selected:cell-selection {
     -fx-background-color: white;
@@ -298,7 +291,6 @@
     -fx-background-position: center center;
     -fx-padding: 15px 15px 15px 15px;
     -fx-spacing: 20;
-    -fx-content-display: block;
 }
 
 .background-event-category:hover {
@@ -419,7 +411,6 @@
     -fx-background-position: center center;
     -fx-padding: 15px 15px 15px 15px;
     -fx-spacing: 20;
-    -fx-content-display: block;
 }
 
 .background-event-category-hover {
@@ -429,7 +420,6 @@
     -fx-background-position: center center;
     -fx-padding: 15px 15px 15px 15px;
     -fx-spacing: 20;
-    -fx-content-display: block;
 }
 
 .bold-text {
