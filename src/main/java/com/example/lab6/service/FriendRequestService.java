@@ -69,13 +69,18 @@ public class FriendRequestService implements Observable<FriendRequestChangeEvent
             if (friendRequestRepo.findOne(ship).getStatus() != Status.PENDING)
                 throw new ValidationException("The request is not possible");
         }
-        FriendRequest friendRequest = new FriendRequest(friendRequestRepo.findOne(ship).getFrom(), friendRequestRepo.findOne(ship).getTo(), friendRequestRepo.findOne(ship).getStatus(), friendRequestRepo.findOne(ship).getLastUpdatedDate());
+        if(friendRequestRepo.findOne(ship) != null){
+
+       // FriendRequest friendRequest = new FriendRequest(friendRequestRepo.findOne(ship).getFrom(), friendRequestRepo.findOne(ship).getTo(), friendRequestRepo.findOne(ship).getStatus(), friendRequestRepo.findOne(ship).getLastUpdatedDate());
+            FriendRequest friendRequest = friendRequestRepo.findOne(ship);
+
         FriendRequest old = friendRequest;
         friendRequest.setStatus(Status.APPROVED);
-        friendRequestRepo.update(friendRequest);
+        friendRequestRepo.remove(friendRequest);
+        //friendRequestRepo.update(friendRequest);
         Friendship friendship = new Friendship(ship);
         repoFriendship.save(friendship);
-        notifyObservers(new FriendRequestChangeEvent(ChangeEventType.ADD, friendRequest));
+        notifyObservers(new FriendRequestChangeEvent(ChangeEventType.ADD, friendRequest));}
     }
 
     /**
@@ -96,11 +101,12 @@ public class FriendRequestService implements Observable<FriendRequestChangeEvent
             if (friendRequestRepo.findOne(ship).getStatus() != Status.PENDING)
                 throw new ValidationException("The request is not possible");
         }
+        if(friendRequestRepo.findOne(ship) != null){
         FriendRequest friendRequest = new FriendRequest(friendRequestRepo.findOne(ship).getFrom(), friendRequestRepo.findOne(ship).getTo(), friendRequestRepo.findOne(ship).getStatus(), friendRequestRepo.findOne(ship).getLastUpdatedDate());
         friendRequest.setStatus(Status.REJECTED);
         friendRequest.setId(ship);
         friendRequestRepo.remove(friendRequest);
-        notifyObservers(new FriendRequestChangeEvent(ChangeEventType.ADD, friendRequest));
+        notifyObservers(new FriendRequestChangeEvent(ChangeEventType.ADD, friendRequest));}
     }
 
     /**
@@ -122,10 +128,11 @@ public class FriendRequestService implements Observable<FriendRequestChangeEvent
                 throw new ValidationException("The request is not possible");
         }
 
-        FriendRequest friendRequest = new FriendRequest(friendRequestRepo.findOne(ship).getFrom(), friendRequestRepo.findOne(ship).getTo(), friendRequestRepo.findOne(ship).getStatus(), friendRequestRepo.findOne(ship).getLastUpdatedDate());
+        if(friendRequestRepo.findOne(ship) != null)
+        { FriendRequest  friendRequest= new FriendRequest(friendRequestRepo.findOne(ship).getFrom(), friendRequestRepo.findOne(ship).getTo(), friendRequestRepo.findOne(ship).getStatus(), friendRequestRepo.findOne(ship).getLastUpdatedDate());
         friendRequest.setId(ship);
         friendRequestRepo.remove(friendRequest);
-        notifyObservers(new FriendRequestChangeEvent(ChangeEventType.ADD, friendRequest));
+        notifyObservers(new FriendRequestChangeEvent(ChangeEventType.ADD, friendRequest));}
     }
 
     /**
@@ -194,6 +201,17 @@ public class FriendRequestService implements Observable<FriendRequestChangeEvent
                 .collect(Collectors.toList());
     }
 
+    public FriendRequest existsFriendRequests(Long id1, Long id2){
+        Tuple<Long, Long> ship = new Tuple<>(id1, id2);
+        if(friendRequestRepo.findOne(ship) == null)
+            return null;
+        else {
+            if(friendRequestRepo.findOne(ship).getStatus().equals(Status.PENDING))
+                return friendRequestRepo.findOne(ship);
+            else
+                return null;
+            }
+    }
 
     private List<Observer> observers = new ArrayList<>();
     @Override

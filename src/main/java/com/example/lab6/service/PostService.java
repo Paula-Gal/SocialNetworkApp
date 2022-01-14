@@ -12,6 +12,7 @@ import com.example.lab6.repository.paging.PagingRepository;
 import com.example.lab6.utils.observer.Observer;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -54,24 +55,62 @@ public class PostService {
 
     public List<Post> getMyPosts(Long id) {
         Iterable<Post> subscribedEvents = repoPost.findAll();
-        List<Post> myEvents = new ArrayList<>();
-        subscribedEvents.forEach(myEvents::add);
-        Predicate<Post> event = x -> x.getAdmin().equals(id);
-        myEvents = myEvents.stream().filter(event).collect(Collectors.toList());
 
-        return myEvents;
+        List<Post> myPosts = new ArrayList<>();
+        subscribedEvents.forEach(myPosts::add);
+        myPosts.sort(Comparator.comparing(Post::getDate).reversed());
+        Predicate<Post> event = x -> x.getAdmin().equals(id);
+        myPosts = myPosts.stream().filter(event).collect(Collectors.toList());
+
+        return myPosts;
     }
 
     public List<Post> getMyPostsOnPage(int leftLimit, int rightLimit, Long id) {
         List<Post> postList= getMyPosts(id);
+
         return postList.stream().skip(leftLimit)
                 .limit(rightLimit)
                 .collect(Collectors.toList());
     }
 
 
-    public List<Post> getPostsOnPage(int leftLimit, int rightLimit) {
-        List<Post> postList= getAllPosts();
+    public List<Post> getFriendsPosts(List<FriendshipDTO> users) {
+        Iterable<Post> iterable = repoPost.findAll();
+        List<Post> list = new ArrayList<>();
+        iterable.forEach(list::add);
+        list.sort(Comparator.comparing(Post::getDate).reversed());
+
+        List<Long> ids = new ArrayList<>();
+        users.forEach(x->{
+            ids.add(x.getUser().getId());
+        });
+
+        Predicate<Post> friend = x->ids.contains(x.getAdmin());
+        List<Post> posts = new ArrayList<>();
+        posts = list.stream().filter(friend).collect(Collectors.toList());
+
+
+        return posts;
+    }
+    public List<Post> getHomePostsOnPage(int leftLimit, int rightLimit, List<FriendshipDTO> users) {
+        List<Post> postList= getFriendsPosts(users);
+        return postList.stream().skip(leftLimit)
+                .limit(rightLimit)
+                .collect(Collectors.toList());
+    }
+
+    public List<Post> getFriendPosts(Long id) {
+        Iterable<Post> subscribedEvents = repoPost.findAll();
+        List<Post> myPosts = new ArrayList<>();
+        subscribedEvents.forEach(myPosts::add);
+        Predicate<Post> event = x -> x.getAdmin().equals(id);
+        myPosts = myPosts.stream().filter(event).collect(Collectors.toList());
+
+        return myPosts;
+    }
+
+    public List<Post> getFriendPostsOnPage(int leftLimit, int rightLimit, Long id) {
+        List<Post> postList= getFriendPosts(id);
         return postList.stream().skip(leftLimit)
                 .limit(rightLimit)
                 .collect(Collectors.toList());

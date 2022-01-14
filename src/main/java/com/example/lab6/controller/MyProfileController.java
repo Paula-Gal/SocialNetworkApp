@@ -7,6 +7,7 @@ import com.example.lab6.utils.observer.Observer;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
@@ -70,6 +71,9 @@ public class MyProfileController implements Observer<FriendRequestChangeEvent> {
     public TextField postField;
     public ScrollPane scrollerPost;
     public VBox vBoxPost;
+    public AnchorPane anchorFriendRequest;
+    public Label labelFriendRequest;
+    public Button generateMessageRaport;
     private Boolean ByMe = false;
     public int leftLimitPosts = 0;
     public int numberOfPost;
@@ -97,6 +101,8 @@ public class MyProfileController implements Observer<FriendRequestChangeEvent> {
     public void initialize() {
 
         profilePhoto.setImage(new Image("/images/profile.png"));
+        profilePhoto.setFitWidth(175);
+        profilePhoto.setFitHeight(175);
 
         hamburgerMenu.setVisible(false);
         pagination.setVisible(false);
@@ -107,6 +113,7 @@ public class MyProfileController implements Observer<FriendRequestChangeEvent> {
         ImageXRaport.setVisible(false);
         raport2VBox.setVisible(false);
         toUploadImage.setVisible(false);
+        anchorFriendRequest.setVisible(false);
     }
 
     public void setServices(UserService userService, FriendshipService friendshipService, FriendRequestService friendRequestService, MessageService messageService,  PostService postService, Stage stage, String email) {
@@ -123,14 +130,26 @@ public class MyProfileController implements Observer<FriendRequestChangeEvent> {
         this.from = userService.exists(email).getId();
         friendRequestService.addObserver(this);
         initializePost();
+        labelFriendRequest.setText("There are no friends requests!");
     }
 
 
     public int itemsPerPage() {
-        return 10;
+        return 2;
     }
 
     public void listofFriendRequests() {
+        int nr_friends = friendRequestService.getFriendRequest(myId).size();
+
+        if (nr_friends == 0) {
+            pagination.setVisible(false);
+            anchorFriendRequest.setVisible(true);
+            labelFriendRequest.setText("There are no friends requests!");
+        } else {
+            pagination.setVisible(true);
+            double nr = (double) (nr_friends) / (double) itemsPerPage();
+            pagination.setPageCount((int) ceil(nr));
+
 
         pagination.getStyleClass().add("/style/pagination");
         pagination.getStyleClass().add("/style/pagination-control");
@@ -146,14 +165,7 @@ public class MyProfileController implements Observer<FriendRequestChangeEvent> {
             }
         });
 
-        int nr_friends = friendRequestService.getFriendRequest(myId).size();
-
-        if(nr_friends == 0)
-            pagination.setPageCount(1);
-        else{
-            double nr = (double) (nr_friends) / (double) itemsPerPage();
-            pagination.setPageCount((int) ceil(nr));
-        }
+    }
 
 
     }
@@ -169,7 +181,7 @@ public class MyProfileController implements Observer<FriendRequestChangeEvent> {
 
         int nr = 0;
         for (int i = page; i < page + friendRequestDTOS.size(); i++) {
-            HBox row = new HBox();
+
             int index = nr;
             Button acceptBtn = new Button("Accept");
             Button rejectBtn = new Button("Reject");
@@ -184,17 +196,19 @@ public class MyProfileController implements Observer<FriendRequestChangeEvent> {
             acceptBtn.setPrefWidth(90);
             rejectBtn.setPrefWidth(90);
             label.setText(friendRequestDTOS.get(index).getFrom());
-         
-            GridPane pane = new GridPane();
+            label.setAlignment(Pos.CENTER_LEFT);
+            label.getStyleClass().add("label-request");
+            label.setPrefWidth(170);
+            acceptBtn.setAlignment(Pos.CENTER_LEFT);
+            rejectBtn.setAlignment(Pos.CENTER_LEFT);
+            HBox row = new HBox();
 
-            pane.getStyleClass().add("gridpane");
-            pane.add(label, 1, 0);
-            pane.add(acceptBtn, 3, 0);
-            pane.add(rejectBtn, 4, 0);
-            pane.setHgap(5);
-            pane.setAlignment(Pos.CENTER_LEFT);
-
-            box.getChildren().add(pane);
+            row.getChildren().add(label);
+            row.getChildren().add(acceptBtn);
+            row.getChildren().add(rejectBtn);
+            row.setSpacing(5);
+            row.setPadding(new Insets(20));
+            box.getChildren().add(row);
 
 
             acceptBtn.setOnAction(event -> {
@@ -213,26 +227,31 @@ public class MyProfileController implements Observer<FriendRequestChangeEvent> {
 
     public void listofFriendRequestsByMe() {
 
-        pagination.getStyleClass().add("/style/pagination");
-        pagination.getStyleClass().add("/style/pagination-control");
-        pagination.getStyleClass().add("/style/bullet-button");
-        pagination.getStyleClass().add("/style/toggle-button");
-        pagination.getStyleClass().add("/style/button");
-        pagination.getStyleClass().add("/style/control-box");
-        pagination.setPageFactory(new Callback<Integer, Node>() {
-
-            @Override
-            public Node call(Integer pageIndex) {
-                return createPageForListOfFriendRequestsByMe(pageIndex);
-            }
-        });
-
         int nr_friends = friendRequestService.getMyFriendsRequestes(myId).size();
-        if(nr_friends == 0)
-            pagination.setPageCount(1);
-        { double nr = (double) (nr_friends) / (double) itemsPerPage();
+        if(nr_friends == 0){
+            anchorFriendRequest.setVisible(true);
+            labelFriendRequest.setText("There are no friends requests!");
+            pagination.setVisible(false);}
+        else {
+            double nr = (double) (nr_friends) / (double) itemsPerPage();
+            pagination.setVisible(true);
+            pagination.setPageCount((int) ceil(nr));
 
-        pagination.setPageCount((int)(nr));}
+            pagination.getStyleClass().add("/style/pagination");
+            pagination.getStyleClass().add("/style/pagination-control");
+            pagination.getStyleClass().add("/style/bullet-button");
+            pagination.getStyleClass().add("/style/toggle-button");
+            pagination.getStyleClass().add("/style/button");
+            pagination.getStyleClass().add("/style/control-box");
+            pagination.setPageFactory(new Callback<Integer, Node>() {
+
+                @Override
+                public Node call(Integer pageIndex) {
+                    return createPageForListOfFriendRequestsByMe(pageIndex);
+                }
+            });
+
+        }
 
     }
 
@@ -255,27 +274,29 @@ public class MyProfileController implements Observer<FriendRequestChangeEvent> {
         for (int i = page; i < page + friendRequestDTOS.size(); i++) {
 
             int index = nr;
-            Button deleteBtn = new Button("Accept");
+            Button deleteBtn = new Button("Delete");
             Label label = new Label();
 
 
-            label.setText(friendRequestDTOS.get(index).getFrom());
-            label.setPrefWidth(120);
+            label.setText(friendRequestDTOS.get(index).getTo());
+            label.setPrefWidth(250);
+            label.getStyleClass().add("label-request");
             deleteBtn.setPrefWidth(90);
+            deleteBtn.getStyleClass().add("/style/button-accept-reject");
             deleteBtn.setStyle("-fx-background-color:linear-gradient(to left, #d53369, #cbad6d);-fx-background-radius: 60;-fx-text-fill: black;");
 
-            GridPane pane = new GridPane();
+            HBox row = new HBox();
 
-            pane.getStyleClass().add("gridpane");
-            pane.add(label, 1, 0);
-            pane.add(deleteBtn, 3, 0);
-            box.getChildren().add(pane);
+            row.getChildren().add(label);
+            row.getChildren().add(deleteBtn);
+            row.setSpacing(5);
+            row.setPadding(new Insets(20));
 
-
+            box.getChildren().add(row);
 
 
             deleteBtn.setOnAction(event -> {
-                friendRequestService.deleteFriendRequest(myId, friendRequestDTOS.get(index).getUserFrom().getId());
+                friendRequestService.deleteFriendRequest(myId, friendRequestDTOS.get(index).getUserTo().getId());
             });
 
             nr++;
@@ -319,6 +340,7 @@ public class MyProfileController implements Observer<FriendRequestChangeEvent> {
     public void onMyFriendsRequests(MouseEvent mouseEvent) {
         raport1VBox.setVisible(false);
         raport2VBox.setVisible(false);
+        anchorFriendRequest.setVisible(false);
         ImageXRaport.setVisible(false);
         pagination.setVisible(true);
         listofFriendRequests();
@@ -332,6 +354,7 @@ public class MyProfileController implements Observer<FriendRequestChangeEvent> {
         raport2VBox.setVisible(false);
         ImageXRaport.setVisible(false);
         pagination.setVisible(true);
+        anchorFriendRequest.setVisible(false);
         ImageX.setVisible(true);
         listofFriendRequestsByMe();
         ByMe = true;
@@ -339,6 +362,7 @@ public class MyProfileController implements Observer<FriendRequestChangeEvent> {
 
     public void onActivityReport(MouseEvent mouseEvent) {
         pagination.setVisible(false);
+        anchorFriendRequest.setVisible(false);
         ImageX.setVisible(false);
         start = null;
         end = null;
@@ -351,9 +375,12 @@ public class MyProfileController implements Observer<FriendRequestChangeEvent> {
     public void onMessagesReport(MouseEvent mouseEvent) {
         ImageX.setVisible(false);
         pagination.setVisible(false);
+        anchorFriendRequest.setVisible(false);
         start = null;
         end = null;
         raport2VBox.setVisible(true);
+        generateMessageRaport.setVisible(false);
+        paginationSearch.setVisible(false);
         ImageXRaport.setVisible(true);
         raport1VBox.setVisible(false);
 
@@ -487,29 +514,39 @@ public class MyProfileController implements Observer<FriendRequestChangeEvent> {
 
     public void listofSearching() {
 
-        paginationSearch.getStyleClass().add("/style/pagination");
-        paginationSearch.getStyleClass().add("/style/pagination-control");
-        paginationSearch.getStyleClass().add("/style/bullet-button");
-        paginationSearch.getStyleClass().add("/style/toggle-button");
-        paginationSearch.getStyleClass().add("/style/button");
-        paginationSearch.getStyleClass().add("/style/control-box");
-        paginationSearch.setPageFactory(new Callback<Integer, Node>() {
+        int nr_searchs = userService.friends(myId, searchField.getText()).size();
+        if(nr_searchs == 0 || searchField.getText().isEmpty()){
+            paginationSearch.setVisible(false);
+            generateMessageRaport.setVisible(false);
 
-            @Override
-            public Node call(Integer pageIndex) {
-                return createPageForListOfSearching(pageIndex);
-            }
-        });
+        }
+        else {
+            paginationSearch.setVisible(true);
+            generateMessageRaport.setVisible(true);
+            double nr = (double) (nr_searchs) / (double) itemsPerPage();
+            paginationSearch.setPageCount((int) ceil(nr));
 
-        int nr_searchs = userService.filter1(myId, searchField.getText()).size();
-        double nr = (double) (nr_searchs) / (double) itemsPerPage();
+            paginationSearch.setPageCount((int) ceil(nr));
+            paginationSearch.getStyleClass().add("/style/pagination");
+            paginationSearch.getStyleClass().add("/style/pagination-control");
+            paginationSearch.getStyleClass().add("/style/bullet-button");
+            paginationSearch.getStyleClass().add("/style/toggle-button");
+            paginationSearch.getStyleClass().add("/style/button");
+            paginationSearch.getStyleClass().add("/style/control-box");
+            paginationSearch.setPageFactory(new Callback<Integer, Node>() {
 
-        paginationSearch.setPageCount((int) ceil(nr));
+                @Override
+                public Node call(Integer pageIndex) {
+                    return createPageForListOfSearching(pageIndex);
+                }
+            });
+        }
+
 
     }
 
     public int itemsPerPageForRaport() {
-        return 3;
+        return 2;
     }
 
     public VBox createPageForListOfSearching(int pageIndex) {
@@ -523,7 +560,7 @@ public class MyProfileController implements Observer<FriendRequestChangeEvent> {
         box.setAlignment(Pos.CENTER);
         int page = pageIndex * itemsPerPage();
 
-        List<User> userList = userService.getSearchOnPage((pageIndex) * itemsPerPageForRaport(), itemsPerPageForRaport(),myId, searchField.getText().toString());
+        List<User> userList = userService.searchingFriends((pageIndex) * itemsPerPageForRaport(), itemsPerPageForRaport(),myId, searchField.getText().toString());
 
         List<UserDTO> users = new ArrayList<>();
         userList.forEach(x -> {
@@ -588,7 +625,7 @@ public class MyProfileController implements Observer<FriendRequestChangeEvent> {
                     dialogStage.setScene(scene);
 
                     FriendProfileController friendProfileController = loader.getController();
-                    friendProfileController.setServices(userService, friendshipService, friendRequestService, dialogStage, email, users.get(index).getEmailDTO());
+                    friendProfileController.setServices(userService, friendshipService, friendRequestService,postService, dialogStage, email, users.get(index).getEmailDTO());
 
                     dialogStage.show();
 
@@ -619,6 +656,7 @@ public class MyProfileController implements Observer<FriendRequestChangeEvent> {
 
     public void onXPaginationClicked(MouseEvent mouseEvent) {
         pagination.setVisible(false);
+        anchorFriendRequest.setVisible(false);
         ImageX.setVisible(false);
     }
 
@@ -674,7 +712,11 @@ public class MyProfileController implements Observer<FriendRequestChangeEvent> {
     }
 
     public void onSearchField(KeyEvent keyEvent) {
-        listofSearching();
+        if(searchField.getText().isEmpty())
+            paginationSearch.setVisible(false);
+        {
+        paginationSearch.setVisible(true);
+        listofSearching();}
     }
 
 
@@ -707,6 +749,7 @@ public class MyProfileController implements Observer<FriendRequestChangeEvent> {
 
     private void initializePost(){
         vBoxPost.getChildren().clear();
+        vBoxPost.setStyle("-fx-background-color: transparent");
         numberOfPost = postService.getMyPosts(myId).size();
 
         int nr = leftLimitPosts+postOnPage;
@@ -731,6 +774,13 @@ public class MyProfileController implements Observer<FriendRequestChangeEvent> {
 
             VBox data = new VBox();
             Label name = new Label();
+
+            ImageView trash = new ImageView();
+            trash.setImage(new Image("/images/remove.png"));
+            trash.setFitHeight(30);
+            trash.setFitWidth(30);
+            Label space = new Label();
+            space.setPrefWidth(50);
             name.setText(userService.getUserByID(x.getAdmin()).getFirstName() + " " + userService.getUserByID(x.getAdmin()).getLastName());
             name.getStyleClass().add("label-name-post");
             data.getChildren().add(name);
@@ -740,6 +790,8 @@ public class MyProfileController implements Observer<FriendRequestChangeEvent> {
 
             hbox.getChildren().add(profile);
             hbox.getChildren().add(data);
+            hbox.getChildren().add(space);
+            hbox.getChildren().add(trash);
             hbox.setSpacing(20);
             hbox.setAlignment(Pos.CENTER_LEFT);
             box.getChildren().add(hbox);
@@ -766,6 +818,11 @@ public class MyProfileController implements Observer<FriendRequestChangeEvent> {
             box.setSpacing(10);
             box.getStyleClass().add("vbox-post");
             vBoxPost.getChildren().add(box);
+            trash.setOnMouseClicked(t->{
+                postService.deletePost(x);
+                initializePost();
+                leftLimitPosts = 0;
+            });
 
         });
 

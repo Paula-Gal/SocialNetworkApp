@@ -5,6 +5,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Pagination?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -91,11 +92,10 @@
             </ScrollPane>
             <HBox prefHeight="108.0" prefWidth="600.0" spacing="20.0" stylesheets="/style/messages.css">
                <children>
-                  <TextField fx:id="conversationField" prefHeight="47.0" prefWidth="421.0" promptText="Write a message here.." styleClass="conversation-field">
+                  <TextArea fx:id="conversationField1" prefHeight="108.0" prefWidth="433.0" wrapText="true">
                      <HBox.margin>
-                        <Insets bottom="25.0" left="50.0" top="35.0" />
-                     </HBox.margin>
-                  </TextField>
+                        <Insets bottom="20.0" left="20.0" top="20.0" />
+                     </HBox.margin></TextArea>
                   <ImageView fx:id="imageSend" fitHeight="47.0" fitWidth="56.0" onMouseClicked="#onSend" pickOnBounds="true" preserveRatio="true" styleClass="image-send" AnchorPane.bottomAnchor="10">
                      <HBox.margin>
                         <Insets bottom="25.0" left="20.0" right="25.0" top="30.0" />
@@ -109,5 +109,6 @@
          </children>
       </VBox>
       <Line endX="-100.0" endY="582.0" layoutX="472.0" layoutY="14.0" startX="-100.0" startY="-10.0" styleClass="vl" />
+      <TextField fx:id="conversationField" layoutX="-9.0" layoutY="-131.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="47.0" prefWidth="421.0" promptText="Write a message here.." styleClass="conversation-field" />
    </children>
 </AnchorPane>

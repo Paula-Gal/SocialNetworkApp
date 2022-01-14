@@ -19,9 +19,9 @@
     <children>
         <AnchorPane layoutX="868.0" layoutY="48.0" prefHeight="163.0" prefWidth="375.0" styleClass="anchor-style" AnchorPane.bottomAnchor="472.0" AnchorPane.rightAnchor="50" AnchorPane.topAnchor="200.0">
             <children>
-                <ImageView fx:id="profilePhoto" fitHeight="60.0" fitWidth="80.0" layoutX="152.0" layoutY="24.0" pickOnBounds="true" preserveRatio="true" styleClass="profile-photo" AnchorPane.TopAnchor="60.0" AnchorPane.leftAnchor="152.0" />
+                <ImageView fx:id="profilePhoto" fitHeight="155.0" fitWidth="203.0" layoutX="103.0" layoutY="38.0" pickOnBounds="true" preserveRatio="true" styleClass="profile-photo" AnchorPane.TopAnchor="60.0" AnchorPane.leftAnchor="100.0" AnchorPane.rightAnchor="100.0" AnchorPane.topAnchor="20.0" />
                 <Label fx:id="nameLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="-1.0" layoutY="162.0" prefHeight="31.0" prefWidth="375.0" styleClass="name" AnchorPane.bottomAnchor="50" />
-                <Label alignment="CENTER" contentDisplay="CENTER" layoutX="138.0" layoutY="145.0" onMouseClicked="#onEditLabelClicked" styleClass="label-edit" text="Edit profile picture!" textAlignment="CENTER" AnchorPane.TopAnchor="170.0" />
+                <Label alignment="CENTER" contentDisplay="CENTER" layoutX="138.0" layoutY="145.0" onMouseClicked="#onEditLabelClicked" styleClass="label-edit" text="Edit profile picture!" textAlignment="CENTER" AnchorPane.TopAnchor="170.0" AnchorPane.topAnchor="210.0" />
             </children>
         </AnchorPane>
         <Button layoutX="16.0" layoutY="87.0" mnemonicParsing="false" onAction="#onMenuButton" prefHeight="30.0" prefWidth="30.0" styleClass="button-menu" AnchorPane.leftAnchor="90" AnchorPane.topAnchor="90" />
@@ -80,7 +80,7 @@
                   <Insets />
                </VBox.margin>
             </Pagination>
-            <Button contentDisplay="CENTER" mnemonicParsing="false" onAction="#onGenerateBtn1" prefHeight="41.0" prefWidth="99.0" styleClass="button-accept-reject" text="Generate pdf">
+            <Button fx:id="generateMessageRaport" contentDisplay="CENTER" mnemonicParsing="false" onAction="#onGenerateBtn1" prefHeight="41.0" prefWidth="99.0" styleClass="button-accept-reject" text="Generate pdf">
                <VBox.margin>
                   <Insets right="40.0" />
                </VBox.margin>
@@ -116,5 +116,10 @@
             <Insets left="50.0" right="50.0" />
          </padding>
       </ScrollPane>
+      <AnchorPane fx:id="anchorFriendRequest" layoutX="850.0" layoutY="68.0" prefHeight="73.0" prefWidth="349.0" styleClass="anchor-style" AnchorPane.leftAnchor="170" AnchorPane.topAnchor="410">
+         <children>
+            <Label fx:id="labelFriendRequest" alignment="CENTER" contentDisplay="CENTER" layoutX="-6.0" prefHeight="73.0" prefWidth="355.0" styleClass="no_friendRequests" />
+         </children>
+      </AnchorPane>
     </children>
 </AnchorPane>

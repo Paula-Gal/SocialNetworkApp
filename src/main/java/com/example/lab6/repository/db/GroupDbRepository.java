@@ -25,7 +25,7 @@ public class GroupDbRepository implements Repository<Long, Group> {
     @Override
     public Group findOne(Long aLong) {
 
-        String sql = "SELECT * FROM messages WHERE id = " + aLong;
+        String sql = "SELECT * FROM groups WHERE id = " + aLong;
         try (Connection connection = DriverManager.getConnection(url, username, password);
              PreparedStatement statement = connection.prepareStatement(sql);
              ResultSet resultSet = statement.executeQuery()) {
@@ -92,7 +92,7 @@ public class GroupDbRepository implements Repository<Long, Group> {
     public Iterable<Group> findAll() {
         Set<Group> groups = new HashSet<>();
         try (Connection connection = DriverManager.getConnection(url, username, password);
-             PreparedStatement statement = connection.prepareStatement("select * from \"group\"");
+             PreparedStatement statement = connection.prepareStatement("select * from \"groups\"");
              ResultSet resultSet = statement.executeQuery()) {
 
             while (resultSet.next()) {
@@ -130,7 +130,7 @@ public class GroupDbRepository implements Repository<Long, Group> {
         if (entity == null)
             throw new IllegalArgumentException("Entity must not be null!");
 
-        String sql = "insert into \"group\" (\"name\") values (?)";
+        String sql = "insert into groups (\"name\") values (?)";
 
         try (Connection connection = DriverManager.getConnection(url, username, password);
              PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {

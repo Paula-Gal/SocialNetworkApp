@@ -13,6 +13,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
@@ -37,6 +38,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static java.lang.Math.ceil;
@@ -49,8 +51,8 @@ public class HomeController implements Observer<MessageChangeEvent> {
     public Label searchLabel;
 
     public Label conversationLabel;
-    public ListView conversationList;
-    public TextField writeMessageField;
+    public VBox conversationList;
+    public TextArea writeMessageField;
 
     public AnchorPane conversation;
     public CheckBox friendsGroupsCheckBox;
@@ -66,6 +68,7 @@ public class HomeController implements Observer<MessageChangeEvent> {
     public AnchorPane notif;
     public ScrollPane scrollerPosts;
     public VBox vBoxPosts;
+    public ScrollPane scrollerMessages;
     private UserService userService;
     private FriendshipService friendshipService;
     private FriendRequestService friendRequestService;
@@ -80,14 +83,12 @@ public class HomeController implements Observer<MessageChangeEvent> {
     private Long myId;
     private Long to;
     private final Group groupFinal = new Group();
-    private final List<Long> groupConversation = new ArrayList<>();
     private String email;
     private PageDTO pageDTO;
     public int leftLimitPosts = 0;
     public int numberOfPost;
     public int postOnPage = 2;
 
-    ObservableList<Message> modelMessages = FXCollections.observableArrayList();
 
     @FXML
     public void initialize() {
@@ -149,6 +150,7 @@ public class HomeController implements Observer<MessageChangeEvent> {
         this.postService = postService;
         this.myId = userService.exists(email).getId();
         this.pageDTO = page;
+
         welcomeText.setText("Welcome, " + pageDTO.getAdmin().getFirstName() + " " + pageDTO.getAdmin().getLastName() + "!");
         listofFriends();
         welcomeText.setText("Welcome, " + userService.exists(email).getFirstName() + " " + userService.exists(email).getLastName() + "!");
@@ -239,6 +241,7 @@ public class HomeController implements Observer<MessageChangeEvent> {
         double t = bounds.getMinX() + (bounds.getWidth() - stage.getWidth()) * 0.3;
         double y = bounds.getMinY() + (bounds.getHeight() - stage.getHeight()) * 0.7;
 
+        pagination.setPadding(new Insets(8));
         box.setLayoutX(t);
         box.setLayoutY(y);
         box.setAlignment(Pos.CENTER);
@@ -282,6 +285,7 @@ public class HomeController implements Observer<MessageChangeEvent> {
             label.setText("  " + users.get(index).getNume());
             label.setPrefWidth(160);
 
+
             GridPane pane = new GridPane();
             pane.getStyleClass().add("gridpane");
             pane.add(imageView, 0, 0);
@@ -290,10 +294,11 @@ public class HomeController implements Observer<MessageChangeEvent> {
 
             box.getChildren().add(pane);
             label.setOnMouseClicked(event -> {
-                conversationLabel.setText("Your conversation with " + users.get(index).getNume());
+                conversationLabel.setText(users.get(index).getNume());
+                conversationLabel.setVisible(true);
                 conversation.setVisible(true);
-                conversationList.scrollTo(modelMessages.size() - 1);
                 to = users.get(index).getIdUser();
+                setConversation(to);
             });
             button.setOnAction(event -> {
                 try {
@@ -310,7 +315,7 @@ public class HomeController implements Observer<MessageChangeEvent> {
                     dialogStage.setScene(scene);
 
                     FriendProfileController friendProfileController = loader.getController();
-                    friendProfileController.setServices(userService, friendshipService, friendRequestService, dialogStage, email, users.get(index).getEmailDTO());
+                    friendProfileController.setServices(userService, friendshipService, friendRequestService, postService, dialogStage, email, users.get(index).getEmailDTO());
 
                     dialogStage.show();
 
@@ -356,7 +361,7 @@ public class HomeController implements Observer<MessageChangeEvent> {
 
         int nr = 0;
         for (int i = page; i < page + groups.size(); i++) {
-            VBox row = new VBox();
+
             int index = nr;
             ImageView imageView = new ImageView();
             Button button = new Button();
@@ -367,18 +372,22 @@ public class HomeController implements Observer<MessageChangeEvent> {
 
             label.setText("  " + groups.get(index).getName());
             label.setPrefWidth(160);
-            GridPane pane = new GridPane();
-            pane.getStyleClass().add("gridpane");
-            pane.add(imageView, 0, 0);
-            pane.add(label, 1, 0);
-            box.getChildren().add(pane);
+            HBox row = new HBox();
+            row.getChildren().add(imageView);
+            row.getChildren().add(label);
+            row.setSpacing(10);
+
+            box.getChildren().add(row);
             label.setOnMouseClicked(event -> {
-                conversationLabel.setText("Your conversation with " + groups.get(index).getName());
+
                 conversation.setVisible(true);
-                conversationList.scrollTo(modelMessages.size() - 1);
+                conversationLabel.setText(groups.get(index).getName());
+                conversationLabel.setVisible(true);
+
                 groupFinal.setId(groups.get(index).getId());
                 groupFinal.setMembers(groups.get(index).getMembers());
                 groupFinal.setMessages(groups.get(index).getMessages());
+                setConversationGroup(groupFinal);
             });
 
             nr++;
@@ -472,7 +481,7 @@ public class HomeController implements Observer<MessageChangeEvent> {
                     dialogStage.setScene(scene);
 
                     FriendProfileController friendProfileController = loader.getController();
-                    friendProfileController.setServices(userService, friendshipService, friendRequestService, dialogStage, email, userList.get(index).getEmail());
+                    friendProfileController.setServices(userService, friendshipService, friendRequestService, postService, dialogStage, email, userList.get(index).getEmail());
 
                     dialogStage.show();
 
@@ -504,78 +513,183 @@ public class HomeController implements Observer<MessageChangeEvent> {
         }
     }
 
-    public void setConversationList() {
-        conversationList.setItems(modelMessages);
-        conversationList.scrollTo(modelMessages.size() - 1);
-        conversationList.setCellFactory(
-                param -> new ListCell<Message>() {
-                    protected final Label label = new Label();
+    private void setConversation(Long friendId) {
 
-                    @Override
-                    public void updateItem(Message message, boolean empty) {
-                        if (empty) {
-                            setGraphic(null);
+        conversationList.getChildren().clear();
 
-                        } else {
-                            label.setText(message.getMessage());
+        conversationList.setFillWidth(true);
+        List<Message> messages = messageService.getConversation(myId, friendId);
+        Collections.reverse(messages);
+        messages.forEach(x -> {
+            HBox row = new HBox();
+            ImageView profilePhoto = new ImageView();
+            Label text = new Label();
 
-                            if (message.getFrom().getId().equals(myId)) {
-                                label.getStyleClass().add("background-mymessage");
-                                setAlignment(Pos.CENTER_RIGHT);
 
-                            } else {
-                                label.getStyleClass().add("background-message");
-                            }
-                            setGraphic(label);
-                        }
-                    }
+            if (userService.findPhoto(x.getFrom().getEmail()) != null)
+                profilePhoto.setImage(new Image(userService.findPhoto(x.getFrom().getEmail())));
+            else
+                profilePhoto.setImage(new Image("/images/profile.png"));
 
-                });
+            ImageView replyImg = new ImageView();
+            replyImg.setImage(new Image("/images/reply.png"));
+            replyImg.setFitWidth(15);
+            replyImg.setFitHeight(15);
+
+            Label date_sent = new Label();
+
+            VBox reply_date = new VBox();
+            reply_date.setSpacing(3);
+            reply_date.setVisible(false);
+
+            profilePhoto.setFitWidth(30);
+            profilePhoto.setFitHeight(30);
+            text.setText(x.getMessage());
+            text.setWrapText(true);
+            row.setSpacing(2);
+            if (x.getFrom().getId().equals(myId)) {
+                text.getStyleClass().add("background-mymessage");
+                text.setAlignment(Pos.CENTER_LEFT);
+                date_sent.setText("Sent on " + " " + x.getDate().format(DateTimeFormatter.ofPattern(" HH:mm yyyy-MM-dd")));
+                date_sent.getStyleClass().add("date-message-start");
+
+                reply_date.setAlignment(Pos.CENTER_RIGHT);
+                reply_date.getChildren().add(replyImg);
+                reply_date.getChildren().add(date_sent);
+
+                row.getChildren().add(reply_date);
+                row.getChildren().add(text);
+                row.getChildren().add(profilePhoto);
+                row.setAlignment(Pos.CENTER_RIGHT);
+
+
+            } else {
+                text.getStyleClass().add("background-message");
+                text.setAlignment(Pos.CENTER_RIGHT);
+                date_sent.setText("Sent on " + " " + x.getDate().format(DateTimeFormatter.ofPattern(" HH:mm yyyy-MM-dd")));
+                date_sent.getStyleClass().add("date-message-start");
+
+                reply_date.setAlignment(Pos.CENTER_LEFT);
+                reply_date.getChildren().add(replyImg);
+                reply_date.getChildren().add(date_sent);
+
+                row.getChildren().add(profilePhoto);
+                row.getChildren().add(text);
+                row.getChildren().add(reply_date);
+                row.setAlignment(Pos.CENTER_LEFT);
+
+
+            }
+
+            text.setOnMouseEntered(y->{
+                reply_date.setVisible(true);
+            });
+            row.setOnMouseExited(y->{
+                reply_date.setVisible(false);
+            });
+
+            conversationList.getChildren().add(row);
+            replyImg.setOnMouseClicked(z->{
+                writeMessageField.setText("Replied to:  " + x.getMessage() + "\n");
+            });
+
+        });
+
+        conversationList.setSpacing(5);
+        scrollerMessages.setContent(conversationList);
+        scrollerMessages.setFitToWidth(conversationList.isFillWidth());
+        scrollerMessages.setVvalue(1.0);
+        scrollerMessages.setHvalue(0.5);
+
     }
 
-    private void setModelMessages(Group group) {
-        if (group.getMessages() != null) {
-            List<Message> messages = messageService.convertMessages(group.getMessages());
-            modelMessages.setAll(messages);
-        }
+    private void setConversationGroup(Group groupFinal) {
+        conversationList.getChildren().clear();
+
+
+        List<Message> messages = messageService.convertMessages(groupFinal.getMessages());
+
+       // Collections.reverse(messages);
+        messages.forEach(x -> {
+            HBox row = new HBox();
+            row.setPrefHeight(100);
+            ImageView profilePhoto = new ImageView();
+            Label text = new Label();
+            row.setSpacing(2);
+            if (userService.findPhoto(x.getFrom().getEmail()) != null)
+                profilePhoto.setImage(new Image(userService.findPhoto(x.getFrom().getEmail())));
+            else
+                profilePhoto.setImage(new Image("/images/profile.png"));
+            profilePhoto.setFitWidth(45);
+            profilePhoto.setFitHeight(45);
+
+            ImageView replyImg = new ImageView();
+            replyImg.setImage(new Image("/images/reply.png"));
+            replyImg.setFitWidth(20);
+            replyImg.setFitHeight(20);
+
+            Label date_sent = new Label();
+
+            VBox reply_date = new VBox();
+            reply_date.setSpacing(3);
+            reply_date.setVisible(false);
+
+            text.setWrapText(true);
+            text.setMaxWidth(400);
+
+            if (x.getFrom().getId().equals(myId)) {
+                text.setText(x.getMessage());
+                text.getStyleClass().add("background-mymessage");
+                text.setAlignment(Pos.CENTER_RIGHT);
+                date_sent.setText("Sent on " + " " + x.getDate().format(DateTimeFormatter.ofPattern(" HH:mm yyyy-MM-dd")));
+                date_sent.getStyleClass().add("date-message-start");
+
+                reply_date.setAlignment(Pos.CENTER_RIGHT);
+                reply_date.getChildren().add(replyImg);
+                reply_date.getChildren().add(date_sent);
+
+                row.getChildren().add(reply_date);
+                row.getChildren().add(text);
+                row.getChildren().add(profilePhoto);
+                row.setAlignment(Pos.CENTER_RIGHT);
+
+            } else {
+                text.setText(x.getFrom().getLastName() + " " + x.getFrom().getFirstName() + ":" + x.getMessage());
+                text.getStyleClass().add("background-message");
+                date_sent.getStyleClass().add("date-message-start");
+
+                reply_date.setAlignment(Pos.CENTER_LEFT);
+                reply_date.getChildren().add(replyImg);
+                reply_date.getChildren().add(date_sent);
+
+                row.getChildren().add(profilePhoto);
+                row.getChildren().add(text);
+                row.getChildren().add(reply_date);
+                row.setAlignment(Pos.CENTER_LEFT);
+
+            }
+
+            text.setOnMouseEntered(y->{
+                reply_date.setVisible(true);
+            });
+            row.setOnMouseExited(y->{
+                reply_date.setVisible(false);
+            });
+
+            conversationList.getChildren().add(row);
+            replyImg.setOnMouseClicked(z->{
+                writeMessageField.setText("Replied to:  " + x.getMessage() + "\n");
+            });
+        });
+
+        conversationList.setSpacing(5);
+
+        scrollerMessages.setContent(conversationList);
+        scrollerMessages.setFitToWidth(conversationList.isFillWidth());
+        scrollerMessages.setVvalue(0.0);
+        scrollerMessages.setHvalue(0.5);
     }
 
-    public void setConversationListGroup() {
-        conversationList.setItems(modelMessages);
-        conversationList.setCellFactory(
-                param -> new ListCell<Message>() {
-                    protected final Label label = new Label();
-
-                    @Override
-                    public void updateItem(Message message, boolean empty) {
-                        if (empty) {
-                            setGraphic(null);
-
-                        } else {
-
-                            if (message.getFrom().getId().equals(myId)) {
-                                label.setText(message.getMessage());
-                                label.getStyleClass().add("background-mymessage");
-                                setAlignment(Pos.CENTER_RIGHT);
-
-                            } else {
-                                label.setText(message.getFrom().getFirstName() + ": " + message.getMessage());
-
-                                label.getStyleClass().add("background-message");
-                            }
-                            setGraphic(label);
-                        }
-                    }
-
-                });
-    }
-
-
-    public void setConversation(Long to) {
-        List<Message> messages = messageService.getConversation(myId, to);
-
-        modelMessages.setAll(messages);
-    }
 
     public void onSendMessage(MouseEvent actionEvent) {
         String message = writeMessageField.getText();
@@ -632,11 +746,10 @@ public class HomeController implements Observer<MessageChangeEvent> {
     @Override
     public void update(MessageChangeEvent messageChangeEvent) {
         if (friendsGroupsCheckBox.isSelected()) {
-            setModelMessages(groupFinal);
-            setConversationListGroup();
+
+           setConversationGroup(groupFinal);
         } else {
             setConversation(to);
-            setConversationList();
         }
     }
 
@@ -668,7 +781,7 @@ public class HomeController implements Observer<MessageChangeEvent> {
             dialogStage.setScene(scene);
 
             MessagesController messagesController = loader.getController();
-            messagesController.setServices(messageService, friendshipService, friendRequestService, userService, dialogStage, email);
+            messagesController.setServices(messageService, friendshipService, friendRequestService, userService,postService, dialogStage, email);
 
             dialogStage.show();
 
@@ -911,12 +1024,15 @@ public class HomeController implements Observer<MessageChangeEvent> {
 
     public void initializePost(){
         vBoxPosts.getChildren().clear();
+        vBoxPosts.setStyle("-fx-border-radius: 20");
         numberOfPost = postService.getAllPosts().size();
 
         int nr = leftLimitPosts+postOnPage;
         if(nr > numberOfPost)
             nr = numberOfPost;
-        List<Post> postList = postService.getPostsOnPage(leftLimitPosts, nr-leftLimitPosts);
+
+        List<FriendshipDTO> friendshipDTOS = friendshipService.getFriendships(myId);
+        List<Post> postList = postService.getHomePostsOnPage(leftLimitPosts, nr-leftLimitPosts, friendshipDTOS);
 
         postList.forEach(x->{
             VBox box = new VBox();
@@ -948,7 +1064,7 @@ public class HomeController implements Observer<MessageChangeEvent> {
             hbox.setAlignment(Pos.CENTER_LEFT);
             box.getChildren().add(hbox);
 
-            if(x.getDescription() != ""){
+            if(x.getDescription() != null){
 
                 Label description = new Label(x.getDescription());
                 description.setAlignment(Pos.CENTER);
@@ -956,7 +1072,7 @@ public class HomeController implements Observer<MessageChangeEvent> {
                 description.getStyleClass().add("label-description-post");
                 box.getChildren().add(description);
             }
-            if(x.getUrl() != ""){
+            if(x.getUrl() != null){
                 ImageView img = new ImageView();
                 img.setImage(new Image(x.getUrl()));
                 HBox rowImage = new HBox();
@@ -972,7 +1088,6 @@ public class HomeController implements Observer<MessageChangeEvent> {
             vBoxPosts.getChildren().add(box);
 
         });
-
 
         vBoxPosts.setSpacing(20);
         scrollerPosts.setContent(vBoxPosts);
