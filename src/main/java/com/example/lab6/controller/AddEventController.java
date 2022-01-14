@@ -45,7 +45,6 @@ public class AddEventController {
             MessageAlert.showMessage(null, Alert.AlertType.INFORMATION, "", error);
 
         else {
-
             String title = textFieldTitle.getText();
             String desc = descField.getText();
             String location = locationField.getText();

@@ -254,7 +254,7 @@
 }
 .date-message{
     -fx-text-fill: #4d4d4d;
-    -fx-text-alignment: bottom;
+    /*-fx-text-alignment: bottom;*/
     -fx-font-size: 13;
     -fx-font-family: Poppins-Regular;
 }

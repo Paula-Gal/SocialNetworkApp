@@ -7,8 +7,6 @@ import com.example.lab6.utils.NotificationType;
 import com.example.lab6.utils.events.MessageChangeEvent;
 import com.example.lab6.utils.observer.Observer;
 import javafx.application.Platform;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -69,6 +67,8 @@ public class HomeController implements Observer<MessageChangeEvent> {
     public ScrollPane scrollerPosts;
     public VBox vBoxPosts;
     public ScrollPane scrollerMessages;
+    public StackPane stackPaneSubs;
+    public ScrollPane scrollerSubs;
     private UserService userService;
     private FriendshipService friendshipService;
     private FriendRequestService friendRequestService;
@@ -88,6 +88,7 @@ public class HomeController implements Observer<MessageChangeEvent> {
     public int leftLimitPosts = 0;
     public int numberOfPost;
     public int postOnPage = 2;
+    private boolean is_open_subs = false;
 
 
     @FXML
@@ -110,6 +111,7 @@ public class HomeController implements Observer<MessageChangeEvent> {
         stackpane.setVisible(true);
         notif.setVisible(false);
 
+        stackPaneSubs.setVisible(false);
     }
 
     public void showNotification(NotificationType notificationType, Event event) {
@@ -188,7 +190,7 @@ public class HomeController implements Observer<MessageChangeEvent> {
                     } else if (noOfDaysBetween == 1 && lastNotificationDate != today.minusDays(1) && (((ChronoUnit.DAYS.between(lastNotificationDate, today) > 0) || notificationDate == null))) {
                         showNotification(NotificationType.ADayBefore, x);
                         eventService.saveNotificationDate(myId, x.getId());
-                    } else if (noOfDaysBetween == 0 && ((ChronoUnit.DAYS.between(lastNotificationDate, today) > 0) || notificationDate == null)){
+                    } else if (noOfDaysBetween == 0 && ((ChronoUnit.DAYS.between(lastNotificationDate, today) > 0) || notificationDate == null)) {
                         showNotification(NotificationType.Today, x);
                         eventService.saveNotificationDate(myId, x.getId());
                     }
@@ -226,7 +228,7 @@ public class HomeController implements Observer<MessageChangeEvent> {
         });
 
         int nr_friends = friendshipService.getFriendships(myId).size();
-        if(nr_friends == 0)
+        if (nr_friends == 0)
             pagination.setPageCount(1);
         else {
             double nr = (double) (nr_friends) / (double) itemsPerPage();
@@ -606,7 +608,6 @@ public class HomeController implements Observer<MessageChangeEvent> {
     private void setConversationGroup(Group groupFinal) {
         conversationList.getChildren().clear();
 
-
         List<Message> messages = messageService.convertMessages(groupFinal.getMessages());
 
        // Collections.reverse(messages);
@@ -860,10 +861,8 @@ public class HomeController implements Observer<MessageChangeEvent> {
         myEvents.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                myEvents.getStyleClass().add("background-event-category-hover");
                 eventListType = EventListType.MyEvents;
                 stackpane.setVisible(false);
-//                myEvents.getStyleClass().add("background-event-category-selected ");
                 openEvents();
             }
         });
@@ -910,6 +909,9 @@ public class HomeController implements Observer<MessageChangeEvent> {
 
             ImageView eventImage = new ImageView();
             ImageView removeImage = new ImageView();
+            ImageView imageMore = new ImageView();
+            ImageView locationImage = new ImageView();
+            ImageView dateImage = new ImageView();
 
             Label title = new Label();
             Label description = new Label();
@@ -917,57 +919,149 @@ public class HomeController implements Observer<MessageChangeEvent> {
             Label endDate = new Label();
             Label location = new Label();
 
+            //location boc
+            HBox locationBox = new HBox();
+            locationImage.getStyleClass().add("location-image");
+
+            //date box
+            HBox dateBox = new HBox();
+            Label line = new Label();
+            line.setText("-");
+            dateImage.getStyleClass().add("date-image");
+
+            locationImage.setFitHeight(15);
+            locationImage.setFitWidth(15);
+
+            dateImage.setFitWidth(15);
+            dateImage.setFitHeight(15);
+
+            locationBox.getChildren().add(locationImage);
+            locationBox.getChildren().add(location);
+
+            dateBox.setSpacing(2);
+
+            dateBox.getChildren().add(dateImage);
+            dateBox.getChildren().add(startDate);
+            dateBox.getChildren().add(line);
+            dateBox.getChildren().add(endDate);
+
             title.setText(x.getName());
+            title.getStyleClass().add("bold-text");
             description.setText(x.getDescription());
             startDate.setText(x.getStart().toLocalDate().toString());
             endDate.setText(x.getEnd().toLocalDate().toString());
             location.setText(x.getLocation());
+            location.setWrapText(true);
+            location.setMaxWidth(250);
 
             eventImage.setImage(new Image("/images/event-image.png"));
             eventImage.getStyleClass().add("event-image");
             row.getStyleClass().add("events-background");
-//            scroller.getStyleClass().add("scroll-background");
-           // scroller.getStyleClass().add("rounded-scroll-pane");
 
-            eventImage.setFitHeight(50);
-            eventImage.setFitWidth(50);
+//            scroller.getStyleClass().add("scroll-background");
+            // scroller.getStyleClass().add("rounded-scroll-pane");
+
+            eventImage.setFitHeight(45);
+            eventImage.setFitWidth(45);
 
             imageEventBox.getChildren().add(eventImage);
+            elem.setSpacing(7);
+
             elem.getChildren().add(title);
             elem.getChildren().add(description);
-            elem.getChildren().add(location);
-            elem.getChildren().add(startDate);
-            elem.getChildren().add(endDate);
+            elem.getChildren().add(dateBox);
+            elem.getChildren().add(locationBox);
+            //  elem.getChildren().add(endDate);
 
+            //list of subs
+//            scrollerSubs.setVisible(true);
+//            stackPaneSubs.setVisible(true);
 
             switch (eventListType) {
                 case AllEvents -> {
                     removeImage.setImage(new Image("/images/subs-v2.png"));
+                    removeImage.getStyleClass().add("image-ripple");
                     removeImage.setFitHeight(60);
                     removeImage.setFitWidth(60);
+//                    scrollerSubs.setVisible(false);
+//                    is_open_subs = false;
                 }
                 case MyEvents -> {
                     removeImage.setImage(new Image("/images/uns-v1.png"));
                     removeImage.setFitHeight(65);
                     removeImage.setFitWidth(65);
+//                    scrollerSubs.setVisible(false);
+//                    is_open_subs = false;
                 }
                 case CreatedByMeEvents -> {
                     removeImage.setImage(new Image("/images/remove.png"));
                     removeImage.setFitHeight(35);
                     removeImage.setFitWidth(35);
+//                    scrollerSubs.setVisible(false);
+//                    is_open_subs = false;
+
+                    imageMore.getStyleClass().add("image-see-subs");
+                    imageMore.setFitHeight(20);
+                    imageMore.setFitWidth(20);
+
+                    imageMore.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                        @Override
+                        public void handle(MouseEvent event) {
+                            if (is_open_subs) {
+                                stackPaneSubs.setVisible(false);
+                                is_open_subs = false;
+                            } else {
+                                is_open_subs = true;
+                                stackPaneSubs.setVisible(true);
+                                scrollerSubs.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+                                scrollerSubs.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+
+                                VBox rowSubs = new VBox();
+                                stackPaneSubs.getStyleClass().add("vbox-event");
+                                rowSubs.setSpacing(3);
+                                HBox titleBox = new HBox();
+                                Label titleEv = new Label();
+                                titleEv.setText(x.getTitle());
+                                titleEv.getStyleClass().add("bold-text");
+                                titleBox.getChildren().add(titleEv);
+                                rowSubs.getChildren().add(titleBox);
+
+                                List<Long> subscribers = x.getSubscribers();
+                                if(subscribers.size() == 0) {
+                                    HBox sub = new HBox();
+                                    Label name = new Label();
+                                    name.setText("No subscribers yet!");
+                                    sub.getChildren().add(name);
+                                    rowSubs.getChildren().add(sub);
+                                }
+                                else {
+                                    subscribers.forEach(k -> {
+                                        HBox sub = new HBox();
+                                        Label name = new Label();
+                                        name.setText(userService.getUserByID(k).getFirstName() + " " + userService.getUserByID(k).getLastName());
+                                        sub.getChildren().add(name);
+                                        rowSubs.getChildren().add(sub);
+                                    });
+                                }
+
+                                scrollerSubs.setContent(rowSubs);
+                            }
+                        }
+                    });
                 }
             }
 
             subscribeBox.setVisible(eventListType.equals(EventListType.AllEvents));
+            removeImageBox.setSpacing(20);
             removeImageBox.getChildren().add(removeImage);
+            removeImageBox.getChildren().add(imageMore);
 
             removeImage.setOnMouseClicked(y -> {
 
                 switch (eventListType) {
                     case AllEvents -> {
                         eventService.subscribe(x.getId(), myId);
-                        if(ChronoUnit.DAYS.between(x.getStart().toLocalDate(), LocalDateTime.now().toLocalDate()) == 0)
-                        {
+                        if (ChronoUnit.DAYS.between(x.getStart().toLocalDate(), LocalDateTime.now().toLocalDate()) == 0) {
                             showNotification(NotificationType.Today, x);
                             eventService.saveNotificationDate(myId, x.getId());
                         }
@@ -993,7 +1087,7 @@ public class HomeController implements Observer<MessageChangeEvent> {
             description.setAlignment(Pos.CENTER);
 
             row.getChildren().add(imageEventBox);
-            row.setSpacing(5);
+            row.setSpacing(20);
             row.getChildren().add(elem);
             row.getChildren().add(removeImageBox);
             eventsBox.getChildren().add(row);
@@ -1011,6 +1105,7 @@ public class HomeController implements Observer<MessageChangeEvent> {
     public void openPosts(MouseEvent mouseEvent) {
         scroller.setVisible(false);
         scrollerPosts.setVisible(true);
+        initializePost();
     }
 
     public void closeEvents(MouseEvent mouseEvent) {
@@ -1019,22 +1114,21 @@ public class HomeController implements Observer<MessageChangeEvent> {
         eventsBox.setVisible(false);
         closeEventsImage.setVisible(false);
         conversationLabel.setVisible(false);
-        friendsGroupsCheckBox.setVisible(false);
     }
 
-    public void initializePost(){
+    public void initializePost() {
         vBoxPosts.getChildren().clear();
         vBoxPosts.setStyle("-fx-border-radius: 20");
         numberOfPost = postService.getAllPosts().size();
 
-        int nr = leftLimitPosts+postOnPage;
-        if(nr > numberOfPost)
+        int nr = leftLimitPosts + postOnPage;
+        if (nr > numberOfPost)
             nr = numberOfPost;
 
         List<FriendshipDTO> friendshipDTOS = friendshipService.getFriendships(myId);
         List<Post> postList = postService.getHomePostsOnPage(leftLimitPosts, nr-leftLimitPosts, friendshipDTOS);
 
-        postList.forEach(x->{
+        postList.forEach(x -> {
             VBox box = new VBox();
             box.getStyleClass().add("vbox-post");
             HBox hbox = new HBox();
@@ -1072,6 +1166,7 @@ public class HomeController implements Observer<MessageChangeEvent> {
                 description.getStyleClass().add("label-description-post");
                 box.getChildren().add(description);
             }
+
             if(x.getUrl() != null){
                 ImageView img = new ImageView();
                 img.setImage(new Image(x.getUrl()));
@@ -1098,11 +1193,11 @@ public class HomeController implements Observer<MessageChangeEvent> {
     }
 
     public void onScrollerPosts(ScrollEvent scrollEvent) {
-        if(scrollEvent.getDeltaY()<0 && (leftLimitPosts+postOnPage)<numberOfPost){ //scroll up
-            leftLimitPosts ++;
+        if (scrollEvent.getDeltaY() < 0 && (leftLimitPosts + postOnPage) < numberOfPost) { //scroll up
+            leftLimitPosts++;
             initializePost();
         }
-        if(scrollEvent.getDeltaY()>0 && leftLimitPosts > 0){ //scroll down and there are messages left
+        if (scrollEvent.getDeltaY() > 0 && leftLimitPosts > 0) { //scroll down and there are messages left
             leftLimitPosts--;
             initializePost();
         }
