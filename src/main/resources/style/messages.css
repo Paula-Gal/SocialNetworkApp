@@ -247,7 +247,14 @@
 
 .rounded-scroll-pane > .scroll-bar:horizontal .thumb:hover,
 .rounded-scroll-pane > .scroll-bar:vertical .thumb:hover {
-    -fx-background-color : #9e9e9e;
-    -fx-background-insets : 2.0, 0.0, 0.0;
-    -fx-background-radius : 2em;
+    -fx-background-color: #9e9e9e;
+    -fx-background-insets: 2.0, 0.0, 0.0;
+    -fx-background-radius: 2em;
+
+}
+.date-message{
+    -fx-text-fill: #4d4d4d;
+    -fx-text-alignment: bottom;
+    -fx-font-size: 13;
+    -fx-font-family: Poppins-Regular;
 }

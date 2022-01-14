@@ -13,6 +13,7 @@ import com.example.lab6.utils.observer.Observer;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.function.Predicate;
@@ -310,7 +311,7 @@ public class MessageService implements Observable<MessageChangeEvent> {
 
         Predicate<Group> myGroup = x -> x.getMembers().contains(id);
         groupList.stream().filter(myGroup).forEach(myGroups::add);
-
+        Collections.reverse(myGroups);
         return myGroups;
     }
 
@@ -399,7 +400,12 @@ public class MessageService implements Observable<MessageChangeEvent> {
                 .collect(Collectors.toList());
     }
 
+    public Group find_group(Long id){
+        Group group = repoGroup.findOne(id);
+        return group;
+    }
     public List<Message> getGroupMessagesOnPage(int leftLimit, int rightLimit, List<Message> messages) {
+        messages.sort(Comparator.comparing(Message::getDate).reversed());
         return messages.stream().skip(leftLimit)
                 .limit(rightLimit)
                 .collect(Collectors.toList());

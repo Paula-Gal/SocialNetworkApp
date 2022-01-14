@@ -101,9 +101,29 @@
     -fx-background-color: #c570e5;
     -fx-background-radius: 40;
     -fx-text-fill: white;
+    -fx-font-size: 12;
     -fx-background-position: right center;
     -fx-text-alignment: right;
     -fx-padding: 10;
+}
+
+
+.background-message {
+    -fx-background-color: #cebade;
+    -fx-background-radius: 40;
+    -fx-text-fill: black;
+    -fx-font-size: 12;
+    -fx-background-position: left center;
+    -fx-padding: 10;
+    -fx-spacing: 20;
+}
+
+
+.date-message-start{
+    -fx-text-fill: #646464;
+    -fx-text-alignment: bottom;
+    -fx-font-size: 9;
+    -fx-font-family: Poppins-Regular;
 }
 
 .events-background {
@@ -134,14 +154,6 @@
     -fx-background-radius : 2em;
 }
 
-.background-message {
-    -fx-background-color: #cebade;
-    -fx-background-radius: 40;
-    -fx-text-fill: black;
-    -fx-background-position: left center;
-    -fx-padding: 10;
-    -fx-spacing: 20;
-}
 
 .label-conversation {
     -fx-background-radius: 20, 20, 0, 0;

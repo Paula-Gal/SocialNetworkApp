@@ -3,15 +3,16 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.Pagination?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
 <AnchorPane prefHeight="544.0" prefWidth="1254.0" stylesheets="/style/homePage.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.lab6.controller.HomeController">
    <children>
@@ -35,18 +36,21 @@
          </children>
       </AnchorPane>
       <Label fx:id="welcomeText" layoutX="7.0" layoutY="82.0" prefHeight="104.0" prefWidth="638.0" styleClass="area-style" AnchorPane.leftAnchor="220" AnchorPane.topAnchor="130" />
-      <TextField fx:id="searchField" layoutX="380.0" layoutY="160.0" onKeyTyped="#onSearchField" prefHeight="26.0" prefWidth="224.0" promptText="Search user..." styleClass="text-field" AnchorPane.leftAnchor="220" AnchorPane.topAnchor="300" />
-      <ImageView fitHeight="20.0" fitWidth="17.0" layoutX="583.0" layoutY="166.0" onMouseClicked="#onXClicked" pickOnBounds="true" preserveRatio="true" styleClass="x-style" AnchorPane.leftAnchor="430" AnchorPane.topAnchor="300" fx:id="xImage" />
-      <AnchorPane fx:id="conversation" layoutX="673.0" layoutY="407.0" prefHeight="392.0" prefWidth="325.0" styleClass="chat-style" AnchorPane.bottomAnchor="0" AnchorPane.rightAnchor="330">
+      <TextField fx:id="searchField" layoutX="380.0" layoutY="160.0" onKeyTyped="#onSearchField" prefHeight="26.0" prefWidth="250.0" promptText="Search user..." styleClass="text-field" AnchorPane.leftAnchor="220.0" AnchorPane.topAnchor="300" />
+      <ImageView fitHeight="20.0" fitWidth="17.0" layoutX="583.0" layoutY="166.0" onMouseClicked="#onXClicked" pickOnBounds="true" preserveRatio="true" styleClass="x-style" AnchorPane.leftAnchor="456" AnchorPane.topAnchor="300" fx:id="xImage" />
+      <AnchorPane fx:id="conversation" layoutX="673.0" layoutY="407.0" prefHeight="392.0" prefWidth="325.0" styleClass="chat-style" AnchorPane.bottomAnchor="0" AnchorPane.rightAnchor="310">
          <children>
             <VBox layoutY="1.0" prefHeight="392.0" prefWidth="325.0" styleClass="conversation-style">
                <children>
-                  <HBox prefHeight="100.0" prefWidth="200.0" spacing="10.0">
+                  <HBox prefHeight="59.0" prefWidth="325.0" spacing="10.0">
                      <children>
                         <Label fx:id="conversationLabel" prefHeight="40.0" prefWidth="250.0" styleClass="label-conversation">
                            <HBox.margin>
-                              <Insets top="10.0" />
+                              <Insets bottom="10.0" top="10.0" />
                            </HBox.margin>
+                           <padding>
+                              <Insets left="20.0" right="20.0" />
+                           </padding>
                         </Label>
                         <ImageView fitHeight="20.0" fitWidth="23.0" onMouseClicked="#onCloseConversation" pickOnBounds="true" preserveRatio="true" styleClass="close-chat">
                            <HBox.margin>
@@ -55,44 +59,60 @@
                         </ImageView>
                      </children>
                   </HBox>
-                  <ListView fx:id="conversationList" editable="true" prefHeight="299.0" prefWidth="325.0" />
-                  <HBox prefHeight="52.0" prefWidth="325.0" spacing="75.0" styleClass="conversation-style">
+                  <ScrollPane fx:id="scrollerMessages" prefHeight="283.0" prefWidth="325.0">
+                     <content>
+                        <VBox fx:id="conversationList" prefHeight="287.0" prefWidth="308.0" />
+                     </content>
+                  </ScrollPane>
+                  <HBox prefHeight="52.0" prefWidth="325.0" spacing="70.0" styleClass="conversation-style">
                      <children>
-                        <TextField fx:id="writeMessageField" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="26.0" prefWidth="216.0" promptText="Write your message here" styleClass="chat-Field" HBox.hgrow="ALWAYS" />
-                        <ImageView fx:id="sendImage" fitHeight="29.0" fitWidth="50.0" onMouseClicked="#onSendMessage" pickOnBounds="true" preserveRatio="true" styleClass="image-send" />
+                        <TextArea fx:id="writeMessageField" prefHeight="37.0" prefWidth="225.0">
+                           <HBox.margin>
+                              <Insets bottom="5.0" right="5.0" top="5.0" />
+                           </HBox.margin>
+                        </TextArea>
+                        <ImageView fx:id="sendImage" fitHeight="29.0" fitWidth="50.0" onMouseClicked="#onSendMessage" pickOnBounds="true" preserveRatio="true" styleClass="image-send">
+                           <HBox.margin>
+                              <Insets top="10.0" />
+                           </HBox.margin></ImageView>
                      </children>
                   </HBox>
                </children>
             </VBox>
          </children>
       </AnchorPane>
-      <HBox layoutX="98.0" layoutY="256.0" prefHeight="100.0" prefWidth="200.0" />
-      <CheckBox fx:id="friendsGroupsCheckBox" layoutX="918.0" layoutY="145.0" mnemonicParsing="false" onAction="#friendsOrGroups" styleClass="label-checkbox" text="Groups" AnchorPane.rightAnchor="280.0" AnchorPane.topAnchor="300.0" />
-      <Pagination fx:id="pagination" layoutX="1196.0" layoutY="300.0" prefHeight="129.0" prefWidth="200.0" AnchorPane.rightAnchor="40.0" AnchorPane.topAnchor="300.0" />
-      <Pagination fx:id="paginationSearch" layoutX="232.0" layoutY="329.0" prefHeight="87.0" prefWidth="200.0" />
-      <AnchorPane fx:id="anchorPagination" layoutX="307.0" layoutY="70.0" prefHeight="200.0" prefWidth="200.0" />
-      <ImageView fx:id="closeEventsImage" fitHeight="30.0" fitWidth="30.0" layoutX="860.0" layoutY="182.0" onMouseClicked="#closeEvents" pickOnBounds="true" preserveRatio="true" styleClass="image-x-events" AnchorPane.rightAnchor="550" />
-      <ScrollPane styleClass="scroll-post-events" fx:id="scroller" layoutX="347.0" layoutY="159.0" prefHeight="720.0" prefWidth="650.0" AnchorPane.rightAnchor="600.0" AnchorPane.topAnchor="230.0">
+      <CheckBox fx:id="friendsGroupsCheckBox" layoutX="1055.0" layoutY="248.0" mnemonicParsing="false" onAction="#friendsOrGroups" styleClass="label-checkbox" text="Groups" AnchorPane.rightAnchor="345.0" AnchorPane.topAnchor="248.0" />
+      <Pagination fx:id="pagination" layoutX="1196.0" layoutY="300.0" prefHeight="129.0" prefWidth="267.0" AnchorPane.rightAnchor="40.0" AnchorPane.topAnchor="250.0">
+         <padding>
+            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+         </padding></Pagination>
+      <Pagination fx:id="paginationSearch" layoutX="232.0" layoutY="329.0" prefHeight="87.0" prefWidth="250.0" AnchorPane.leftAnchor="220.0" />
+      <ImageView fx:id="closeEventsImage" fitHeight="30.0" fitWidth="30.0" layoutX="860.0" layoutY="182.0" onMouseClicked="#closeEvents" pickOnBounds="true" preserveRatio="true" styleClass="image-x-events" AnchorPane.rightAnchor="610" />
+      <ScrollPane fx:id="scroller" layoutX="347.0" layoutY="159.0" prefHeight="720.0" prefWidth="650.0" styleClass="scroll-post-events" AnchorPane.rightAnchor="660.0" AnchorPane.topAnchor="230.0">
          <content>
-            <VBox fx:id="eventsBox" alignment="TOP_CENTER" prefHeight="800.0" prefWidth="400.0"  />
+            <VBox fx:id="eventsBox" alignment="TOP_CENTER" prefHeight="800.0" prefWidth="400.0" />
          </content>
          <padding>
             <Insets left="100.0" />
          </padding>
       </ScrollPane>
       <StackPane fx:id="stackpane" layoutX="930.0" layoutY="356.0" prefHeight="150.0" prefWidth="200.0" AnchorPane.bottomAnchor="150" AnchorPane.rightAnchor="630" />
-      <ScrollPane fx:id="scrollerPosts" layoutX="357.0" layoutY="169.0" onScroll="#onScrollerPosts" prefHeight="632.0" prefWidth="569.0" styleClass="scroll-post" AnchorPane.rightAnchor="600.0" AnchorPane.topAnchor="230.0">
+      <ScrollPane fx:id="scrollerPosts" layoutX="357.0" layoutY="169.0" onScroll="#onScrollerPosts" prefHeight="720.0" prefWidth="569.0" styleClass="scroll-post-events" AnchorPane.rightAnchor="660.0" AnchorPane.topAnchor="230.0">
          <content>
-            <VBox fx:id="vBoxPosts" alignment="CENTER" prefHeight="637.0" prefWidth="453.0" styleClass="list-view-event">
+            <VBox fx:id="vBoxPosts" alignment="CENTER" prefHeight="730.0" prefWidth="453.0" styleClass="list-view-event">
                <padding>
                   <Insets left="20.0" right="20.0" top="20.0" />
-               </padding></VBox>
+               </padding>
+            </VBox>
          </content>
          <padding>
             <Insets left="50.0" right="50.0" />
          </padding>
       </ScrollPane>
-      <Label layoutX="1220.0" layoutY="262.0" text="My friends" AnchorPane.rightAnchor="140.0" AnchorPane.topAnchor="260.0" styleClass="label-myfriends"/>
-      <AnchorPane styleClass="notification-style" fx:id="notif" layoutX="980.0" layoutY="416.0" prefHeight="100" prefWidth="150" />
+      <Label layoutX="1177.0" layoutY="215.0" styleClass="label-myfriends" text="My friends" AnchorPane.rightAnchor="189.0" AnchorPane.topAnchor="215.0">
+         <font>
+            <Font size="20.0" />
+         </font></Label>
+      <AnchorPane fx:id="notif" layoutX="980.0" layoutY="416.0" prefHeight="100" prefWidth="150" styleClass="notification-style" />
    </children>
 </AnchorPane>

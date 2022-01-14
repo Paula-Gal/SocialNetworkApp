@@ -68,6 +68,16 @@
     -fx-text-fill: black;
 }
 
+.label-edit:hover{
+    -fx-text-fill: #fd18d7;
+}
+
+.label-request{
+    -fx-font-size: 14px;
+    -fx-font-family: Poppins-Bold;
+    -fx-text-fill: black;
+}
+
 .conversation-style{
     -fx-background-color: #e8b5d2;
     -fx-text-fill: white;
@@ -122,8 +132,8 @@
     -fx-shape: circle;
     -fx-position-shape: center;
     -fx-background-size: contain;
-    -fx-pref-height: 80;
-    -fx-pref-width: 70;
+    -fx-pref-height: 100;
+    -fx-pref-width: 90;
     -fx-background-radius: 100;
 }
 
@@ -233,13 +243,14 @@
     -fx-background-radius: 40;
     -fx-padding: 20;
 }
+
 .hbox-post{
     -fx-background-color:#9cc8ff;
     -fx-background-radius: 0 0 40 40;
 }
 .scroll-post {
-    -fx-background-image: url("/images/images.jpg");
-    -fx-background-size: cover;
+
+    -fx-background-size: contain;
     -fx-background-radius: 40;
     -fx-border-radius: 40;
 }
@@ -265,9 +276,10 @@
     -fx-text-fill: #606060;
 }
 
-.vbox-posts{
-    -fx-background-color: red;
 
 
-    -fx-opacity: 0.4;
+.no_friendRequests{
+    -fx-font-size: 20px;
+    -fx-text-fill: black;
+    -fx-text-alignment: center;
 }

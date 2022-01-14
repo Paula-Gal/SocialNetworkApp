@@ -81,7 +81,9 @@ public class LoginController {
             Scene scene = new Scene(root);
             dialogStage.setScene(scene);
             dialogStage.setMaximized(true);
+
             PageDTO page = new PageDTO(userService.exists(email), userService.exists(email).getFriendsList());
+
             HomeController userViewController = loader.getController();
             userViewController.setServices(userService, friendshipService, friendRequestService, messageService, eventService, postService, dialogStage, email, page);
 

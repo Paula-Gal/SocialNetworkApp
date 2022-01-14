@@ -1,10 +1,7 @@
 package com.example.lab6.controller;
 
 import com.example.lab6.model.*;
-import com.example.lab6.service.FriendRequestService;
-import com.example.lab6.service.FriendshipService;
-import com.example.lab6.service.MessageService;
-import com.example.lab6.service.UserService;
+import com.example.lab6.service.*;
 import com.example.lab6.utils.events.MessageChangeEvent;
 import com.example.lab6.utils.observer.Observer;
 import javafx.event.ActionEvent;
@@ -30,6 +27,7 @@ import javafx.util.Callback;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -55,6 +53,7 @@ public class MessagesController implements Observer<MessageChangeEvent> {
     public ScrollPane scrollerMembers;
     public VBox members;
     public ImageView menuImage;
+    public TextArea conversationField1;
 
     private int leftLimit = 0;
 
@@ -66,6 +65,7 @@ public class MessagesController implements Observer<MessageChangeEvent> {
     private FriendshipService friendshipService;
     private UserService userService;
     private FriendRequestService friendRequestService;
+    private PostService postService;
     Stage stage;
     private String email;
     private Long myId;
@@ -92,15 +92,17 @@ public class MessagesController implements Observer<MessageChangeEvent> {
         menuImage.setVisible(false);
         scrollerMembers.setVisible(false);
 
+
     }
 
-    public void setServices(MessageService messageService, FriendshipService friendshipService, FriendRequestService friendRequestService, UserService userService, Stage dialogStage, String email) {
+    public void setServices(MessageService messageService, FriendshipService friendshipService, FriendRequestService friendRequestService, UserService userService, PostService postService, Stage dialogStage, String email) {
         this.messageService = messageService;
         this.stage = dialogStage;
         this.email = email;
         this.friendshipService = friendshipService;
         this.friendRequestService = friendRequestService;
         this.userService = userService;
+        this.postService = postService;
         messageService.addObserver(this);
         friendsChat();
         this.myId = this.userService.exists(email).getId();
@@ -119,9 +121,9 @@ public class MessagesController implements Observer<MessageChangeEvent> {
     public void update(MessageChangeEvent messageChangeEvent) {
 
         if (friendsBool.get()) {
-            setConversation1(friendId);
+            setConversation(friendId);
         } else {
-            setConversationGroup1(groupFinal);
+            setConversationGroup(groupFinal);
 
         }
     }
@@ -218,15 +220,14 @@ public class MessagesController implements Observer<MessageChangeEvent> {
                 else
                     userImage.setImage(new Image("/images/profile.png"));
                 userName.setVisible(true);
-                userName.setText("Your conversation with " + users.get(index).getNume());
+                userName.setText(users.get(index).getNume());
 
 
                 friendId = users.get(index).getIdUser();
                 numberOfMessages = messageService.getConversation(myId, friendId).size();
-                setConversation1(friendId);
+                setConversation(friendId);
                 leftLimit = 0;
-                // emailTo = user.getEmail();
-                //setConversationList();
+
             });
             button.setOnAction(event -> {
                 try {
@@ -243,7 +244,7 @@ public class MessagesController implements Observer<MessageChangeEvent> {
                     dialogStage.setScene(scene);
 
                     FriendProfileController friendProfileController = loader.getController();
-                    friendProfileController.setServices(userService, friendshipService, friendRequestService, dialogStage, email, users.get(index).getEmailDTO());
+                    friendProfileController.setServices(userService, friendshipService, friendRequestService, postService, dialogStage, email, users.get(index).getEmailDTO());
 
                     dialogStage.show();
 
@@ -258,54 +259,8 @@ public class MessagesController implements Observer<MessageChangeEvent> {
         return box;
     }
 
-//    private void setConversation(Long friendId) {
-//
-//        chat.getChildren().clear();
-//        List<Message> messages = messageService.getConversation(myId, friendId);
-//
-//            messages.forEach(x -> {
-//                HBox row = new HBox();
-//                ImageView profilePhoto = new ImageView();
-//                Label text = new Label();
-//                if (userService.findPhoto(x.getFrom().getEmail()) != null)
-//                    profilePhoto.setImage(new Image(userService.findPhoto(x.getFrom().getEmail())));
-//                else
-//                    profilePhoto.setImage(new Image("/images/profile.png"));
-//
-//                profilePhoto.setFitWidth(50);
-//                profilePhoto.setFitHeight(50);
-//                text.setText(x.getMessage());
-//                if (x.getFrom().getId().equals(myId)) {
-//                    text.getStyleClass().add("background-mymessages");
-//                    text.setAlignment(Pos.CENTER_RIGHT);
-//
-//                    row.getChildren().add(text);
-//                    row.getChildren().add(profilePhoto);
-//                    row.setAlignment(Pos.CENTER_RIGHT);
-//                    row.setPrefHeight(100);
-//
-//                } else {
-//                    text.getStyleClass().add("background-messages");
-//                    row.getChildren().add(profilePhoto);
-//                    row.getChildren().add(text);
-//                    row.setAlignment(Pos.CENTER_LEFT);
-//                    row.setPrefHeight(100);
-//
-//                }
-//
-//                chat.getChildren().add(row);
-//
-//            });
-//            chat.setSpacing(5);
-//
-//      scroller.setContent(chat);
-//      scroller.setFitToWidth(chat.isFillWidth());
-//      scroller.setVvalue(1.0);
-//      scroller.setHvalue(1.0);
-//      scroller.setPannable(true);
-//    }
 
-    private void setConversation1(Long friendId) {
+    private void setConversation(Long friendId) {
 
         chat.getChildren().clear();
         numberOfMessages = messageService.getConversation(myId, friendId).size();
@@ -321,18 +276,41 @@ public class MessagesController implements Observer<MessageChangeEvent> {
             HBox row = new HBox();
             ImageView profilePhoto = new ImageView();
             Label text = new Label();
+
+
             if (userService.findPhoto(x.getFrom().getEmail()) != null)
                 profilePhoto.setImage(new Image(userService.findPhoto(x.getFrom().getEmail())));
             else
                 profilePhoto.setImage(new Image("/images/profile.png"));
 
+            ImageView replyImg = new ImageView();
+            replyImg.setImage(new Image("/images/reply.png"));
+            replyImg.setFitWidth(20);
+            replyImg.setFitHeight(20);
+
+            Label date_sent = new Label();
+
+            VBox reply_date = new VBox();
+            reply_date.setSpacing(3);
+            reply_date.setVisible(false);
+
             profilePhoto.setFitWidth(45);
             profilePhoto.setFitHeight(45);
             text.setText(x.getMessage());
+            text.setWrapText(true);
+            text.setMaxWidth(300);
+            row.setSpacing(2);
             if (x.getFrom().getId().equals(myId)) {
                 text.getStyleClass().add("background-mymessages");
-                text.setAlignment(Pos.CENTER_RIGHT);
+                text.setAlignment(Pos.CENTER_LEFT);
+                date_sent.setText("Sent on " + " " + x.getDate().format(DateTimeFormatter.ofPattern(" HH:mm yyyy-MM-dd")));
+                date_sent.getStyleClass().add("date_message");
 
+                reply_date.setAlignment(Pos.CENTER_RIGHT);
+                reply_date.getChildren().add(replyImg);
+                reply_date.getChildren().add(date_sent);
+
+                row.getChildren().add(reply_date);
                 row.getChildren().add(text);
                 row.getChildren().add(profilePhoto);
                 row.setAlignment(Pos.CENTER_RIGHT);
@@ -340,14 +318,33 @@ public class MessagesController implements Observer<MessageChangeEvent> {
 
             } else {
                 text.getStyleClass().add("background-messages");
+                text.setAlignment(Pos.CENTER_RIGHT);
+                date_sent.setText("Sent on " + " " + x.getDate().format(DateTimeFormatter.ofPattern(" HH:mm yyyy-MM-dd")));
+                date_sent.getStyleClass().add("date_message");
+
+                reply_date.setAlignment(Pos.CENTER_LEFT);
+                reply_date.getChildren().add(replyImg);
+                reply_date.getChildren().add(date_sent);
+
                 row.getChildren().add(profilePhoto);
                 row.getChildren().add(text);
+                row.getChildren().add(reply_date);
                 row.setAlignment(Pos.CENTER_LEFT);
                 row.setPrefHeight(100);
 
             }
 
+            text.setOnMouseEntered(y->{
+                reply_date.setVisible(true);
+            });
+            row.setOnMouseExited(y->{
+                reply_date.setVisible(false);
+            });
+
             chat.getChildren().add(row);
+            replyImg.setOnMouseClicked(z->{
+                conversationField1.setText("Replied to:  " + x.getMessage() + "\n");
+            });
 
         });
 
@@ -381,7 +378,7 @@ public class MessagesController implements Observer<MessageChangeEvent> {
         else {
             double nr = (double) (nr_groups) / (double) itemsPerPage();
 
-            pagination.setPageCount((int) (nr));
+            pagination.setPageCount((int) ceil(nr));
         }
     }
 
@@ -429,7 +426,7 @@ public class MessagesController implements Observer<MessageChangeEvent> {
                 groupFinal.setMembers(groups.get(index).getMembers());
                 groupFinal.setMessages(groups.get(index).getMessages());
                 leftLimit = 0;
-                setConversationGroup1(groupFinal);
+                setConversationGroup(groupFinal);
             });
 
             nr++;
@@ -437,52 +434,11 @@ public class MessagesController implements Observer<MessageChangeEvent> {
         return box;
     }
 
-//    private void setConversationGroup(Group groupFinal) {
-//        chat.getChildren().clear();
-//        List<Message> messages = messageService.convertMessages(groupFinal.getMessages());
-//
-//        messages.forEach(x -> {
-//            HBox row = new HBox();
-//            ImageView profilePhoto = new ImageView();
-//            Label text = new Label();
-//            if (userService.findPhoto(x.getFrom().getEmail()) != null)
-//                profilePhoto.setImage(new Image(userService.findPhoto(x.getFrom().getEmail())));
-//            else
-//                profilePhoto.setImage(new Image("/images/profile.png"));
-//            profilePhoto.setFitWidth(40);
-//            profilePhoto.setFitHeight(40);
-//            if (x.getFrom().getId().equals(myId)) {
-//                text.setText(x.getMessage());
-//                text.getStyleClass().add("background-mymessage");
-//                text.setAlignment(Pos.CENTER_RIGHT);
-//
-//                row.getChildren().add(text);
-//                row.getChildren().add(profilePhoto);
-//                row.setAlignment(Pos.CENTER_RIGHT);
-//
-//            } else {
-//                text.setText(x.getFrom().getLastName() + " " + x.getFrom().getFirstName() + ":" + x.getMessage());
-//                text.getStyleClass().add("background-message");
-//                row.getChildren().add(profilePhoto);
-//                row.getChildren().add(text);
-//                row.setAlignment(Pos.CENTER_LEFT);
-//
-//            }
-//
-//            chat.getChildren().add(row);
-//        });
-//        chat.setSpacing(5);
-//
-//        scroller.setContent(chat);
-//        scroller.setFitToWidth(chat.isFillWidth());
-//        scroller.setVvalue(1.0f);
-//        scroller.setHvalue(1.0);
-//    }
 
-    private void setConversationGroup1(Group groupFinal) {
+    private void setConversationGroup(Group groupFinal) {
         chat.getChildren().clear();
-        numberOfMessages = messageService.convertMessages(groupFinal.getMessages()).size();
-        List<Message> messagesList = messageService.convertMessages(groupFinal.getMessages());
+        numberOfMessages = messageService.convertMessages(messageService.find_group(groupFinal.getId()).getMessages()).size();
+        List<Message> messagesList = messageService.convertMessages(messageService.find_group(groupFinal.getId()).getMessages());
 
         int nr = leftLimit + messagesPerPage();
         if (nr > numberOfMessages)
@@ -490,48 +446,90 @@ public class MessagesController implements Observer<MessageChangeEvent> {
 
         List<Message> messages = messageService.getGroupMessagesOnPage(leftLimit, nr - leftLimit, messagesList);
 
+        Collections.reverse(messages);
         messages.forEach(x -> {
             HBox row = new HBox();
             row.setPrefHeight(100);
             ImageView profilePhoto = new ImageView();
             Label text = new Label();
+            row.setSpacing(2);
             if (userService.findPhoto(x.getFrom().getEmail()) != null)
                 profilePhoto.setImage(new Image(userService.findPhoto(x.getFrom().getEmail())));
             else
                 profilePhoto.setImage(new Image("/images/profile.png"));
             profilePhoto.setFitWidth(45);
             profilePhoto.setFitHeight(45);
+
+            ImageView replyImg = new ImageView();
+            replyImg.setImage(new Image("/images/reply.png"));
+            replyImg.setFitWidth(20);
+            replyImg.setFitHeight(20);
+
+            Label date_sent = new Label();
+
+            VBox reply_date = new VBox();
+            reply_date.setSpacing(3);
+            reply_date.setVisible(false);
+
+            text.setWrapText(true);
+            text.setMaxWidth(300);
+
             if (x.getFrom().getId().equals(myId)) {
                 text.setText(x.getMessage());
                 text.getStyleClass().add("background-mymessages");
                 text.setAlignment(Pos.CENTER_RIGHT);
+                date_sent.setText("Sent on " + " " + x.getDate().format(DateTimeFormatter.ofPattern(" HH:mm yyyy-MM-dd")));
+                date_sent.getStyleClass().add("date_message");
 
+                reply_date.setAlignment(Pos.CENTER_RIGHT);
+                reply_date.getChildren().add(replyImg);
+                reply_date.getChildren().add(date_sent);
+
+                row.getChildren().add(reply_date);
                 row.getChildren().add(text);
                 row.getChildren().add(profilePhoto);
                 row.setAlignment(Pos.CENTER_RIGHT);
 
             } else {
-                text.setText(x.getFrom().getLastName() + " " + x.getFrom().getFirstName() + ":" + x.getMessage());
+                text.setText(x.getFrom().getLastName() + " " + x.getFrom().getFirstName() + " : " + x.getMessage());
                 text.getStyleClass().add("background-messages");
+                date_sent.getStyleClass().add("date_message");
+
+                reply_date.setAlignment(Pos.CENTER_LEFT);
+                reply_date.getChildren().add(replyImg);
+                reply_date.getChildren().add(date_sent);
+
                 row.getChildren().add(profilePhoto);
                 row.getChildren().add(text);
+                row.getChildren().add(reply_date);
                 row.setAlignment(Pos.CENTER_LEFT);
 
             }
 
+            text.setOnMouseEntered(y->{
+                reply_date.setVisible(true);
+            });
+            row.setOnMouseExited(y->{
+                reply_date.setVisible(false);
+            });
+
             chat.getChildren().add(row);
+            replyImg.setOnMouseClicked(z->{
+                conversationField1.setText("Replied to:  " + x.getMessage() + "\n");
+            });
         });
+
         chat.setSpacing(5);
 
         scroller.setContent(chat);
         scroller.setFitToWidth(chat.isFillWidth());
-        scroller.setVvalue(1.0f);
-        scroller.setHvalue(1.0);
+        scroller.setVvalue(0.5);
+        scroller.setHvalue(0.5);
     }
 
     public void onCreateGroup(ActionEvent actionEvent) {
         addMembersToGroupLabel.setVisible(true);
-        searchFriendsForGroup();
+        groupsChat();
         createGroupButton.setVisible(false);
         plusGroupImage.setVisible(true);
         nameGroupField.setVisible(true);
@@ -632,7 +630,7 @@ public class MessagesController implements Observer<MessageChangeEvent> {
                 userName.setVisible(true);
                 userName.setText("Your conversation with " + usersDTO.get(index).getNume());
                 friendId = usersDTO.get(index).getIdUser();
-                setConversation1(friendId);
+                setConversation(friendId);
 
             });
             buttonPlus.setOnAction(event -> {
@@ -765,7 +763,7 @@ public class MessagesController implements Observer<MessageChangeEvent> {
                 userName.setVisible(true);
                 userName.setText("Your conversation with " + usersDTO.get(index).getNume());
                 friendId = usersDTO.get(index).getIdUser();
-                setConversation1(friendId);
+                setConversation(friendId);
 
             });
             button.setOnAction(event -> {
@@ -783,7 +781,7 @@ public class MessagesController implements Observer<MessageChangeEvent> {
                     dialogStage.setScene(scene);
 
                     FriendProfileController friendProfileController = loader.getController();
-                    friendProfileController.setServices(userService, friendshipService, friendRequestService, dialogStage, email, usersDTO.get(index).getEmailDTO());
+                    friendProfileController.setServices(userService, friendshipService, friendRequestService, postService, dialogStage, email, usersDTO.get(index).getEmailDTO());
 
                     dialogStage.show();
 
@@ -859,7 +857,7 @@ public class MessagesController implements Observer<MessageChangeEvent> {
                 groupFinal.setMembers(groups.get(index).getMembers());
                 groupFinal.setMessages(groups.get(index).getMessages());
 
-                setConversationGroup1(groupFinal);
+                setConversationGroup(groupFinal);
             });
 
             nr++;
@@ -869,12 +867,12 @@ public class MessagesController implements Observer<MessageChangeEvent> {
 
 
     public void onSend(MouseEvent mouseEvent) {
-        String message = conversationField.getText();
+        String message = conversationField1.getText();
         if (friendsBool.get()) {
             List<Long> tos = new ArrayList<>();
             tos.add(friendId);
             messageService.sendMessage(userService.exists(email).getId(), tos, message);
-            conversationField.setText("");
+            conversationField1.setText("");
 
         } else {
             List<Long> recipients = new ArrayList<>();
@@ -882,9 +880,11 @@ public class MessagesController implements Observer<MessageChangeEvent> {
                 if (!x.equals(userService.exists(email).getId()))
                     recipients.add(x);
             });
+
             MessageDTO messageDTO = new MessageDTO(userService.exists(email).getId(), recipients, message, LocalDateTime.now(), null);
             messageService.sendMessageGroup(groupFinal, messageDTO);
-            conversationField.setText("");
+            conversationField1.setText("");
+
         }
     }
 
@@ -946,7 +946,7 @@ public class MessagesController implements Observer<MessageChangeEvent> {
                         dialogStage.setScene(scene);
 
                         FriendProfileController friendProfileController = loader.getController();
-                        friendProfileController.setServices(userService, friendshipService, friendRequestService, dialogStage, email, x.getEmail());
+                        friendProfileController.setServices(userService, friendshipService, friendRequestService,postService, dialogStage, email, x.getEmail());
 
                         dialogStage.show();
 
@@ -959,8 +959,8 @@ public class MessagesController implements Observer<MessageChangeEvent> {
 
             scroller.setContent(chat);
             scroller.setFitToWidth(chat.isFillWidth());
-            scroller.setVvalue(1.0);
-            scroller.setHvalue(1.0);
+            scroller.setVvalue(0.5);
+            scroller.setHvalue(0.5);
 
         }
     }
@@ -969,20 +969,20 @@ public class MessagesController implements Observer<MessageChangeEvent> {
         if (friendsBool.get()) {
             if (scrollEvent.getDeltaY() > 0 && (leftLimit + messagesPerPage()) < numberOfMessages) { //scroll up
                 leftLimit++;
-                setConversation1(friendId);
+                setConversation(friendId);
             }
             if (scrollEvent.getDeltaY() < 0 && leftLimit > 0) { //scroll down and there are messages left
                 leftLimit--;
-                setConversation1(friendId);
+                setConversation(friendId);
             }
         } else {
-            if (scrollEvent.getDeltaY() > 0 && (leftLimit + messagesPerPage()) < numberOfMessages) { //scroll up
+            if (scrollEvent.getDeltaY()> 0 && (leftLimit + messagesPerPage()) < numberOfMessages) { //scroll up
                 leftLimit++;
-                setConversationGroup1(groupFinal);
+                setConversationGroup(groupFinal);
             }
             if (scrollEvent.getDeltaY() < 0 && leftLimit > 0) { //scroll down and there are messages left
                 leftLimit--;
-                setConversationGroup1(groupFinal);
+                setConversationGroup(groupFinal);
             }
         }
     }
