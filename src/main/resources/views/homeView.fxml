@@ -81,6 +81,13 @@
             </VBox>
          </children>
       </AnchorPane>
+      <HBox layoutX="98.0" layoutY="256.0" prefHeight="100.0" prefWidth="200.0" />
+      <CheckBox fx:id="friendsGroupsCheckBox" layoutX="918.0" layoutY="145.0" mnemonicParsing="false" onAction="#friendsOrGroups" styleClass="label-checkbox" text="Groups" AnchorPane.rightAnchor="280.0" AnchorPane.topAnchor="300.0" />
+      <Pagination fx:id="pagination" layoutX="1196.0" layoutY="300.0" prefHeight="129.0" prefWidth="200.0" AnchorPane.rightAnchor="40.0" AnchorPane.topAnchor="300.0" />
+      <Pagination fx:id="paginationSearch" layoutX="232.0" layoutY="329.0" prefHeight="87.0" prefWidth="200.0" />
+      <AnchorPane fx:id="anchorPagination" layoutX="307.0" layoutY="70.0" prefHeight="200.0" prefWidth="200.0" />
+      <ImageView fx:id="closeEventsImage" fitHeight="30.0" fitWidth="30.0" layoutX="860.0" layoutY="182.0" onMouseClicked="#closeEvents" pickOnBounds="true" preserveRatio="true" styleClass="image-x-events" AnchorPane.rightAnchor="550" />
+      <ScrollPane fx:id="scroller" layoutX="347.0" layoutY="159.0" prefHeight="720.0" prefWidth="650.0" styleClass="scroll-post-events" AnchorPane.rightAnchor="600.0" AnchorPane.topAnchor="230.0">
       <CheckBox fx:id="friendsGroupsCheckBox" layoutX="1055.0" layoutY="248.0" mnemonicParsing="false" onAction="#friendsOrGroups" styleClass="label-checkbox" text="Groups" AnchorPane.rightAnchor="345.0" AnchorPane.topAnchor="248.0" />
       <Pagination fx:id="pagination" layoutX="1196.0" layoutY="300.0" prefHeight="129.0" prefWidth="267.0" AnchorPane.rightAnchor="40.0" AnchorPane.topAnchor="250.0">
          <padding>
@@ -109,6 +116,17 @@
             <Insets left="50.0" right="50.0" />
          </padding>
       </ScrollPane>
+      <Label layoutX="1220.0" layoutY="262.0" styleClass="label-myfriends" text="My friends" AnchorPane.rightAnchor="140.0" AnchorPane.topAnchor="260.0" />
+      <AnchorPane fx:id="notif" layoutX="980.0" layoutY="416.0" prefHeight="100" prefWidth="150" styleClass="notification-style" />
+      <StackPane AnchorPane.rightAnchor="620" AnchorPane.bottomAnchor="430" fx:id="stackPaneSubs" layoutX="868.0" layoutY="231.0" prefHeight="150.0" prefWidth="200.0">
+         <children>
+            <ScrollPane fx:id="scrollerSubs" prefHeight="200.0" prefWidth="200.0">
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" />
+              </content>
+            </ScrollPane>
+         </children>
+      </StackPane>
       <Label layoutX="1177.0" layoutY="215.0" styleClass="label-myfriends" text="My friends" AnchorPane.rightAnchor="189.0" AnchorPane.topAnchor="215.0">
          <font>
             <Font size="20.0" />

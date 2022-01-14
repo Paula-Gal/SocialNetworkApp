@@ -48,6 +48,19 @@
 
 .label-tab:hover {
     -fx-text-fill: #ff589e;
+    -fx-background-radius: 35;
+    -fx-background-color: white;
+    -fx-text-fill: black;
+}
+
+.label-tab:hover:selected {
+    -fx-text-fill: #ff589e;
+    -fx-content-display: block;
+}
+
+.label-tab:hover:pressed {
+    -fx-text-fill: #ff589e;
+    -fx-content-display: block;
 }
 
 .text-field {
@@ -251,6 +264,7 @@
 .event-image {
     -fx-pref-height: 50px;
     -fx-pref-width: 50px;
+    -fx-padding: 10px;
 }
 
 .image-x-events {
@@ -405,4 +419,36 @@
     -fx-background-position: center center;
     -fx-padding: 15px 15px 15px 15px;
     -fx-spacing: 20;
+    -fx-content-display: block;
+}
+
+.background-event-category-hover {
+    -fx-background-color: #FF75B7;
+    -fx-background-radius: 35;
+    -fx-text-fill: black;
+    -fx-background-position: center center;
+    -fx-padding: 15px 15px 15px 15px;
+    -fx-spacing: 20;
+    -fx-content-display: block;
+}
+
+.bold-text {
+    -fx-font-weight: bold;
+    -fx-font-family: Poppins-Bold;
+}
+
+.location-image {
+    -fx-image: url("/images/loc.png");
+}
+
+.date-image {
+    -fx-image: url("/images/date.png");
+}
+
+.image-see-subs {
+    -fx-image: url("/images/more.png");
+}
+
+.image-ripple:hover {
+    -fx-background-color: black;
 }

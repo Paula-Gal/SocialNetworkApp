@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
@@ -8,49 +9,85 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.lab6.controller.AddEventController">
+<AnchorPane prefHeight="400.0" prefWidth="600.0" stylesheets="/style/addEvent.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.lab6.controller.AddEventController">
    <children>
       <VBox fx:id="vboxAddEvent" layoutX="-1.0" layoutY="-3.0" prefHeight="400.0" prefWidth="600.0">
          <children>
-            <HBox prefHeight="85.0" prefWidth="600.0">
+            <HBox alignment="TOP_CENTER" prefHeight="40.0" prefWidth="600.0">
                <children>
-                  <Label fx:id="addEventLabel" prefHeight="22.0" prefWidth="113.0" text="Add new event" />
+                  <Label fx:id="addEventLabel" prefHeight="22.0" prefWidth="113.0" styleClass="bold-text" text="Add new event" />
                </children>
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+               <VBox.margin>
+                  <Insets top="30.0" />
+               </VBox.margin>
             </HBox>
             <HBox prefHeight="60.0" prefWidth="600.0">
                <children>
-                  <Label fx:id="titleLabel" prefHeight="22.0" prefWidth="113.0" text="Title" />
-                  <TextField fx:id="textFieldTitle" />
+                  <Label fx:id="titleLabel" prefHeight="22.0" prefWidth="113.0" styleClass="bold-text" text="Title">
+                     <HBox.margin>
+                        <Insets left="100.0" top="30.0" />
+                     </HBox.margin></Label>
+                  <TextField fx:id="textFieldTitle">
+                     <HBox.margin>
+                        <Insets top="30.0" />
+                     </HBox.margin></TextField>
                </children>
+               <opaqueInsets>
+                  <Insets left="20.0" />
+               </opaqueInsets>
+               <VBox.margin>
+                  <Insets left="60.0" top="10.0" />
+               </VBox.margin>
             </HBox>
             <HBox prefHeight="60.0" prefWidth="600.0">
                <children>
-                  <Label fx:id="startDateLabel" prefHeight="22.0" prefWidth="113.0" text="Start Date" />
+                  <Label fx:id="startDateLabel" prefHeight="22.0" prefWidth="113.0" styleClass="bold-text" text="Start Date" />
                   <DatePicker fx:id="startDatePicker" promptText="Start Date" />
                </children>
+               <VBox.margin>
+                  <Insets left="160.0" top="20.0" />
+               </VBox.margin>
             </HBox>
             <HBox prefHeight="60.0" prefWidth="600.0">
                <children>
-                  <Label fx:id="endDateLabel" prefHeight="22.0" prefWidth="113.0" text="End Date" />
+                  <Label fx:id="endDateLabel" prefHeight="22.0" prefWidth="113.0" styleClass="bold-text" text="End Date">
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin></Label>
                   <DatePicker fx:id="endDatePicker" promptText="End Date" />
                </children>
+               <VBox.margin>
+                  <Insets left="161.0" top="10.0" />
+               </VBox.margin>
             </HBox>
             <HBox prefHeight="60.0" prefWidth="600.0">
                <children>
-                  <Label fx:id="descriptions" prefHeight="22.0" prefWidth="113.0" text="Short description" />
+                  <Label fx:id="descriptions" prefHeight="22.0" prefWidth="113.0" styleClass="bold-text" text="Short description" />
                   <TextField fx:id="descField" />
                </children>
+               <VBox.margin>
+                  <Insets left="160.0" top="10.0" />
+               </VBox.margin>
             </HBox>
             <HBox prefHeight="60.0" prefWidth="600.0">
                <children>
-                  <Label fx:id="locationLabel" prefHeight="22.0" prefWidth="113.0" text="Location" />
+                  <Label fx:id="locationLabel" prefHeight="22.0" prefWidth="113.0" styleClass="bold-text" text="Location" />
                   <TextField fx:id="locationField" />
                </children>
+               <VBox.margin>
+                  <Insets left="160.0" top="10.0" />
+               </VBox.margin>
             </HBox>
             <HBox prefHeight="80.0" prefWidth="600.0">
                <children>
-                  <Button fx:id="addEventButton" mnemonicParsing="false" onAction="#addEvent" text="Add event" />
+                  <Button fx:id="addEventButton" mnemonicParsing="false" onAction="#addEvent" styleClass="button-save" text="Add event" />
                </children>
+               <VBox.margin>
+                  <Insets left="245.0" top="20.0" />
+               </VBox.margin>
             </HBox>
          </children></VBox>
    </children>
